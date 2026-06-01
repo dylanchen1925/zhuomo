@@ -89,7 +89,7 @@ See [REFERENCE.md](REFERENCE.md#readwise--highlights-pipeline).
 
 ```
 - [ ] 1. Review — due SR cards (Obsidian Spaced Repetition) + one explain-back
-- [ ] 2. Connect — one cross-domain prompt (LEARNING.md Connect mode)
+- [ ] 2. Connect — one cross-domain prompt (LEARNING.md Connect mode) **or Run** — one short roguelike fuse ([RUN.md](RUN.md))
 - [ ] 3. Lint — top 3 stale/contradicted/duplicate issues → Revise tasks
 - [ ] 4. Progress — bump one gap on a domain study path
 - [ ] 5. Applied — scan wiki/learn/applied/ since last week; any wiki revise needed?

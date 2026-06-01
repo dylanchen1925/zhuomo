@@ -33,6 +33,7 @@ flowchart TD
   subgraph process [Zhuomo operations]
     IN[Ingest]
     LR[Learn]
+    RN[Run]
     FW[Framework]
     RV[Review / Weekly]
     QY[Query]
@@ -50,6 +51,8 @@ flowchart TD
   I --> IN
   IN --> W
   IN --> LR
+  LR --> RN
+  RN --> W
   LR --> W
   IN --> FW
   FW --> W
@@ -84,7 +87,7 @@ Often: **wiki first → extraction card → skill** when an idea is actionable a
 
 ---
 
-## 3. Eight operations
+## 3. Nine operations
 
 Operations are the **verbs** of Zhuomo. Each has a trigger, output, and typical prompt shape.
 
@@ -92,12 +95,15 @@ Operations are the **verbs** of Zhuomo. Each has a trigger, output, and typical 
 |-----------|------|----------------|----------|
 | **Ingest** | New source landed in `raw/` | Concept pages, source summary, index updates | `wiki/` |
 | **Learn** | You are studying (not archive-only) | Digest, pretest, recall cards, quiz | `wiki/learn/` |
+| **Run** | Multi-domain integration practice | Fictional scenario, floors, debrief, loot | `wiki/learn/runs/` |
 | **Review** | Due cards or study session | Explain-back, optional session note | `wiki/learn/reviews/` |
 | **Framework** | After ingest or on request | Updated pillars, progress, gaps | `wiki/domains/*/framework.md` |
-| **Weekly** | ~15 min ritual | Review + connect + lint + progress | `wiki/log.md` |
+| **Weekly** | ~15 min ritual | Review + connect/run + lint + progress | `wiki/log.md` |
 | **Query** | You have a question | Answer (+ file back if valuable) | wiki + chat |
 | **Revise** | Wrong, stale, duplicate, contradicted | Corrected pages; skill merge | wiki, skills, `log.md` |
 | **Lint** | Periodic health | Issue list → Revise tasks | `log.md` |
+
+Full Run spec: [RUN.md](RUN.md).
 
 ### Operation dependencies
 
@@ -106,12 +112,16 @@ flowchart LR
   IN[Ingest] --> LR[Learn]
   IN --> FW[Framework]
   IN --> EX[Extract → Skill]
+  LR --> RN[Run]
+  FW --> RN
   LR --> RV[Review]
+  RN --> RV
   FW --> RV
   RV --> WK[Weekly]
   LT[Lint] --> RZ[Revise]
   QY[Query] --> RZ
   IN --> RZ
+  RN --> RZ
 ```
 
 **Default after chapter ingest** (unless you say *archive only*): Ingest → Learn (digest + recall) → Framework update.
@@ -306,6 +316,7 @@ Revision card (before editing): what was wrong, evidence, new claim — see [REF
 8. **File answers back** — chat does not compound; wiki does
 9. **Laptop owns wiki edits** — phone read + capture
 10. **Short artifacts, deep links** — one screen digest → concept pages
+11. **Fiction tests truth** — Run scenarios are made up; answers must cite wiki — [RUN.md](RUN.md)
 
 ---
 
@@ -318,6 +329,7 @@ Revision card (before editing): what was wrong, evidence, new claim — see [REF
 | [SKILL.md](SKILL.md) | Agents | Operations checklist, mistakes |
 | [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) | Agents + you | Wiki schema, ingest/query/lint/revise |
 | [LEARNING.md](LEARNING.md) | Agents + you | Learn modes, framework templates |
+| [RUN.md](RUN.md) | Agents + you | Roguelike multi-domain runs |
 | [RETENTION.md](RETENTION.md) | You | SR plugin, weekly, mastery |
 | [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md) | Agents + you | Domain skill pattern |
 | [REFERENCE.md](REFERENCE.md) | Agents + you | EPUB, video, Readwise, revision cards |

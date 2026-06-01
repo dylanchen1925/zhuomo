@@ -18,6 +18,7 @@ Personal knowledge system: sources → Obsidian wiki → Spaced Repetition → C
 | [SKILL.md](SKILL.md) | **Agents** | Main workflow — start here in Cursor |
 | [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) | Both | Wiki pattern, Obsidian, multi-device |
 | [LEARNING.md](LEARNING.md) | Both | Learn, frameworks, multi-domain |
+| [RUN.md](RUN.md) | You | Roguelike multi-domain learning runs |
 | [RETENTION.md](RETENTION.md) | You | Spaced Repetition, weekly, applied journal |
 | [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md) | Both | Domain skills with wiki backend |
 | [REFERENCE.md](REFERENCE.md) | Both | EPUB, web, video, Readwise |

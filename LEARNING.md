@@ -29,6 +29,7 @@ Run during or right after ingest. Goal: understanding and retention, not just st
 | **Companion** | While reading (chapter by chapter) | Digest per chunk + tie to framework pillars |
 | **Recap** | After ingest | Quiz + recall cards + update framework progress |
 | **Connect** | Any time | "How does this relate to [[other concept]] in other domain?" |
+| **Run** | Multi-domain integration | Fictional scenario + floors + debrief — [RUN.md](RUN.md) |
 
 ### Rules
 
@@ -45,6 +46,8 @@ Run during or right after ingest. Goal: understanding and retention, not just st
 /zhuomo I finished ch.3 — recap quiz + update my distributed-systems framework.
 
 /zhuomo Explain event sourcing back to me; correct me using the wiki.
+
+/zhuomo Run: fuse distributed-systems + finance — 3 floors, easy
 ```
 
 ---
@@ -133,6 +136,7 @@ wiki/
 │   ├── digests/
 │   ├── recall/                # Obsidian FSRS targets this folder
 │   ├── quizzes/
+│   ├── runs/                  # roguelike multi-domain sessions
 │   ├── applied/
 │   └── reviews/               # optional session notes
 └── index.md                   # global catalog OR pointer to domain-map

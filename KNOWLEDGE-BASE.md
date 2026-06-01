@@ -195,6 +195,9 @@ Log every revision. Prefer supersede/archive over delete.
 **Learn:** After ingest (unless user says archive only), add pretest/digest/recall/quiz
 under `wiki/learn/`; tie to concept pages. See LEARNING.md, RETENTION.md.
 
+**Run:** Fuse 2+ domains into fictional scenario; floor questions cite wiki;
+file debrief to `wiki/learn/runs/`; loot = recall cards + synthesis. See RUN.md.
+
 **Review / Weekly:** Scheduled retrieval + 15-min ritual — RETENTION.md.
 
 **Framework:** Maintain `wiki/domains/*/framework.md` and `domain-map.md` —

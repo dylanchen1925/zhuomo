@@ -1,6 +1,6 @@
 ---
 name: zhuomo
-description: Use when turning books, EPUBs, blogs, videos, or notes into a personal wiki or agent skills; when learning from resources quickly, building domain frameworks, or mapping progress across varied domains; when discovering topics or correcting existing wiki/skills.
+description: Use when turning books, EPUBs, blogs, videos, or notes into a personal wiki or agent skills; when learning from resources quickly, building domain frameworks, running roguelike multi-domain learning scenarios, or mapping progress across varied domains; when discovering topics or correcting existing wiki/skills.
 disable-model-invocation: true
 ---
 
@@ -25,28 +25,29 @@ Give future agents: *when* to act, *what* to do, *how* to decide, *what mistakes
 
 **REQUIRED:** **superpowers:writing-skills**, **write-a-skill**  
 **User:** [USER-GUIDE.md](USER-GUIDE.md) · **Framework:** [FRAMEWORK.md](FRAMEWORK.md)  
-**Wiki:** [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) · **Learn:** [LEARNING.md](LEARNING.md) · **Retention:** [RETENTION.md](RETENTION.md) · **Domain skills:** [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md)
+**Wiki:** [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) · **Learn:** [LEARNING.md](LEARNING.md) · **Run:** [RUN.md](RUN.md) · **Retention:** [RETENTION.md](RETENTION.md) · **Domain skills:** [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md)
 
 ## When to Use / NOT
 
-**Use:** sources → wiki and/or skill; **learn** from resources (digests, quizzes, recall); **build/update domain frameworks**; multi-domain vault; correct or update existing pages.
+**Use:** sources → wiki and/or skill; **learn** from resources (digests, quizzes, recall); **run** roguelike multi-domain scenarios; **build/update domain frameworks**; multi-domain vault; correct or update existing pages.
 
 **Don't:** one-off answers without filing; silent overwrite; delete history instead of supersede/archive; wall-of-text summaries instead of linked learning artifacts.
 
-## Eight operations
+## Nine operations
 
 | Op | When | Output |
 |----|------|--------|
 | **Ingest** | New source | Wiki pages (multi-topic, multi-domain) |
 | **Learn** | User studying | Digests, pretest, recall cards → `wiki/learn/` |
+| **Run** | Multi-domain practice | Fictional scenario + floors + debrief → `wiki/learn/runs/` — [RUN.md](RUN.md) |
 | **Review** | Due cards / study session | SR review + explain-back → [RETENTION.md](RETENTION.md) |
 | **Framework** | After ingest or on request | `domain-map`, per-domain `framework.md`, progress |
-| **Weekly** | ~15 min ritual | Review + Connect + Lint + progress → `log.md` |
+| **Weekly** | ~15 min ritual | Review + Connect/Run + Lint + progress → `log.md` |
 | **Query** | Question | Answer (+ file back to wiki) |
 | **Revise** | Wrong, stale, duplicate | Corrected pages/skills + log |
 | **Lint** | Periodic health | Issues → often Revise |
 
-Details: [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md), [LEARNING.md](LEARNING.md), [RETENTION.md](RETENTION.md)
+Details: [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md), [LEARNING.md](LEARNING.md), [RUN.md](RUN.md), [RETENTION.md](RETENTION.md)
 
 ## Wiki vs Skill
 
@@ -86,6 +87,7 @@ One resource → **one source summary** + **many concept pages** across **one or
 | Goal | Ask for |
 |------|---------|
 | Learn faster | **Learn** — preview, digest, quiz, explain-back |
+| Cross-domain under pressure | **Run** — roguelike scenario fused from 2+ domains — [RUN.md](RUN.md) |
 | See the big picture | **Framework** — pillars, mental model, progress table |
 | Many unrelated subjects | **Multi-domain** — `wiki/domain-map.md` + `wiki/domains/*/` |
 
@@ -159,6 +161,8 @@ Full ingest checklist:
 | Single-domain assumed | Use domain-map + wiki/domains/* for varied subjects |
 | BGP facts pasted into skill | Domain skill + WIKI-SCOPE; Revise wiki only when facts change |
 | Recall cards never reviewed | Obsidian Spaced Repetition + Weekly Review — [RETENTION.md](RETENTION.md) |
+| Scenario fiction filed as facts | Run artifacts use `type: fictional-scenario`; Revise only for wiki errors — [RUN.md](RUN.md) |
+| Cross-domain only in chat | **Run** — fuse domains, file debrief to `wiki/learn/runs/` |
 
 ## Deployment
 

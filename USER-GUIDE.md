@@ -23,7 +23,8 @@ Detailed guide for **you** (not the agent). How to set up 琢磨, run each opera
 13. [Multi-device workflow](#13-multi-device-workflow)
 14. [Source types](#14-source-types)
 15. [Troubleshooting](#15-troubleshooting)
-16. [FAQ](#16-faq)
+16. [Roguelike runs](#16-roguelike-runs)
+17. [FAQ](#17-faq)
 
 ---
 
@@ -41,7 +42,7 @@ Zhuomo helps you produce:
 |--------|----------------|
 | **Personal wiki** (Obsidian) | Concepts, frameworks, digests — your long-term memory |
 | **Agent skills** (Cursor) | When X happens, do Y — repeatable agent behavior |
-| **Learning artifacts** | Digests, quizzes, flashcards — faster human learning |
+| **Learning artifacts** | Digests, quizzes, flashcards, **roguelike runs** — faster human learning |
 
 **You do not need to name topics upfront.** Drop a source; the agent discovers topics and proposes a topic map when useful.
 
@@ -99,6 +100,7 @@ The agent should create:
         ├── digests/
         ├── recall/
         ├── quizzes/
+        ├── runs/
         └── applied/
 ```
 
@@ -171,6 +173,7 @@ You append to `wiki/log.md` via the agent.
 |-----------|-------------------|---------|
 | **Ingest** | `Ingest raw/books/ddia.epub ch.1` | Concept pages, source summary |
 | **Learn** | `Learn mode: preview ch.2` | Pretest, digest, recall cards |
+| **Run** | `Run: fuse networking + psychology, 5 floors` | Scenario, floors, debrief, loot |
 | **Review** | `Review networking recall` | Session plan, explain-back |
 | **Framework** | `Update my distributed-systems framework` | `framework.md` refresh |
 | **Weekly** | `Weekly review` | Checklist + log entry |
@@ -198,6 +201,18 @@ You append to `wiki/log.md` via the agent.
 /zhuomo Lint the whole wiki — top 10 issues
 
 /zhuomo Weekly review
+```
+
+### Roguelike runs
+
+```
+/zhuomo Run: fuse networking + psychology — roguelike, 5 floors, medium
+
+/zhuomo Run random — 2 domains from domain-map, easy, 3 floors
+
+/zhuomo Run themed "incident response" — weakest domains from framework progress
+
+/zhuomo Run rematch seed:2026-06-01-net-psych-7
 ```
 
 ### Ingest (no topic required)
@@ -509,10 +524,44 @@ EPUB, video, O'Reilly: see [REFERENCE.md](REFERENCE.md).
 | Phone can't find raw books | Books not synced | Keep `books/` laptop-only |
 | Ingest twice same URL | No duplicate check | Agent checks `wiki/sources/` first |
 | Overwhelming topic map | Large source | Ingest 1–2 clusters per session |
+| Run questions not from my wiki | Agent skipped concept pages | Require wiki cites; see [RUN.md](RUN.md) |
+| Story filed as wiki fact | Missing `fictional-scenario` tag | Revise if needed; runs go in `wiki/learn/runs/` only |
 
 ---
 
-## 16. FAQ
+## 16. Roguelike runs
+
+**Run** turns your multi-domain wiki into a **roguelike learning game**: fictional scenario, escalating floors, wiki-grounded questions, debrief + loot.
+
+| Piece | Meaning |
+|-------|---------|
+| **Scenario** | Made-up setting (bank outage, Mars colony, etc.) |
+| **Floors** | Harder questions each floor; death = failed explain-back |
+| **Fusion** | 2+ domains from `domain-map.md` combined in one story |
+| **Loot** | New recall cards, synthesis stubs, framework progress |
+| **Boss** | Final cross-domain tradeoff question |
+
+**Rules:** fiction is allowed; **answers must cite your wiki**. Contested topics stay contested. If a run exposes a wiki error → **Revise**, don't patch via story.
+
+### When to use
+
+- After you have concept pages in 2+ domains
+- Weekly ritual alternative to Connect (10 min)
+- When quizzes feel too flat — you want **integration under pressure**
+
+### Example
+
+```
+/zhuomo Run: fuse networking + psychology — 5 floors, medium
+```
+
+You play in chat; agent files `wiki/learn/runs/YYYY-MM-DD-seed.md` with grades and loot.
+
+Full spec: [RUN.md](RUN.md).
+
+---
+
+## 17. FAQ
 
 **Do I have to name the topic?**  
 No. Optional lens only. Agent discovers from TOC/headings.
@@ -543,6 +592,7 @@ Readwise sync is another raw snapshot until **ingest** compiles concepts and fra
 |------|----------|
 | [USER-GUIDE.md](USER-GUIDE.md) | This guide — setup and daily use |
 | [FRAMEWORK.md](FRAMEWORK.md) | Understanding the system model |
+| [RUN.md](RUN.md) | Roguelike multi-domain runs |
 | [SKILL.md](SKILL.md) | What the agent reads first |
 | [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) | Wiki layout and operations |
 | [LEARNING.md](LEARNING.md) | Learn modes and framework template |

@@ -205,24 +205,48 @@ Propagate to all pages linking to it.
 
 EPUB works well — it's structured HTML in a ZIP, so chapter boundaries are usually preserved.
 
-**Workflow:**
+**Workflow (required steps):**
 
-1. Copy the `.epub` to `raw/` (immutable source).
-2. Extract text **by chapter** (don't ingest the whole book in one pass unless it's short).
-3. Run the normal pipeline: wiki ingest → extraction card → zhuomo to skill.
+1. Copy the `.epub` to `raw/books/` (immutable source).
+2. **Convert full text to Markdown** under `wiki/sources/[slug]/md/` — one file per spine item/chapter, with heading anchors. This is the **provenance corpus**; concept pages link here, not only to the EPUB path.
+3. Write `wiki/sources/[slug].md` index (topic map + link to `md/index`).
+4. **Ingest by chapter or topic cluster** — don't pillar-summarize a whole large book in one pass unless user says `overview only`.
+5. On every concept page: **`## Evidence`** table — each claim row links `[[sources/slug/md/part-NNN#heading-anchor]]`.
+6. Then: learn + framework; optional extraction card → skill.
 
-**Extraction options** (pick one available on the machine):
+**Convert script (repo):**
 
 ```bash
-# Option A — pandoc (best chapter structure as markdown)
-pandoc book.epub -t markdown --split-level=1 -o wiki/sources/book-title/
+python3 scripts/epub-to-wiki-md.py raw/books/my-book.epub \
+  --out ~/Obsidian/zhuomo-vault/wiki/sources/my-book/md \
+  --slug my-book
+```
 
-# Option B — Calibre CLI (plain text, one file or per-chapter)
+Requires: `pip install ebooklib beautifulsoup4`
+
+**Alternative extraction options:**
+
+```bash
+# pandoc (single file or split — publisher-dependent)
+pandoc book.epub -t markdown --split-level=1 -o wiki/sources/book-title/md/
+
+# Calibre CLI (plain text fallback)
 ebook-convert book.epub book.txt
+```
 
-# Option C — unzip + read XHTML (no extra tools; EPUB is a zip)
-unzip -l book.epub   # find OEBPS/*.xhtml or similar spine files
-unzip -j book.epub 'OEBPS/chapter*.xhtml' -d /tmp/book-chapters/
+**Concept page evidence block (required):**
+
+```markdown
+## Evidence
+
+| 要点 | 原文 |
+|------|------|
+| FD_VNID mismatch F3274 | [[sources/my-book/md/part-003#vpc-consistency-checks]] |
+
+## Sources
+
+- **Raw EPUB:** `~/zhuomo-data/raw/books/my-book.epub`
+- **MD 全文:** [[sources/my-book/md/index]]
 ```
 
 Python (when scripting ingest):

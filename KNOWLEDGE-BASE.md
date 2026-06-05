@@ -217,18 +217,19 @@ Co-evolve this schema as you learn what works for your domain.
 
 1. If `raw/inbox/` has files, process those first (multi-device captures).
 2. User saves snapshot to local `raw/` (Web Clipper → export elsewhere, or clip to `raw/web/`; URL alone is not enough).
-3. LLM reads source; **discover topics** (TOC/headings/skim) unless user gave a narrow lens.
-4. Present **topic map** if multi-topic or overlap with existing wiki is likely; confirm when ambiguous.
-5. **Search existing wiki** for related pages before writing new ones.
-6. LLM writes/updates:
+3. **EPUB/PDF books:** convert full text to `wiki/sources/[slug]/md/` first (see [REFERENCE.md](REFERENCE.md#epub-epub)); concept pages must include `## Evidence` with `[[md/part#anchor]]` links — never summary-only without provenance corpus.
+4. LLM reads source **and** MD corpus; **discover topics** (TOC/headings/skim) unless user gave a narrow lens.
+5. Present **topic map** if multi-topic or overlap with existing wiki is likely; confirm when ambiguous.
+6. **Search existing wiki** for related pages before writing new ones.
+7. LLM writes/updates:
    - Summary in `wiki/sources/`
    - Entity and concept pages touched (often 10–15 pages per rich source)
    - **Revise** any existing pages the new source contradicts or supersedes
    - `wiki/index.md`
    - Entry in `wiki/log.md`
-7. If source was in `raw/inbox/`, move to `raw/processed/` or typed folder (`web/`, `video/`, `books/`).
-8. **Then** run zhuomo extraction card on actionable techniques (per topic, not per book).
-9. **Learn + framework** — digest, recall cards, update domain framework (see LEARNING.md).
+8. If source was in `raw/inbox/`, move to `raw/processed/` or typed folder (`web/`, `video/`, `books/`).
+9. **Then** run zhuomo extraction card on actionable techniques (per topic, not per book).
+10. **Learn + framework** — digest, recall cards, update domain framework (see LEARNING.md).
 
 Prefer one source at a time with user in the loop; batch ingest possible with less supervision.
 

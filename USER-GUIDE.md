@@ -526,6 +526,7 @@ EPUB, video, O'Reilly: see [REFERENCE.md](REFERENCE.md).
 | Overwhelming topic map | Large source | Ingest 1–2 clusters per session |
 | Run questions not from my wiki | Agent skipped concept pages | Require wiki cites; see [RUN.md](RUN.md) |
 | Story filed as wiki fact | Missing `fictional-scenario` tag | Revise if needed; runs go in `wiki/learn/runs/` only |
+| Book ingest lost detail / no provenance | Pillar-only pass; no MD corpus | Run `scripts/epub-to-wiki-md.py`; deepen by chapter; add `## Evidence` per [REFERENCE.md](REFERENCE.md#epub-epub) |
 
 ---
 

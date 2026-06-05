@@ -99,6 +99,7 @@ Default after chapter ingest (unless you say **archive only**): digest + update 
 ```
 - [ ] 0. Wiki setup — bootstrap if needed; multi-domain → domain-map (LEARNING.md)
 - [ ] 1. Intake — source; discover topics; assign domain(s)
+- [ ] 1b. EPUB/PDF — convert full text to wiki/sources/[slug]/md/; Evidence links on every concept page (REFERENCE.md)
 - [ ] 2. Ingest — wiki pages; flag contradictions
 - [ ] 2b. Learn — pretest + digest + recall for Spaced Repetition (skip if "archive only")
 - [ ] 2c. Framework — update domain framework + epistemic/progress

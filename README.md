@@ -32,7 +32,7 @@ ln -sf /path/to/zhuomo ~/.cursor/skills/zhuomo
 **2. Bootstrap your folders** — in Cursor chat:
 
 ```
-/zhuomo Bootstrap: raw ~/zhuomo-data/raw/, Obsidian vault ~/Obsidian/zhuomo-vault
+/zhuomo Bootstrap: raw ~/zhuomo-data/raw/, Obsidian vault ~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen
 ```
 
 **3. Ingest your first source:**
@@ -106,7 +106,7 @@ Artifacts land in `wiki/learn/runs/`. Full guide: [USER-GUIDE § Roguelike runs]
 | **This repo** (your clone) | Skill docs + optional config |
 | `~/.cursor/skills/zhuomo` | Symlink → clone (Cursor discovers the skill) |
 | `~/zhuomo-data/raw/` | Sources + `inbox/` *(created on bootstrap)* |
-| `~/Obsidian/zhuomo-vault/wiki/` | Your wiki *(path is yours to choose)* |
+| `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen/wiki/` | Your wiki (iCloud Obsidian vault) |
 
 ---
 

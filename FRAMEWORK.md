@@ -293,7 +293,7 @@ Revision card (before editing): what was wrong, evidence, new claim — see [REF
 |-----------|--------------|------|
 | Skill docs | This repo / `~/.cursor/skills/zhuomo` | Git |
 | Raw | `~/zhuomo-data/raw/` | iCloud/Dropbox/Syncthing; `inbox/` for phone |
-| Wiki vault | `~/Obsidian/zhuomo-vault/` | Obsidian Sync / iCloud / Git |
+| Wiki vault | `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen/` | iCloud Obsidian + Git optional |
 | Technique skills | `~/.cursor/skills/[name]/` | Git per skill |
 | Domain skills | `~/.cursor/skills/[domain-expert]/` + `WIKI-SCOPE.md` | Git |
 

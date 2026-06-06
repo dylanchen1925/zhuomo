@@ -43,7 +43,7 @@ Tells the agent **what to read** from the vault before answering.
 ```markdown
 # Wiki scope — network-expert
 
-Vault: `~/Obsidian/zhuomo-vault/wiki/`
+Vault: `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen/wiki/`
 
 ## Always read first
 - [[domains/networking/framework.md]]

@@ -78,7 +78,7 @@ Set Obsidian **Settings → Files → Default open file** to `wiki/overview.md` 
 ## One-line prompts
 
 ```
-/zhuomo Bootstrap: raw ~/zhuomo-data/raw/, vault ~/Obsidian/zhuomo-vault
+/zhuomo Bootstrap: raw ~/zhuomo-data/raw/, vault ~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen
 
 /zhuomo Ingest overview only: ~/zhuomo-data/raw/inbox/book.epub
 

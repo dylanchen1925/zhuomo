@@ -34,7 +34,7 @@ AGENTS.md     → schema: structure, conventions, workflows (co-evolve with user
 ├── assets/
 └── processed/                  # optional — archived after ingest
 
-~/Obsidian/zhuomo-vault/        # Obsidian vault — your reading surface
+~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen/  # Obsidian vault (iCloud)
 ├── wiki/
 │   ├── domain-map.md
 │   ├── index.md
@@ -53,7 +53,7 @@ Record both paths in `AGENTS.md`:
 ## Knowledge base
 
 Raw (read-only, local): `~/zhuomo-data/raw/`
-Wiki (Obsidian vault): `~/Obsidian/zhuomo-vault/wiki/`
+Wiki (Obsidian vault): `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen/wiki/`
 
 Ingest reads from Raw; writes only under Wiki. Source pages cite raw paths for provenance.
 
@@ -72,7 +72,7 @@ Wiki `sources/` pages are **agent-written summaries** with links to `[[concepts]
 If you prefer one tree on disk, same split mentally — only `wiki/` is the Obsidian vault root:
 
 ```
-zhuomo-vault/                   # Obsidian opens here
+Dylan Chen/                     # Obsidian vault root (iCloud)
 ├── wiki/                       # ← everything you browse
 │   ├── domain-map.md
 │   ├── index.md

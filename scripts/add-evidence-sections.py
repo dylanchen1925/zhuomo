@@ -3,7 +3,10 @@
 
 from pathlib import Path
 
-VAULT = Path.home() / "Obsidian/zhuomo-vault/wiki/concepts"
+VAULT = (
+    Path.home()
+    / "Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen/wiki/concepts"
+)
 SRC = "sources/cisco-aci-design-guide-2024/md"
 
 EVIDENCE: dict[str, list[tuple[str, str]]] = {

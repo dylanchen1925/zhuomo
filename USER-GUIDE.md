@@ -72,7 +72,7 @@ ln -sf /path/to/zhuomo ~/.cursor/skills/zhuomo
 In Cursor chat:
 
 ```
-/zhuomo Bootstrap: raw ~/zhuomo-data/raw/, Obsidian vault ~/Obsidian/zhuomo-vault
+/zhuomo Bootstrap: raw ~/zhuomo-data/raw/, Obsidian vault ~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen
 ```
 
 The agent should create:
@@ -86,7 +86,7 @@ The agent should create:
 ├── assets/
 └── processed/
 
-~/Obsidian/zhuomo-vault/
+~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen/
 ├── AGENTS.md       # wiki schema for agents
 └── wiki/
     ├── index.md
@@ -106,7 +106,7 @@ The agent should create:
 
 ### Step 2: Open Obsidian
 
-Open the vault folder (`zhuomo-vault` or `wiki/` root — match what you chose at bootstrap).
+Open the Obsidian vault folder **Dylan Chen** (iCloud); wiki lives under `wiki/`.
 
 ### Step 3: Install Spaced Repetition (recommended)
 
@@ -194,7 +194,7 @@ You append to `wiki/log.md` via the agent.
 ### Bootstrap and maintenance
 
 ```
-/zhuomo Bootstrap: raw ~/zhuomo-data/raw/, Obsidian vault ~/Obsidian/zhuomo-vault
+/zhuomo Bootstrap: raw ~/zhuomo-data/raw/, Obsidian vault ~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen
 
 /zhuomo Process everything in ~/zhuomo-data/raw/inbox/
 

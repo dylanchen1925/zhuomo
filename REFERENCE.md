@@ -19,12 +19,12 @@ Full wiki setup and operations: [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md).
 | Store | Where | Obsidian |
 |-------|-------|----------|
 | Clips, EPUB, transcripts, video notes | `~/zhuomo-data/raw/` | Don't add to vault (or exclude from graph) |
-| Concepts, frameworks, digests, synthesis | `~/Obsidian/zhuomo-vault/wiki/` | **Open vault here** |
+| Concepts, frameworks, digests, synthesis | `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen/wiki/` | **Open vault here** |
 
 Bootstrap prompt:
 
 ```
-/zhuomo Bootstrap: raw ~/zhuomo-data/raw/, Obsidian vault ~/Obsidian/zhuomo-vault/wiki/, AGENTS.md in vault root.
+/zhuomo Bootstrap: raw ~/zhuomo-data/raw/, Obsidian vault ~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen, AGENTS.md in vault root.
 ```
 
 **Source page** (in wiki, not raw) links outward:
@@ -218,7 +218,7 @@ EPUB works well — it's structured HTML in a ZIP, so chapter boundaries are usu
 
 ```bash
 python3 scripts/epub-to-wiki-md.py raw/books/my-book.epub \
-  --out ~/Obsidian/zhuomo-vault/wiki/sources/my-book/md \
+  --out ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/Dylan\ Chen/wiki/sources/my-book/md \
   --slug my-book
 ```
 

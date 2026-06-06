@@ -182,11 +182,13 @@ Wiki path: Obsidian vault `wiki/` — all agent output goes here.
 **Ingest:** Process `raw/inbox/` when non-empty → read source → discuss takeaways with user → write/update wiki pages →
 update `wiki/index.md` → append `wiki/log.md` → move raw out of inbox.
 
-**Query:** Read `index.md` → open relevant pages → answer with citations →
-file valuable answers back into `wiki/` (don't leave in chat).
+**Query — brain-first:** overview → domain-map → domain overview/guide → index → concepts; then raw/web.
 
-**Lint:** Contradictions, stale claims, orphan pages, missing cross-links,
-concepts mentioned but without pages. Suggest follow-up questions.
+**Query modes:** `search` = page list; `think` (default) = synthesis + Sources + **Gaps** table; file back to synthesis/ or concepts.
+
+**Lint (doctor-lite):** broken links, orphans, stub gaps, progress/Evidence mismatch, contradictions, duplicates. Log + Revise/deepen. Auto-stub missing pillar links.
+
+**Weekly:** Review + Lint + overview progress + optional synthesis note.
 
 **Revise:** Correct or update wiki pages and linked skills when wrong, stale,
 contradicted, or duplicated. Propagate fixes to all pages citing old claims.
@@ -239,24 +241,37 @@ Prefer one source at a time with user in the loop; batch ingest possible with le
 
 ### Query
 
-1. Read `wiki/index.md` → drill into pages.
-2. Synthesize answer with citations to wiki pages (and raw paths if needed).
-3. **File back:** comparisons, analyses, connections discovered → new wiki pages. Chat history does not compound; the wiki does.
+**Brain-first order:** `overview.md` → `domain-map.md` → `domains/<slug>/overview.md` / `guide.md` → `index.md` → `concepts/` / `sources/` → only then raw or web.
+
+| Mode | When | Output |
+|------|------|--------|
+| **search** | User wants pages to read | Ranked list + one-line relevance |
+| **think** | Default for questions | `## Answer` + `## Sources` + `## Gaps` |
+
+**Think — Gaps table** must flag: stub-only concepts, missing Evidence, overview vs page mismatch, contradictions, stale source version, topics needing deepen.
+
+**File back:** durable synthesis → `wiki/synthesis/` or extend concept pages; log substantial updates.
 
 Output forms: markdown page, comparison table, slides (Marp), chart — user choice.
 
 ### Lint
 
-Periodic health check (also after major ingest batches):
+Doctor-lite health check — on request, after major ingest, or in **Weekly**:
 
-- Contradictions between pages
-- Stale claims superseded by newer sources
-- Orphan pages (no inbound links)
-- Concepts mentioned but lacking dedicated pages
-- Missing cross-references
-- Gaps worth a web search or new source
+| Check | Fix |
+|-------|-----|
+| Broken `[[wikilinks]]` | Correct path or stub page |
+| Orphan concepts | Link from overview / guide / peers |
+| Mentioned concept, no page | Stub or merge duplicate |
+| Overview progress ≠ concept depth | Revise one side |
+| Deepened concept, no `## Evidence` | Add Evidence or note in overview |
+| Contradictions | Revise + supersede |
+| Stale source | Gap note + overview flag |
+| Duplicate topics | Merge to canonical page |
 
-Append lint pass to `log.md`. Turn each actionable issue into a **Revise** task.
+**Auto-stub:** pillar/guide links to missing `[[concept]]` → minimal page with `domain:` frontmatter.
+
+Append `## [date] lint | …` to `log.md`. Each row → **Revise** or deepen follow-up.
 
 ### Revise (correct & update)
 

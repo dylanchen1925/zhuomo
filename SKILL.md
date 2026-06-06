@@ -43,9 +43,9 @@ Give future agents: *when* to act, *what* to do, *how* to decide, *what mistakes
 | **Review** | Due cards / study session | SR review + explain-back → [RETENTION.md](RETENTION.md) |
 | **Framework** | After ingest or on request | `domain-map`, per-domain `overview.md` (pillars + progress), optional `guide.md` |
 | **Weekly** | ~15 min ritual | Review + Connect/Run + Lint + progress → `log.md` |
-| **Query** | Question | Answer (+ file back to wiki) |
+| **Query** | Question | **search** (page list) or **think** (synthesis + gaps + file back) |
 | **Revise** | Wrong, stale, duplicate | Corrected pages/skills + log |
-| **Lint** | Periodic health | Issues → often Revise |
+| **Lint** | Periodic health | Doctor-lite checklist → issues → often Revise |
 
 Details: [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md), [LEARNING.md](LEARNING.md), [RUN.md](RUN.md), [RETENTION.md](RETENTION.md)
 
@@ -96,6 +96,64 @@ One resource → **one source summary** + **many concept pages** across **one or
 New domain ingest: add a row to vault `overview.md` + `domain-map.md`; create `domains/<slug>/overview.md`. Add `guide.md` only when user wants one-scroll reference depth.
 
 Lite mode default: [SIMPLE.md](SIMPLE.md). Vault `AGENTS.md` must mirror this block.
+
+**Concept pages (compiled truth):** body = current trusted claims; optional `## Changelog` or frontmatter records when ingest/revise changed what (never silent overwrite).
+
+## Query — brain-first, search vs think
+
+**Brain-first (always):** read wiki before web or raw EPUB.
+
+1. `wiki/overview.md` → `domain-map.md` → `domains/<domain>/overview.md` / `guide.md`
+2. `wiki/index.md` → relevant `concepts/` + `sources/`
+3. Only if insufficient: raw `~/zhuomo-data/raw/` or external search
+
+| Mode | User says | Agent returns |
+|------|-----------|---------------|
+| **search** | `Query search: …` or "list wiki pages about …" | Ranked page list + one-line why each matters — user reads pages |
+| **think** (default) | `Query: …` or `Query think: …` | Synthesized answer + citations + **## Gaps** |
+
+**Think output template (required sections):**
+
+```markdown
+## Answer
+…synthesis with [[wikilinks]] and Evidence anchors where deepened…
+
+## Sources
+- [[concept-or-page]] — what you used
+
+## Gaps
+| Gap | Why it matters | Suggested next step |
+|-----|----------------|---------------------|
+| … | stub / no Evidence / stale source / contradiction | deepen X / Revise Y / new source |
+```
+
+**Network/IT:** lead Answer with business constraint → design lever → technical object (see domain `overview` architect lens).
+
+**File back:** comparisons, cross-concept synthesis, or durable Q&A → `wiki/synthesis/` or strengthen an existing concept; append `log.md` if substantial.
+
+## Lint — doctor-lite
+
+Run on request, after large ingest, or as part of **Weekly**.
+
+| Check | Action if failed |
+|-------|------------------|
+| Broken `[[wikilinks]]` | Fix path or create stub concept linked from domain `overview` pillar |
+| Orphan concept pages (no inbound links) | Link from `overview`, `guide`, or related concepts |
+| Concept mentioned in text but no page | Create stub or merge duplicate |
+| `overview` progress ≠ concept `status` / depth | Revise overview or concept |
+| Deepened book concept missing `## Evidence` | Add Evidence or downgrade progress note |
+| Contradictions between pages | Revise; supersede stale claim |
+| Stale source (newer guide/version exists) | Note in Gaps; flag in `overview` |
+| Duplicate concept pages same topic | Merge; one canonical page |
+| Domain `overview` gaps list outdated | Refresh after ingest |
+
+Append `## [date] lint | …` to `wiki/log.md`. Turn each row into **Revise** or **deepen** follow-up.
+
+**Auto-stub (on ingest/lint):** when a pillar or guide links `[[aci-foo]]` and page missing, create minimal stub with `domain:` frontmatter and link back to pillar — do not leave dangling wikilinks.
+
+## Weekly — mini dream cycle
+
+~15 min ritual ([RETENTION.md](RETENTION.md)): **Review** due cards → **Lint** (doctor-lite) → merge duplicates → bump `overview` progress → optional one `wiki/synthesis/` cross-concept note → `log.md`.
 
 ## Learn & framework (for you, not agents)
 
@@ -168,6 +226,9 @@ Full ingest checklist:
 | Wiki without schema | AGENTS.md/CLAUDE.md defines ingest/query/lint |
 | Skip RED | Test skill first |
 | Query answers lost in chat | File good answers back to wiki |
+| Web search before wiki | Brain-first: overview → guide → concepts |
+| Query without Gaps section | Think mode must end with ## Gaps |
+| Lint only when user complains | Run doctor-lite after big ingest + Weekly |
 | Fix only in chat | Revise wiki/skill + log.md |
 | New source contradicts old | Revise affected pages, don't append both as true |
 | Duplicate concept pages | Merge on lint/revise; one canonical page |

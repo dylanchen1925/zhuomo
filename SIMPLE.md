@@ -84,7 +84,13 @@ Set Obsidian **Settings → Files → Default open file** to `wiki/overview.md` 
 
 /zhuomo Deepen: tenant model from book.epub
 
-/zhuomo Query: how does contract direction work? cite wiki
+/zhuomo Query think: Multi-Pod vs Multi-Site — when to use which?
+
+/zhuomo Query search: contract
+
+/zhuomo Lint
+
+/zhuomo Weekly
 
 /zhuomo Revise: aci-tenant-epg-contract — ESG Multi-Site note is wrong
 ```

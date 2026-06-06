@@ -76,7 +76,7 @@ See [REFERENCE.md](REFERENCE.md#readwise--highlights-pipeline).
 **Agent does:**
 
 1. User runs **Spaced Repetition** review UI in Obsidian (agent lists `wiki/learn/recall/` paths if helping plan a session)
-2. Run **explain-it-back** on 1–3 weak pillars from `framework.md`
+2. Run **explain-it-back** on 1–3 weak pillars from `domains/<slug>/overview.md`
 3. Update `last_reviewed` on concept frontmatter if manual tracking needed
 
 **Output:** Optional session note in `wiki/learn/reviews/YYYY-MM-DD.md` — what was hard, links to revise.
@@ -90,8 +90,8 @@ See [REFERENCE.md](REFERENCE.md#readwise--highlights-pipeline).
 ```
 - [ ] 1. Review — due SR cards (Obsidian Spaced Repetition) + one explain-back
 - [ ] 2. Connect — one cross-domain prompt (LEARNING.md Connect mode) **or Run** — one short roguelike fuse ([RUN.md](RUN.md))
-- [ ] 3. Lint — top 3 stale/contradicted/duplicate issues → Revise tasks
-- [ ] 4. Progress — bump one gap on a domain study path
+- [ ] 3. Lint — doctor-lite checklist (SKILL.md): broken links, orphans, Evidence gaps, progress mismatch → Revise/deepen tasks
+- [ ] 4. Progress — update `domains/<slug>/overview.md` progress; optional `wiki/synthesis/` cross-concept note
 - [ ] 5. Applied — scan wiki/learn/applied/ since last week; any wiki revise needed?
 ```
 

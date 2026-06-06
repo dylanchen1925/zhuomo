@@ -14,6 +14,7 @@ Drop a source in. Get an Obsidian wiki, flashcards, domain frameworks, and (when
 
 | If you want to… | Open |
 |-----------------|------|
+| **Keep it simple** | [SIMPLE.md](SIMPLE.md) |
 | **Set up and use Zhuomo day to day** | [USER-GUIDE.md](USER-GUIDE.md) |
 | **Understand the big picture** | [FRAMEWORK.md](FRAMEWORK.md) |
 | **Tell the agent what to do** | [SKILL.md](SKILL.md) |

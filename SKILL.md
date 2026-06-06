@@ -41,7 +41,7 @@ Give future agents: *when* to act, *what* to do, *how* to decide, *what mistakes
 | **Learn** | User studying | Digests, pretest, recall cards → `wiki/learn/` |
 | **Run** | Multi-domain practice | Fictional scenario + floors + debrief → `wiki/learn/runs/` — [RUN.md](RUN.md) |
 | **Review** | Due cards / study session | SR review + explain-back → [RETENTION.md](RETENTION.md) |
-| **Framework** | After ingest or on request | `domain-map`, per-domain `framework.md`, progress |
+| **Framework** | After ingest or on request | `domain-map`, per-domain `overview.md` (pillars + progress), optional `guide.md` |
 | **Weekly** | ~15 min ritual | Review + Connect/Run + Lint + progress → `log.md` |
 | **Query** | Question | Answer (+ file back to wiki) |
 | **Revise** | Wrong, stale, duplicate | Corrected pages/skills + log |
@@ -82,13 +82,28 @@ Example: `network-expert` + `wiki/domains/networking/` + `[[concepts/bgp]]`. Ful
 
 One resource → **one source summary** + **many concept pages** across **one or more domains**. Details: [REFERENCE.md](REFERENCE.md#topic-discovery-multi-topic-resources), [LEARNING.md](LEARNING.md).
 
+## Wiki page layout (per domain)
+
+**Two pages per domain — do not create `framework.md` or `mega-overview.md`.**
+
+| Page | Path | Holds |
+|------|------|-------|
+| **Vault hub** | `wiki/overview.md` | Domain table + ingest rules only — **no domain prose** |
+| **Domain entry** | `wiki/domains/<slug>/overview.md` | Why learn, architect lens, pillars, progress, glossary, study order, gaps |
+| **Domain guide** (optional) | `wiki/domains/<slug>/guide.md` | One-page technical digest (merge of concept pages) |
+| **Concepts** | `wiki/concepts/*.md` | Full depth + `## Evidence` when deepened |
+
+New domain ingest: add a row to vault `overview.md` + `domain-map.md`; create `domains/<slug>/overview.md`. Add `guide.md` only when user wants one-scroll reference depth.
+
+Lite mode default: [SIMPLE.md](SIMPLE.md). Vault `AGENTS.md` must mirror this block.
+
 ## Learn & framework (for you, not agents)
 
 | Goal | Ask for |
 |------|---------|
 | Learn faster | **Learn** — preview, digest, quiz, explain-back |
 | Cross-domain under pressure | **Run** — roguelike scenario fused from 2+ domains — [RUN.md](RUN.md) |
-| See the big picture | **Framework** — pillars, mental model, progress table |
+| See the big picture | **Framework** — update `domains/<slug>/overview.md` (pillars, progress) |
 | Many unrelated subjects | **Multi-domain** — `wiki/domain-map.md` + `wiki/domains/*/` |
 
 Default after chapter ingest (unless you say **archive only**): digest + update domain framework. Full guide: [LEARNING.md](LEARNING.md).
@@ -102,7 +117,7 @@ Default after chapter ingest (unless you say **archive only**): digest + update 
 - [ ] 1b. EPUB/PDF — convert full text to wiki/sources/[slug]/md/; Evidence links on every concept page (REFERENCE.md)
 - [ ] 2. Ingest — wiki pages; flag contradictions
 - [ ] 2b. Learn — pretest + digest + recall for Spaced Repetition (skip if "archive only")
-- [ ] 2c. Framework — update domain framework + epistemic/progress
+- [ ] 2c. Framework — update `domains/<slug>/overview.md` (pillars, progress, gaps)
 - [ ] 3–10. Extract → skill pipeline if actionable
 ```
 
@@ -158,7 +173,8 @@ Full ingest checklist:
 | Duplicate concept pages | Merge on lint/revise; one canonical page |
 | One topic per resource assumed | Multi-topic normal — topic map first, one concept page each |
 | User must name topic upfront | Optional — agent infers; user topic = priority lens only |
-| Summary dump, no framework | Digest + link to pillars; update framework.md |
+| Summary dump, no framework | Digest + link to pillars; update `domains/<slug>/overview.md` |
+| `framework.md` / `mega-overview.md` | Use `overview.md` + optional `guide.md` only — see Wiki page layout |
 | Single-domain assumed | Use domain-map + wiki/domains/* for varied subjects |
 | BGP facts pasted into skill | Domain skill + WIKI-SCOPE; Revise wiki only when facts change |
 | Recall cards never reviewed | Obsidian Spaced Repetition + Weekly Review — [RETENTION.md](RETENTION.md) |

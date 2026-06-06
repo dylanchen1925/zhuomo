@@ -14,6 +14,7 @@
 
 | 你想… | 打开 |
 |-------|------|
+| **尽量简单** | [SIMPLE.md](SIMPLE.md) |
 | **日常 setup 和使用** | [USER-GUIDE.md](USER-GUIDE.md) |
 | **理解整体架构** | [FRAMEWORK.md](FRAMEWORK.md) |
 | **告诉 Agent 该做什么** | [SKILL.md](SKILL.md) |

@@ -200,8 +200,12 @@ file debrief to `wiki/learn/runs/`; loot = recall cards + synthesis. See RUN.md.
 
 **Review / Weekly:** Scheduled retrieval + 15-min ritual — RETENTION.md.
 
-**Framework:** Maintain `wiki/domains/*/framework.md` and `domain-map.md` —
-pillars, mental model, progress, gaps, epistemic strength. Update on each domain-touching ingest.
+**Lite mode:** Default `overview only` ingest unless user says deepen — see zhuomo repo `SIMPLE.md`.
+
+**Human entry:** `wiki/overview.md` (vault hub, stays short). Per domain: `domains/<slug>/overview.md` (entry) + optional `guide.md` (technical digest). **No** `framework.md` or `mega-overview.md`.
+
+**Domain overview:** Maintain `wiki/domains/*/overview.md` and `domain-map.md` —
+architect lens, pillars, progress, gaps, glossary. Update on each domain-touching ingest.
 
 **Log format:** `## [YYYY-MM-DD] ingest | Title` or `revise | learn | review | weekly | framework | …`
 

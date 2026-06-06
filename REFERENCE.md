@@ -208,7 +208,7 @@ EPUB works well — it's structured HTML in a ZIP, so chapter boundaries are usu
 **Workflow (required steps):**
 
 1. Copy the `.epub` to `raw/books/` (immutable source).
-2. **Convert full text to Markdown** under `wiki/sources/[slug]/md/` — one file per spine item/chapter, with heading anchors. This is the **provenance corpus**; concept pages link here, not only to the EPUB path.
+2. **Convert full text to Markdown** under `wiki/sources/[slug]/md/` — one file per spine item/chapter, with heading anchors. **Images** are extracted to `md/assets/` and embedded as `![alt](assets/…)` in the part files (default; pass `--no-images` for text-only). This is the **provenance corpus**; concept pages link here, not only to the EPUB path.
 3. Write `wiki/sources/[slug].md` index (topic map + link to `md/index`).
 4. **Ingest by chapter or topic cluster** — don't pillar-summarize a whole large book in one pass unless user says `overview only`.
 5. On every concept page: **`## Evidence`** table — each claim row links `[[sources/slug/md/part-NNN#heading-anchor]]`.

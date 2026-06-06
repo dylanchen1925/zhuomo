@@ -115,6 +115,10 @@ def node_to_md(
         return
 
     if name == "p":
+        if node.find("img"):
+            for child in node.children:
+                node_to_md(child, lines, image_lookup)
+            return
         # Bold-only line as pseudo-heading (common in publisher EPUBs)
         bold = node.find(["b", "strong"])
         if bold and not node.get_text(strip=True).replace(bold.get_text(strip=True), "").strip():

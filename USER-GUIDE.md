@@ -172,7 +172,7 @@ You append to `wiki/log.md` via the agent.
 | Operation | You say (examples) | You get |
 |-----------|-------------------|---------|
 | **Ingest** | `Ingest raw/books/ddia.epub ch.1` | Concept pages, source summary |
-| **Learn** | `Learn mode: preview ch.2` | Pretest, digest, recall cards |
+| **Learn** | `Learn mode: preview ch.2` / `Learn fable: [[concept]]` | Pretest, digest, recall; **fable** (Askell story → reveal) |
 | **Run** | `Run: fuse networking + psychology, 5 floors` | Scenario, floors, debrief, loot |
 | **Review** | `Review networking recall` | Session plan, explain-back |
 | **Framework** | `Update my distributed-systems framework` | `framework.md` refresh |
@@ -233,6 +233,10 @@ You append to `wiki/log.md` via the agent.
 /zhuomo I finished ch.3 — recap quiz + update my distributed-systems framework.
 
 /zhuomo Explain event sourcing back to me; correct me using the wiki.
+
+/zhuomo Learn fable: [[event-sourcing]] — don't name it until the end; then map story beats to the wiki.
+
+/zhuomo Learn fable mode — pick the weakest pillar on my ACI overview.
 ```
 
 ### Skills

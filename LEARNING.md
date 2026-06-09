@@ -14,6 +14,7 @@ Run during or right after ingest. Goal: understanding and retention, not just st
 | **Preread questions** | same or separate | Questions to read *for* (before deep read) |
 | **Recall cards** | `wiki/learn/recall/[domain]/` | Q → A; `#flashcards/domain` for **Spaced Repetition** |
 | **Explain-it-back** | chat + optional wiki | Feynman prompt; agent checks against source + wiki |
+| **Concept fable** | `wiki/learn/fables/[domain]/` | Narrative that embodies a concept; reveal at end — Askell fable mode |
 | **Mini quiz** | digest or `wiki/learn/quizzes/` | 5–10 questions + answers; user self-tests |
 | **Gap list** | domain `framework.md` | What this source didn't cover; what to read next |
 | **Applied journal** | `wiki/learn/applied/` | Real-world use of concepts — see [RETENTION.md](RETENTION.md) |
@@ -29,7 +30,65 @@ Run during or right after ingest. Goal: understanding and retention, not just st
 | **Companion** | While reading (chapter by chapter) | Digest per chunk + tie to framework pillars |
 | **Recap** | After ingest | Quiz + recall cards + update framework progress |
 | **Connect** | Any time | "How does this relate to [[other concept]] in other domain?" |
+| **Fable** | Hard or abstract concept; before/after read | Story embodies concept without naming it; reveal + map beats → terms — see below |
 | **Run** | Multi-domain integration | Fictional scenario + floors + debrief — [RUN.md](RUN.md) |
+
+### Fable mode (Amanda Askell)
+
+**Why:** Definitions are easy to nod at and forget. A fable lets you *feel* the mechanism first; naming it afterward locks intuition. Technique from Anthropic researcher **Amanda Askell** — indirect narrative, reveal near the end, then explicit articulation.
+
+**When:** Abstract jargon (CAP, Nash equilibrium, contract model); pillar still `learning` on domain `overview`; user says "I don't get [[concept]]"; optional **Preview** hook before reading or **Recap** after ingest.
+
+**Agent does:**
+
+1. Read target `[[concept]]` + source/wiki — fable must match trusted claims (no fiction-as-fact).
+2. Write a short fable (≈300–800 words) that **embodies** the concept without naming it; reader should guess only near the end.
+3. **Reveal** — name the concept in one clear sentence.
+4. **Explanation** — map 3–6 story beats → technical points; wikilink to concept page.
+5. Optional: 1–2 recall hooks (`Question::Answer`) tying fable imagery to terms.
+6. File to `wiki/learn/fables/[domain]/[concept-slug].md`; link from concept page `## Learn` or digest; append `log.md` if first fable for domain.
+
+**Output template:**
+
+```markdown
+---
+domain: networking
+concept: "[[bgp-path-selection]]"
+technique: askell-fable
+tags: [learn, fable]
+---
+
+# Fable — BGP path selection
+
+## Story
+…narrative; do not name BGP or path attributes until the reveal…
+
+## Reveal
+The concept is **BGP path selection** (simplified attribute order).
+
+## Explanation
+| Story beat | Technical point |
+|------------|-----------------|
+| … | Weight → local pref → … |
+
+→ [[concepts/bgp-path-selection]]
+
+## Recall hook (optional)
+#flashcards/networking
+What did the three merchants argue about first?::…
+```
+
+**Prompt seeds (user or agent):**
+
+```
+Learn fable: [[aci-contract]] — village metaphor, reveal at end.
+
+Learn fable mode for ch.5 topics I keep missing — pick weakest pillar from overview.
+
+I want to understand [[event-sourcing]]. Write a fable that embodies it completely without naming it until the end; then explain and map story beats to the wiki.
+```
+
+**Not a substitute for:** Evidence on concept pages, recall cards for lists/procedures, or **Run** (multi-domain fiction quiz). **Run** tests wiki under pressure; **Fable** builds single-concept intuition.
 
 ### Rules
 
@@ -46,6 +105,8 @@ Run during or right after ingest. Goal: understanding and retention, not just st
 /zhuomo I finished ch.3 — recap quiz + update my distributed-systems framework.
 
 /zhuomo Explain event sourcing back to me; correct me using the wiki.
+
+/zhuomo Learn fable: [[event-sourcing]] — story first, name it at the end.
 
 /zhuomo Run: fuse distributed-systems + finance — 3 floors, easy
 ```
@@ -134,6 +195,7 @@ wiki/
 ├── synthesis/                 # cross-domain synthesis lives here
 ├── learn/
 │   ├── digests/
+│   ├── fables/                  # Askell narrative → reveal → beat map
 │   ├── recall/                # Obsidian FSRS targets this folder
 │   ├── quizzes/
 │   ├── runs/                  # roguelike multi-domain sessions

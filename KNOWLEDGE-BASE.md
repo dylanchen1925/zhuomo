@@ -195,7 +195,7 @@ contradicted, or duplicated. Propagate fixes to all pages citing old claims.
 Log every revision. Prefer supersede/archive over delete.
 
 **Learn:** After ingest (unless user says archive only), add pretest/digest/recall/quiz
-under `wiki/learn/`; tie to concept pages. See LEARNING.md, RETENTION.md.
+under `wiki/learn/`; **fable** (`wiki/learn/fables/`) for hard abstract concepts — Askell narrative → reveal → beat map. See LEARNING.md, RETENTION.md.
 
 **Run:** Fuse 2+ domains into fictional scenario; floor questions cite wiki;
 file debrief to `wiki/learn/runs/`; loot = recall cards + synthesis. See RUN.md.

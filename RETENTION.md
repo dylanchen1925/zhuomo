@@ -76,7 +76,7 @@ See [REFERENCE.md](REFERENCE.md#readwise--highlights-pipeline).
 **Agent does:**
 
 1. User runs **Spaced Repetition** review UI in Obsidian (agent lists `wiki/learn/recall/` paths if helping plan a session)
-2. Run **explain-it-back** on 1–3 weak pillars from `domains/<slug>/overview.md`
+2. Run **explain-it-back** on 1–3 weak pillars from `domains/<slug>/overview.md` **or** offer **Learn fable** for one stubborn concept ([LEARNING.md](LEARNING.md#fable-mode-amanda-askell))
 3. Update `last_reviewed` on concept frontmatter if manual tracking needed
 
 **Output:** Optional session note in `wiki/learn/reviews/YYYY-MM-DD.md` — what was hard, links to revise.
@@ -175,7 +175,8 @@ Log in digest: `## Pretest` / `## After read`.
 | L0 | `raw/` snapshot | Immutable |
 | L1 | `wiki/sources/` | Agent ingest |
 | L2 | `wiki/learn/digests/` bold claims | Learn |
-| L3 | `framework.md` pillar one-liners | Framework |
+| L2b | `wiki/learn/fables/` narrative intuition | Learn (Askell fable) |
+| L3 | `domains/<slug>/overview.md` pillar one-liners | Framework |
 | L4 | `wiki/learn/recall/` one-line cards | Learn + SR |
 
 Don't skip layers — deep books need L2 before L4.
@@ -209,4 +210,6 @@ Agent warns on ingest order; framework study path respects prereqs.
 /zhuomo Applied journal: used [[bgp-communities]] in incident today.
 
 /zhuomo Promote [[bgp]] to established — explain-back passed, 2 sources.
+
+/zhuomo Learn fable: [[aci-contract]] — embody without naming until the end.
 ```

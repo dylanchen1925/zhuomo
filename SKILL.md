@@ -38,7 +38,7 @@ Give future agents: *when* to act, *what* to do, *how* to decide, *what mistakes
 | Op | When | Output |
 |----|------|--------|
 | **Ingest** | New source | Wiki pages (multi-topic, multi-domain) |
-| **Learn** | User studying | Digests, pretest, recall cards → `wiki/learn/` |
+| **Learn** | User studying | Digests, pretest, recall, **fable** (Askell) → `wiki/learn/` |
 | **Run** | Multi-domain practice | Fictional scenario + floors + debrief → `wiki/learn/runs/` — [RUN.md](RUN.md) |
 | **Review** | Due cards / study session | SR review + explain-back → [RETENTION.md](RETENTION.md) |
 | **Framework** | After ingest or on request | `domain-map`, per-domain `overview.md` (pillars + progress), optional `guide.md` |
@@ -159,7 +159,7 @@ Append `## [date] lint | …` to `wiki/log.md`. Turn each row into **Revise** or
 
 | Goal | Ask for |
 |------|---------|
-| Learn faster | **Learn** — preview, digest, quiz, explain-back |
+| Learn faster | **Learn** — preview, digest, quiz, explain-back, **fable** (story → reveal → map) |
 | Cross-domain under pressure | **Run** — roguelike scenario fused from 2+ domains — [RUN.md](RUN.md) |
 | See the big picture | **Framework** — update `domains/<slug>/overview.md` (pillars, progress) |
 | Many unrelated subjects | **Multi-domain** — `wiki/domain-map.md` + `wiki/domains/*/` |
@@ -174,7 +174,7 @@ Default after chapter ingest (unless you say **archive only**): digest + update 
 - [ ] 1. Intake — source; discover topics; assign domain(s)
 - [ ] 1b. EPUB/PDF — convert full text to wiki/sources/[slug]/md/; Evidence links on every concept page (REFERENCE.md)
 - [ ] 2. Ingest — wiki pages; flag contradictions
-- [ ] 2b. Learn — pretest + digest + recall for Spaced Repetition (skip if "archive only")
+- [ ] 2b. Learn — pretest + digest + recall for Spaced Repetition; **fable** for hard abstract concepts (skip if "archive only")
 - [ ] 2c. Framework — update `domains/<slug>/overview.md` (pillars, progress, gaps)
 - [ ] 3–10. Extract → skill pipeline if actionable
 ```
@@ -235,6 +235,7 @@ Full ingest checklist:
 | One topic per resource assumed | Multi-topic normal — topic map first, one concept page each |
 | User must name topic upfront | Optional — agent infers; user topic = priority lens only |
 | Summary dump, no framework | Digest + link to pillars; update `domains/<slug>/overview.md` |
+| Hard concept, definition only | **Learn fable** — Askell narrative → reveal → beat map; file `wiki/learn/fables/` |
 | `framework.md` / `mega-overview.md` | Use `overview.md` + optional `guide.md` only — see Wiki page layout |
 | Single-domain assumed | Use domain-map + wiki/domains/* for varied subjects |
 | BGP facts pasted into skill | Domain skill + WIKI-SCOPE; Revise wiki only when facts change |

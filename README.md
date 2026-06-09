@@ -72,7 +72,7 @@ Everything you do with Zhuomo is one of these verbs. You don't need to memorize 
 | Operation | You say something like… | You get |
 |-----------|-------------------------|---------|
 | **Ingest** | "Ingest this EPUB" | Wiki concept pages |
-| **Learn** | "Learn from this chapter" | Digest, quiz, recall cards |
+| **Learn** | "Learn from this chapter" / `Learn fable: [[concept]]` | Digest, quiz, recall; optional Askell fable |
 | **Run** | "Run: fuse networking + psychology" | Roguelike scenario + debrief |
 | **Review** | "Review due cards" | Spaced repetition session |
 | **Framework** | "Update my networking framework" | Pillars, gaps, progress |

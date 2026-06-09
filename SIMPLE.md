@@ -24,7 +24,7 @@ That's it for phase 1.
 |-------|---------|------------|
 | **1 — Map** | `Ingest overview only: book.epub` | Source page + topic map + **stub** concept pages (5–10 bullets each) + `wiki/overview.md` update |
 | **2 — Deepen** | `Deepen tenant` or `Deepen all` | Expand chosen concepts + Evidence links |
-| **3 — Remember** | `Learn recap` | Digest + recall cards only |
+| **3 — Remember** | `Learn recap` or `Learn fable: [[concept]]` | Digest + recall cards; optional Askell fable for hard topics |
 
 Skip phase 2 until you actually need reference depth on a topic.
 
@@ -91,6 +91,8 @@ Set Obsidian **Settings → Files → Default open file** to `wiki/overview.md` 
 /zhuomo Lint
 
 /zhuomo Weekly
+
+/zhuomo Learn fable: [[tenant-epg-contract]] — story first, reveal at end
 
 /zhuomo Revise: aci-tenant-epg-contract — ESG Multi-Site note is wrong
 ```

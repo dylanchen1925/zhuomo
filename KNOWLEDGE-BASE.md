@@ -169,22 +169,55 @@ At moderate scale (~100 sources, hundreds of pages), **index.md + wikilinks** of
 
 ## Schema (AGENTS.md section)
 
-Add a `## Knowledge base` block telling the agent how to maintain the wiki:
+On **Bootstrap**, write this file to the vault root (customize paths). **Default ingest depth = reference depth (deepen all)** — not stub-only lite.
 
 ```markdown
+# Zhuomo vault — agent conventions
+
+Bootstrapped: [YYYY-MM-DD]
+
+## Ingest depth (default)
+
+**Default:** `reference depth` — topic map → EPUB/PDF md corpus → **deepen all** topic-map concepts with `## Evidence` → domain `overview.md` (+ optional `guide.md`).
+
+**Opt-out:** User says `overview only`, `lite`, or `bootstrap lite` → stub-only pass; deepen later on demand.
+
+User says `archive only` → ingest wiki pages only; skip learn artifacts.
+
+## Reference depth workflow
+
+1. **Topic map** on `wiki/sources/[slug].md`
+2. **EPUB/PDF** → `wiki/sources/[slug]/md/` via `scripts/epub-to-wiki-md.py` (images to `md/assets/`)
+3. **Deepen all** — expand every topic-map concept; no stub left behind unless user opted out
+4. **Framework** — `domains/<slug>/overview.md` pillars, progress, gaps; optional `guide.md`
+5. **Learn** (unless archive only) — digest + recall; fable for stubborn concepts
+
+## Human entry point
+
+`wiki/overview.md` (Obsidian Homepage) — **vault hub only; keep short.**
+
+**Per domain — two pages only:**
+- `domains/<domain>/overview.md` — why learn, pillars, progress, glossary (entry)
+- `domains/<domain>/guide.md` — optional one-page technical digest
+
+**Vault overview rule:** New domain → add row to `wiki/overview.md` + `domain-map.md` only — never append domain prose to vault `overview.md`.
+
+**Architect framing (network/IT):** Query leads business → constraint → technical object.
+
+**New source layout:** `wiki/sources/<slug>.md` + flat `wiki/concepts/` (`domain:` frontmatter). No `wiki/<book-name>/` top-level folders.
+
 ## Knowledge base
 
-Raw path: `~/zhuomo-data/raw/` (local, read only, never edit).
+Raw path: `[raw path]` (local, read only, never edit).
 Wiki path: Obsidian vault `wiki/` — all agent output goes here.
 
-**Multi-device:** Phone captures → `raw/inbox/` only. Laptop processes inbox before other ingest; move done files to `raw/processed/` or typed folder (`web/`, `video/`, `books/`). Check `wiki/sources/` for duplicate URL/path before re-ingest. Laptop owns wiki edits.
+**Multi-device:** Phone captures → `raw/inbox/` only. Laptop processes inbox before other ingest; move done files to `raw/processed/` or typed folder. Laptop owns wiki edits.
 
-**Ingest:** Process `raw/inbox/` when non-empty → read source → discuss takeaways with user → write/update wiki pages →
-update `wiki/index.md` → append `wiki/log.md` → move raw out of inbox.
+**Ingest:** Process `raw/inbox/` when non-empty → read source → topic map → reference depth (above) → update `wiki/index.md` → append `wiki/log.md`.
 
 **Query — brain-first:** overview → domain-map → domain overview/guide → index → concepts; then raw/web.
 
-**Query modes:** `search` = page list; `think` (default) = synthesis + Sources + **Gaps** table; file back to synthesis/ or concepts.
+**Query modes:** `search` = page list; `think` (default) = synthesis + Sources + **Gaps**; file back to synthesis/ or concepts.
 
 **Lint (doctor-lite):** broken links, orphans, stub gaps, progress/Evidence mismatch, contradictions, duplicates. Log + Revise/deepen. Auto-stub missing pillar links.
 
@@ -194,7 +227,7 @@ update `wiki/index.md` → append `wiki/log.md` → move raw out of inbox.
 contradicted, or duplicated. Propagate fixes to all pages citing old claims.
 Log every revision. Prefer supersede/archive over delete.
 
-**Learn:** After ingest (unless user says archive only), add pretest/digest/recall/quiz
+**Learn:** After ingest (unless archive only), add pretest/digest/recall/quiz
 under `wiki/learn/`; **fable** (`wiki/learn/fables/`) for hard abstract concepts — Askell narrative → reveal → beat map. See LEARNING.md, RETENTION.md.
 
 **Run:** Fuse 2+ domains into fictional scenario; floor questions cite wiki;
@@ -202,18 +235,26 @@ file debrief to `wiki/learn/runs/`; loot = recall cards + synthesis. See RUN.md.
 
 **Review / Weekly:** Scheduled retrieval + 15-min ritual — RETENTION.md.
 
-**Lite mode:** Default `overview only` ingest unless user says deepen — see zhuomo repo `SIMPLE.md`.
-
-**Human entry:** `wiki/overview.md` (vault hub, stays short). Per domain: `domains/<slug>/overview.md` (entry) + optional `guide.md` (technical digest). **No** `framework.md` or `mega-overview.md`.
-
 **Domain overview:** Maintain `wiki/domains/*/overview.md` and `domain-map.md` —
 architect lens, pillars, progress, gaps, glossary. Update on each domain-touching ingest.
 
-**Log format:** `## [YYYY-MM-DD] ingest | Title` or `revise | learn | review | weekly | framework | …`
+**Log format:** `## [YYYY-MM-DD] ingest | Title` or `revise | learn | review | weekly | framework | bootstrap | …`
 
 **Page conventions:** wikilinks `[[concept-name]]`; YAML frontmatter optional
 (tags, source_count, epistemic, prereqs, status: active | stale | superseded | archived).
+
+## User-facing UX
+
+Human cheatsheet: `wiki/help.md` (copy from repo `templates/wiki/help.md` on bootstrap).
+
+**Before large book ingest:** confirm once unless user said `overview only` / `lite`.
+
+**After major ops:** 3-line closing — ✓ 完成 / → 下一步 / ⚙ 可选 (see SKILL.md).
+
+**Ambiguous request:** menu before running long ingest.
 ```
+
+On **Bootstrap**, also copy `templates/wiki/help.md` → `wiki/help.md` and link from `wiki/overview.md`.
 
 Co-evolve this schema as you learn what works for your domain.
 

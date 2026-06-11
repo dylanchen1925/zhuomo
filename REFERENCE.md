@@ -24,8 +24,16 @@ Full wiki setup and operations: [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md).
 Bootstrap prompt:
 
 ```
-/zhuomo Bootstrap: raw ~/zhuomo-data/raw/, Obsidian vault ~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen, AGENTS.md in vault root.
+/zhuomo Bootstrap: raw ~/zhuomo-data/raw/, Obsidian vault ~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen
 ```
+
+With first source (deepen all in one session):
+
+```
+/zhuomo Bootstrap + ingest: raw ~/zhuomo-data/raw/, vault ~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen, book ~/zhuomo-data/raw/books/my-book.epub
+```
+
+**Default:** reference depth — topic map → md corpus → deepen every concept + Evidence. Opt-out: `bootstrap lite` or `overview only`.
 
 **Source page** (in wiki, not raw) links outward:
 
@@ -210,8 +218,8 @@ EPUB works well — it's structured HTML in a ZIP, so chapter boundaries are usu
 1. Copy the `.epub` to `raw/books/` (immutable source).
 2. **Convert full text to Markdown** under `wiki/sources/[slug]/md/` — one file per spine item/chapter, with heading anchors. **Images** are extracted to `md/assets/` and embedded as `![alt](assets/…)` in the part files (default; pass `--no-images` for text-only). This is the **provenance corpus**; concept pages link here, not only to the EPUB path.
 3. Write `wiki/sources/[slug].md` index (topic map + link to `md/index`).
-4. **Ingest by chapter or topic cluster** — don't pillar-summarize a whole large book in one pass unless user says `overview only`.
-5. On every concept page: **`## Evidence`** table — each claim row links `[[sources/slug/md/part-NNN#heading-anchor]]`.
+4. **Deepen all** topic-map concepts — full pages + **`## Evidence`** on each (default). Use stub-only pass only when user says `overview only`.
+5. On every deepened concept page: **`## Evidence`** table — each claim row links `[[sources/slug/md/part-NNN#heading-anchor]]`.
 6. Then: learn + framework; optional extraction card → skill.
 
 **Convert script (repo):**

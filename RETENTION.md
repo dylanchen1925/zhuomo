@@ -126,7 +126,7 @@ Promote `tentative` → `established` when mastery criteria met (below).
 
 ## Mastery criteria (framework Strength)
 
-In `framework.md` Progress table, use rules:
+In `domains/<slug>/overview.md` Progress table, use rules:
 
 | Strength | Criteria |
 |----------|----------|

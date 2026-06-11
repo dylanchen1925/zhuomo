@@ -56,7 +56,7 @@ Roguelike structure adds **escalating difficulty**, **low-stakes failure**, and 
 
 ### 1. Select fusion
 
-Read `wiki/domain-map.md` and chosen `wiki/domains/*/framework.md`.
+Read `wiki/domain-map.md` and chosen `wiki/domains/*/overview.md`.
 
 | Mode | How |
 |------|-----|
@@ -104,7 +104,7 @@ Always file `wiki/learn/runs/YYYY-MM-DD-[seed-slug].md`:
 - Floors cleared / death floor
 - Weak concepts → 2–5 new recall cards in `wiki/learn/recall/[domain]/`
 - Optional synthesis stub in `wiki/synthesis/` if a cross-domain insight emerged
-- Update `framework.md` progress if user passed boss (bump toward `solid` per [RETENTION.md](RETENTION.md))
+- Update `domains/<slug>/overview.md` progress if user passed boss (bump toward `solid` per [RETENTION.md](RETENTION.md))
 - Append `wiki/log.md`: `run | domains | outcome | seed`
 
 If user answer reveals **wiki error** (not story error) → offer **Revise**, don't patch via fiction.
@@ -186,7 +186,7 @@ Death — couldn't tie finance SLA to routing policy without hand-waving.
 
 ## Meta-progress (optional)
 
-Track on `wiki/learn/runs/index.md` or domain `framework.md`:
+Track on `wiki/learn/runs/index.md` or domain `overview.md`:
 
 | Field | Meaning |
 |-------|---------|

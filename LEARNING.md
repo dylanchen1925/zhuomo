@@ -16,7 +16,7 @@ Run during or right after ingest. Goal: understanding and retention, not just st
 | **Explain-it-back** | chat + optional wiki | Feynman prompt; agent checks against source + wiki |
 | **Concept fable** | `wiki/learn/fables/[domain]/` | Narrative that embodies a concept; reveal at end — Askell fable mode |
 | **Mini quiz** | digest or `wiki/learn/quizzes/` | 5–10 questions + answers; user self-tests |
-| **Gap list** | domain `framework.md` | What this source didn't cover; what to read next |
+| **Gap list** | domain `overview.md` | What this source didn't cover; what to read next |
 | **Applied journal** | `wiki/learn/applied/` | Real-world use of concepts — see [RETENTION.md](RETENTION.md) |
 | **Pretest** | digest `## Pretest` section | Questions *before* read — testing effect |
 
@@ -26,9 +26,9 @@ Run during or right after ingest. Goal: understanding and retention, not just st
 
 | Mode | When | What agent does |
 |------|------|-----------------|
-| **Preview** | Before reading | Topic map + **pretest questions** + link to existing framework |
-| **Companion** | While reading (chapter by chapter) | Digest per chunk + tie to framework pillars |
-| **Recap** | After ingest | Quiz + recall cards + update framework progress |
+| **Preview** | Before reading | Topic map + **pretest questions** + link to domain `overview` |
+| **Companion** | While reading (chapter by chapter) | Digest per chunk + tie to overview pillars |
+| **Recap** | After ingest | Quiz + recall cards + update overview progress |
 | **Connect** | Any time | "How does this relate to [[other concept]] in other domain?" |
 | **Fable** | Hard or abstract concept; before/after read | Story embodies concept without naming it; reveal + map beats → terms — see below |
 | **Run** | Multi-domain integration | Fictional scenario + floors + debrief — [RUN.md](RUN.md) |
@@ -102,7 +102,7 @@ I want to understand [[event-sourcing]]. Write a fable that embodies it complete
 ```
 /zhuomo Learn mode: preview raw/new-book.epub ch.1 before I read it.
 
-/zhuomo I finished ch.3 — recap quiz + update my distributed-systems framework.
+/zhuomo I finished ch.3 — recap quiz + update my distributed-systems overview.
 
 /zhuomo Explain event sourcing back to me; correct me using the wiki.
 
@@ -115,14 +115,14 @@ I want to understand [[event-sourcing]]. Write a fable that embodies it complete
 
 ## Framework operation
 
-A **framework** is the user's evolving map of a domain — pillars, progress, gaps, mental model — not a book summary.
+A **framework** is the user's evolving map of a domain — pillars, progress, gaps, mental model — stored in **`domains/<slug>/overview.md`**, not a book summary. Optional **`guide.md`** = one-page technical digest. **Do not create `framework.md` or `mega-overview.md`.**
 
-### Framework page template
+### Domain overview template
 
-Path: `wiki/domains/[domain-slug]/framework.md`
+Path: `wiki/domains/[domain-slug]/overview.md`
 
 ```markdown
-# Framework — [Domain display name]
+# Overview — [Domain display name]
 
 One-sentence north star: what this domain is *for* in your life/work.
 
@@ -157,15 +157,15 @@ Concept pages use `epistemic: tentative | established | contested | deprecated` 
 Suggested order for remaining gaps → links to raw/ or external.
 ```
 
-Rebuild framework when: new ingest touches domain; user asks; lint finds orphan concepts in domain.
+Rebuild on: new ingest touching domain; user asks; lint finds orphan concepts. **Ingest usually updates overview automatically** — separate Framework op is optional.
 
 ### Framework levels
 
 | Level | Content |
 |-------|---------|
 | **L0** | `wiki/domain-map.md` — all domains at a glance |
-| **L1** | `wiki/domains/*/framework.md` — pillars + mental model per domain |
-| **L2** | Concept pages — detailed nodes |
+| **L1** | `wiki/domains/*/overview.md` — pillars + progress per domain |
+| **L2** | `wiki/domains/*/guide.md` or `concepts/` — technical depth |
 | **L3** | Source pages — evidence trail |
 
 User climbs L0 → L3 as needed; learning digests sit between L2 and reading raw.
@@ -183,13 +183,14 @@ wiki/
 ├── domain-map.md              # required when 2+ domains
 ├── domains/
 │   ├── distributed-systems/
-│   │   ├── framework.md
-│   │   └── index.md           # pages in this domain
+│   │   ├── overview.md
+│   │   ├── guide.md           # optional
+│   │   └── index.md
 │   ├── psychology/
-│   │   ├── framework.md
+│   │   ├── overview.md
 │   │   └── index.md
 │   └── finance/
-│       └── framework.md
+│       └── overview.md
 ├── concepts/                  # flat OK — use frontmatter domain:
 ├── sources/
 ├── synthesis/                 # cross-domain synthesis lives here
@@ -209,10 +210,10 @@ wiki/
 ```markdown
 # Domain map
 
-| Domain | Framework | Topics (count) | Last updated |
-|--------|-----------|----------------|--------------|
-| [[domains/distributed-systems/framework\|Distributed systems]] | 5 pillars | 42 | 2026-05-30 |
-| [[domains/psychology/framework\|Psychology]] | 3 pillars | 18 | 2026-05-28 |
+| Domain | Overview | Topics (count) | Last updated |
+|--------|----------|----------------|--------------|
+| [[domains/distributed-systems/overview\|Distributed systems]] | 5 pillars | 42 | 2026-05-30 |
+| [[domains/psychology/overview\|Psychology]] | 3 pillars | 18 | 2026-05-28 |
 ```
 
 ### Assigning domain on ingest
@@ -228,7 +229,7 @@ domains: [distributed-systems, finance]   # when cross-cutting
 ---
 ```
 
-4. **Cross-domain concept** — one canonical concept page; link from each domain's framework under "Cross-domain links". Avoid duplicate pages per domain unless definitions genuinely differ.
+4. **Cross-domain concept** — one canonical concept page; link from each domain's `overview.md` under "Cross-domain links". Avoid duplicate pages per domain unless definitions genuinely differ.
 
 ### Cross-domain synthesis
 
@@ -245,7 +246,7 @@ Put in `wiki/synthesis/` when user has ingested across domains:
 Topic map → assign domain(s)
     → Ingest (wiki pages)
     → Learn: pretest → digest → recall cards (Spaced Repetition)
-    → Update domain framework + domain-map + epistemic tags
+    → Update domain overview + domain-map + epistemic tags
     → Extract technique skills OR domain skill (WIKI-SCOPE) if requested
 ```
 
@@ -256,7 +257,7 @@ Domain skills (wiki backend): [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md).
 After every chapter ingest (default when user is learning, not just archiving):
 
 - [ ] Digest in `wiki/learn/digests/` (include Pretest section if Preview ran)
-- [ ] Bump progress + epistemic tags in `framework.md` / concept pages
+- [ ] Bump progress + epistemic tags in `domains/<slug>/overview.md` / concept pages
 - [ ] Add 3–7 recall cards in `wiki/learn/recall/` (`#flashcards/[domain]`) for Spaced Repetition
 
 User says **"archive only"** to skip learn artifacts.
@@ -267,7 +268,7 @@ User says **"archive only"** to skip learn artifacts.
 
 **First book (creates domain):**
 ```
-/zhuomo Ingest DDIA ch.1–2. Create domain distributed-systems with framework.
+/zhuomo Ingest DDIA ch.1–2. Create domain distributed-systems with overview.
 Learn: preview + recap quiz.
 ```
 

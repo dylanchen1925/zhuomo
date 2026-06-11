@@ -46,7 +46,7 @@ Tells the agent **what to read** from the vault before answering.
 Vault: `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen/wiki/`
 
 ## Always read first
-- [[domains/networking/framework.md]]
+- [[domains/networking/overview.md]]
 - [[domains/networking/index.md]]
 
 ## Load by topic (open if question touches)
@@ -81,7 +81,7 @@ Vault: `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen/wiki/
 ```
 Trigger matches domain skill
     → Read WIKI-SCOPE.md
-    → Load framework + relevant concept pages (don't load entire vault)
+    → Load domain overview + relevant concept pages (don't load entire vault)
     → Apply SKILL.md reasoning workflow
     → Answer citing wiki; flag gaps/contested/stale
     → Optional: propose Revise or applied/ journal entry
@@ -99,8 +99,8 @@ After ingesting a domain (e.g. networking / BGP):
 
 Checklist:
 
-- [ ] Domain framework exists (`wiki/domains/[slug]/framework.md`)
-- [ ] Key concept pages exist and linked from framework
+- [ ] Domain overview exists (`wiki/domains/[slug]/overview.md`)
+- [ ] Key concept pages exist and linked from overview
 - [ ] WIKI-SCOPE.md lists always-read + topic routing table
 - [ ] SKILL.md: triggers (symptoms), persona, workflow, anti-patterns
 - [ ] SOURCES.md lists wiki paths
@@ -115,11 +115,11 @@ On concept pages, optional backlink:
 Related domain skill: `~/.cursor/skills/network-expert`
 ```
 
-On `framework.md`:
+On `overview.md`:
 
 ```markdown
 ## Domain skill
-Agent persona: [[~/.cursor/skills/network-expert]] — loads this framework first.
+Agent persona: [[~/.cursor/skills/network-expert]] — loads this overview first.
 ```
 
 ## When to Revise vs update skill

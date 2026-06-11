@@ -93,13 +93,73 @@ One resource → **one source summary** + **many concept pages** across **one or
 | **Domain guide** (optional) | `wiki/domains/<slug>/guide.md` | One-page technical digest (merge of concept pages) |
 | **Concepts** | `wiki/concepts/*.md` | Full depth + `## Evidence` when deepened |
 
-New domain ingest: add a row to vault `overview.md` + `domain-map.md`; create `domains/<slug>/overview.md`. Add `guide.md` only when user wants one-scroll reference depth.
+New domain ingest: add a row to vault `overview.md` + `domain-map.md`; create `domains/<slug>/overview.md`. Add `guide.md` when domain has enough deepened concepts for one-scroll digest.
 
-Lite mode default: [SIMPLE.md](SIMPLE.md). Vault `AGENTS.md` must mirror this block.
+**Reference depth default:** Bootstrap and ingest **deepen all** topic-map concepts unless user says `overview only` / `lite`. Vault `AGENTS.md` must mirror this block. Opt-in lite: [SIMPLE.md](SIMPLE.md#lite-mode-opt-in).
 
 **Concept pages (compiled truth):** body = current trusted claims; optional `## Changelog` or frontmatter records when ingest/revise changed what (never silent overwrite).
 
-## Query — brain-first, search vs think
+## Bootstrap
+
+**When:** `/zhuomo Bootstrap: raw …, vault …` — optionally include first source on the same prompt.
+
+**Agent does:**
+
+1. Create `raw/` tree (`inbox/`, `web/`, `video/`, `books/`, `assets/`, `processed/`).
+2. Create wiki skeleton: `index.md`, `log.md`, `overview.md`, `help.md` (from `templates/wiki/help.md`), `domain-map.md` (empty table OK), `learn/` (`digests/`, `fables/`, `recall/`, `runs/`, …).
+3. Write vault `AGENTS.md` from [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md#schema-agentsmd-section) — **reference depth default**.
+4. **First source** (on bootstrap line or immediate follow-up ingest):
+   - Topic map on `wiki/sources/[slug].md`
+   - EPUB/PDF → full md corpus under `wiki/sources/[slug]/md/` ([REFERENCE.md](REFERENCE.md#epub-epub))
+   - **Deepen all** concepts from topic map — full pages, `## Evidence` on every concept, domain `overview.md`, optional `guide.md`
+   - Update `index.md`; log `bootstrap | …` and `ingest | … reference depth`
+
+**Opt-out:** `bootstrap lite` or `overview only` on bootstrap/ingest → stub-only pass (old lite behavior); deepen later on demand.
+
+**Subsequent ingests:** Same default — reference depth / deepen all unless user says `overview only`, `lite`, or `archive only`.
+
+## User-facing UX (required)
+
+Keep responses **short, actionable, friendly**. Human cheatsheet lives in vault `wiki/help.md` (copy from repo `templates/wiki/help.md` on bootstrap).
+
+### Before large Ingest
+
+If source is a **book / large EPUB** and user did **not** already say `overview only` / `lite`, **confirm once**:
+
+```markdown
+**Ingest 计划：** [书名] → topic map → md 全文 → deepen **约 N 个概念** + Evidence。
+继续默认 reference depth？回复 **继续** / **overview only** / **只 deepen [[某主题]]**
+```
+
+If user already said `Ingest: path` without opt-out, proceed — no extra confirm for small articles.
+
+### After any major operation — closing block
+
+End with **exactly this shape** (3 lines):
+
+```markdown
+**✓ 完成：** [操作] — [1 句结果，如 12 concepts + Evidence]
+**→ 下一步：** [1–2 个具体建议，链到 [[wikilinks]] 或指令]
+**⚙ 可选：** `overview only` · `Learn fable [[stub]]` · `Weekly` · `Lint`
+```
+
+### Ambiguous request — menu first
+
+If intent unclear (ingest depth, domain, or operation), **ask before running**:
+
+```markdown
+你要哪种？
+1. **Ingest 全书 deepen**（默认）
+2. **overview only** — 只要 topic map
+3. **Query** — 问现有 wiki
+4. **其他** — 说明一下
+```
+
+Do not silently run multi-hour deepen on ambiguous phrasing.
+
+### Point humans to help
+
+When user asks "怎么用" / "有哪些功能", link vault `[[help]]` and repo `SIMPLE.md` — do not dump nine operations inline.
 
 **Brain-first (always):** read wiki before web or raw EPUB.
 
@@ -170,10 +230,10 @@ Default after chapter ingest (unless you say **archive only**): digest + update 
 
 **New source:**
 ```
-- [ ] 0. Wiki setup — bootstrap if needed; multi-domain → domain-map (LEARNING.md)
+- [ ] 0. Wiki setup — bootstrap if needed; **reference depth** unless user says `overview only` / `lite`
 - [ ] 1. Intake — source; discover topics; assign domain(s)
-- [ ] 1b. EPUB/PDF — convert full text to wiki/sources/[slug]/md/; Evidence links on every concept page (REFERENCE.md)
-- [ ] 2. Ingest — wiki pages; flag contradictions
+- [ ] 1b. EPUB/PDF — convert full text to wiki/sources/[slug]/md/ (**required** for reference depth)
+- [ ] 2. Ingest — topic map + **deepen all** concepts; Evidence on every concept page; flag contradictions
 - [ ] 2b. Learn — pretest + digest + recall for Spaced Repetition; **fable** for hard abstract concepts (skip if "archive only")
 - [ ] 2c. Framework — update `domains/<slug>/overview.md` (pillars, progress, gaps)
 - [ ] 3–10. Extract → skill pipeline if actionable
@@ -242,8 +302,9 @@ Full ingest checklist:
 | Recall cards never reviewed | Obsidian Spaced Repetition + Weekly Review — [RETENTION.md](RETENTION.md) |
 | Scenario fiction filed as facts | Run artifacts use `type: fictional-scenario`; Revise only for wiki errors — [RUN.md](RUN.md) |
 | Cross-domain only in chat | **Run** — fuse domains, file debrief to `wiki/learn/runs/` |
-
-## Deployment
+| Bootstrap stops at stubs | Default is **deepen all** + md corpus + Evidence; use `overview only` to opt out |
+| Silent long ingest | Confirm once on large books; use closing block + [[help]] |
+| Dump nine operations in chat | Link `wiki/help.md`; core = Bootstrap → Ingest → Query → Revise + Weekly |
 
 - [ ] Skill: name, description, SOURCES.md, RED/GREEN/REFACTOR
 - [ ] Raw: local path (e.g. `~/zhuomo-data/raw/`), `inbox/` for phone captures, immutable snapshots

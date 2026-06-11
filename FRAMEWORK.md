@@ -2,6 +2,8 @@
 
 Conceptual model for **琢磨 (Zhuomo)** — how the pieces fit, why they exist, and how knowledge compounds over time.
 
+> **Human daily use:** Obsidian `wiki/help.md` + repo [SIMPLE.md](SIMPLE.md). This file is **architecture reference** for power users — not required reading.
+
 For step-by-step usage, see [USER-GUIDE.md](USER-GUIDE.md). For agent workflows, see [SKILL.md](SKILL.md).
 
 ---
@@ -87,7 +89,11 @@ Often: **wiki first → extraction card → skill** when an idea is actionable a
 
 ---
 
-## 3. Nine operations
+## 3. Core loop (4 + 1) + full operations
+
+**Daily use:** Bootstrap → Ingest → Query → Revise; optional **Weekly**. See Obsidian `wiki/help.md`.
+
+All nine operations (for power users):
 
 Operations are the **verbs** of Zhuomo. Each has a trigger, output, and typical prompt shape.
 
@@ -97,7 +103,7 @@ Operations are the **verbs** of Zhuomo. Each has a trigger, output, and typical 
 | **Learn** | You are studying (not archive-only) | Digest, pretest, recall cards, quiz | `wiki/learn/` |
 | **Run** | Multi-domain integration practice | Fictional scenario, floors, debrief, loot | `wiki/learn/runs/` |
 | **Review** | Due cards or study session | Explain-back, optional session note | `wiki/learn/reviews/` |
-| **Framework** | After ingest or on request | Updated pillars, progress, gaps | `wiki/domains/*/framework.md` |
+| **Framework** | After ingest or on request | Updated pillars, progress, gaps | `wiki/domains/*/overview.md` |
 | **Weekly** | ~15 min ritual | Review + connect/run + lint + progress | `wiki/log.md` |
 | **Query** | You have a question | Answer (+ file back if valuable) | wiki + chat |
 | **Revise** | Wrong, stale, duplicate, contradicted | Corrected pages; skill merge | wiki, skills, `log.md` |
@@ -135,15 +141,15 @@ How structured understanding scales inside the wiki.
 | Level | Artifact | Question it answers |
 |-------|----------|---------------------|
 | **L0** | `wiki/domain-map.md` | What domains do I care about? |
-| **L1** | `wiki/domains/[domain]/framework.md` | What are the pillars and how far along am I? |
-| **L2** | `wiki/concepts/*.md` (or domain concepts) | What is this idea, evidence, links? |
+| **L1** | `wiki/domains/[domain]/overview.md` | What are the pillars and how far along am I? |
+| **L2** | `wiki/domains/[domain]/guide.md` or `wiki/concepts/*.md` | Technical digest or concept depth |
 | **L3** | `wiki/sources/*.md` | Where did this claim come from? |
 
 **Learning artifacts** (digests, recall) sit between L2 and reading raw — optimized for *your* memory, not the agent's.
 
-### Framework page anatomy
+### Domain overview anatomy
 
-Each domain `framework.md` should include:
+Each domain `overview.md` should include:
 
 1. **North star** — one sentence: what this domain is for in your life/work
 2. **Pillars** — 3–7 big ideas, each wikilinked
@@ -232,10 +238,11 @@ wiki/
 ├── domain-map.md
 ├── domains/
 │   ├── networking/
-│   │   ├── framework.md
-│   │   ├── index.md
-│   │   └── concepts/
+│   │   ├── overview.md
+│   │   ├── guide.md       # optional
+│   │   └── index.md
 │   └── psychology/
+│       └── overview.md
 ├── concepts/          # optional shared/global concepts
 ├── sources/
 ├── synthesis/

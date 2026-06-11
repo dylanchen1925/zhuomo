@@ -4,8 +4,6 @@
 
 **Turn books, articles, and notes into knowledge you actually remember — and skills your AI agent can use.**
 
-Drop a source in. Get an Obsidian wiki, flashcards, domain frameworks, and (when ready) Cursor skills. Learning can even feel like a **roguelike game** when you fuse multiple subjects into one scenario.
-
 > **琢磨** — to polish and chew over material until it is clear and usable.
 
 ---
@@ -14,88 +12,73 @@ Drop a source in. Get an Obsidian wiki, flashcards, domain frameworks, and (when
 
 | If you want to… | Open |
 |-----------------|------|
-| **Keep it simple** | [SIMPLE.md](SIMPLE.md) |
-| **Set up and use Zhuomo day to day** | [USER-GUIDE.md](USER-GUIDE.md) |
-| **Understand the big picture** | [FRAMEWORK.md](FRAMEWORK.md) |
-| **Tell the agent what to do** | [SKILL.md](SKILL.md) |
+| **Daily cheatsheet (in Obsidian)** | `wiki/help.md` in your vault |
+| **5-minute repo guide** | [SIMPLE.md](SIMPLE.md) |
+| **Full manual** | [USER-GUIDE.md](USER-GUIDE.md) |
+| **Agent rules** | [SKILL.md](SKILL.md) |
 
 ---
 
-## Quick start (5 minutes)
+## Core loop (4 + 1)
 
-**1. Install the skill** — symlink this repo where Cursor finds skills:
+You only need five verbs day to day. Everything else is optional.
+
+```mermaid
+flowchart LR
+  A[Bootstrap] --> B[Ingest]
+  B --> C[Query]
+  C --> D[Revise]
+  D --> B
+  W[Weekly] -.-> C
+```
+
+| Step | You say | You get |
+|------|---------|---------|
+| **Bootstrap** | `Bootstrap + ingest: book.epub` | Folders, `AGENTS.md`, first wiki |
+| **Ingest** | `Ingest: path/to/source` | Concepts + Evidence (default: deepen all) |
+| **Query** | `Query: your question` | Answer + Gaps; cites your wiki |
+| **Revise** | `Revise [[page]] — what's wrong` | Fixed pages, no silent overwrite |
+| **Weekly** *(optional)* | `Weekly` | ~15 min review + lint + progress |
+
+**Quick start:**
 
 ```bash
 ln -sf /path/to/zhuomo ~/.cursor/skills/zhuomo
 ```
 
-**2. Bootstrap your folders** — in Cursor chat:
-
 ```
-/zhuomo Bootstrap: raw ~/zhuomo-data/raw/, Obsidian vault ~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen
-```
-
-**3. Ingest your first source:**
-
-```
-/zhuomo Ingest: ~/zhuomo-data/raw/inbox/my-book.epub
+/zhuomo Bootstrap + ingest: ~/zhuomo-data/raw/inbox/my-book.epub
+/zhuomo Query: how does X relate to Y?
+/zhuomo Weekly
 ```
 
-The agent creates wiki pages in Obsidian. You read, learn, review — and revise when something was wrong.
-
-Full setup: [USER-GUIDE § First-time setup](USER-GUIDE.md#3-first-time-setup)
+Lite mode: add `overview only` on ingest. Full setup: [USER-GUIDE § First-time setup](USER-GUIDE.md#3-first-time-setup)
 
 ---
 
 ## How it fits together
 
-Raw sources stay untouched. Zhuomo **compiles** them into a wiki you study from, and skills the agent can invoke when patterns match.
-
-![Zhuomo system overview — raw sources flow through Zhuomo into Obsidian wiki and Cursor skills](assets/framework-overview.png)
-
 | Layer | Where | What lives there |
 |-------|-------|------------------|
-| **Raw** | `~/zhuomo-data/raw/` | EPUBs, clips, transcripts — never edited |
-| **Wiki** | Obsidian `wiki/` | Concepts, frameworks, digests, recall cards |
-| **Skills** | `~/.cursor/skills/` | Triggers + workflows (optional domain experts) |
+| **Raw** | `~/zhuomo-data/raw/` | EPUBs, clips — never edited |
+| **Wiki** | Obsidian `wiki/` | Concepts, overviews, digests |
+| **Skills** | `~/.cursor/skills/` | Triggers + workflows *(optional)* |
 
-**Wiki = facts and synthesis. Skills = when to act.** Often: wiki first, skill later when a technique is proven.
+![Zhuomo system overview](assets/framework-overview.png)
 
----
-
-## Nine operations
-
-Everything you do with Zhuomo is one of these verbs. You don't need to memorize them — the agent routes from natural language — but they help you know what's possible.
-
-![Nine Zhuomo operations — Ingest, Learn, Run, Review, Framework, Weekly, Query, Revise, Lint](assets/workflow-operations.png)
-
-| Operation | You say something like… | You get |
-|-----------|-------------------------|---------|
-| **Ingest** | "Ingest this EPUB" | Wiki concept pages |
-| **Learn** | "Learn from this chapter" / `Learn fable: [[concept]]` | Digest, quiz, recall; optional Askell fable |
-| **Run** | "Run: fuse networking + psychology" | Roguelike scenario + debrief |
-| **Review** | "Review due cards" | Spaced repetition session |
-| **Framework** | "Update my networking framework" | Pillars, gaps, progress |
-| **Weekly** | "Weekly ritual" | 15 min review + connect |
-| **Query** | "How does X relate to Y?" | Answer (+ optional wiki update) |
-| **Revise** | "This page is wrong" | Corrected pages, no silent overwrite |
-| **Lint** | "Lint the wiki" | Health check → fix list |
-
-Details: [FRAMEWORK § Nine operations](FRAMEWORK.md#3-nine-operations) · Run spec: [RUN.md](RUN.md)
+**Wiki = facts. Skills = when to act.** Start with wiki; extract skills when a technique is proven.
 
 ---
 
-## Roguelike learning (Run)
+## Advanced (when you want more)
 
-When flat quizzes feel boring, **Run** fuses 2+ domains into a fictional scenario. You climb floors of harder questions; wrong explain-backs end the run. Fiction is fine — **answers must cite your wiki**.
-
-![Roguelike learning Run — floors, fused domains, loot as recall cards](assets/roguelike-run.png)
-
-```
-/zhuomo Run: fuse networking + psychology — 5 floors, medium
-```
-
-Artifacts land in `wiki/learn/runs/`. Full guide: [USER-GUIDE § Roguelike runs](USER-GUIDE.md#16-roguelike-runs)
+| Feature | You say | Notes |
+|---------|---------|-------|
+| **Learn** | `Learn fable: [[concept]]` | Fables, digests, flashcards |
+| **Lint** | `Lint` | Wiki health check *(included in Weekly)* |
+| **Run** | `Run: fuse A + B, 3 floors` | Roguelike multi-domain practice — [RUN.md](RUN.md) |
+| **Skill extract** | `Extract skill from [[concept]]` | Cursor agent workflows |
+| **Domain skill** | `Domain skill: network-expert` | Wiki-backed expert — [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md) |
 
 ---
 
@@ -103,57 +86,35 @@ Artifacts land in `wiki/learn/runs/`. Full guide: [USER-GUIDE § Roguelike runs]
 
 | Path | Role |
 |------|------|
-| **This repo** (your clone) | Skill docs + optional config |
-| `~/.cursor/skills/zhuomo` | Symlink → clone (Cursor discovers the skill) |
-| `~/zhuomo-data/raw/` | Sources + `inbox/` *(created on bootstrap)* |
-| `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen/wiki/` | Your wiki (iCloud Obsidian vault) |
+| This repo | Skill docs + `templates/wiki/help.md` |
+| `~/.cursor/skills/zhuomo` | Symlink → clone |
+| `~/zhuomo-data/raw/` | Sources + `inbox/` |
+| Obsidian vault `wiki/` | Your knowledge base |
+| Obsidian `wiki/help.md` | **Your daily command cheatsheet** |
 
 ---
 
 ## Documentation map
 
-**For you**
-
-| Doc | Purpose |
-|-----|---------|
-| [USER-GUIDE.md](USER-GUIDE.md) | Setup, habits, prompt cookbook, troubleshooting |
-| [FRAMEWORK.md](FRAMEWORK.md) | Conceptual model — layers, operations, wiki vs skill |
-| [RUN.md](RUN.md) | Roguelike multi-domain runs |
-| [RETENTION.md](RETENTION.md) | Spaced repetition, weekly ritual |
-
-**For you + the agent**
-
-| Doc | Purpose |
-|-----|---------|
-| [SKILL.md](SKILL.md) | Agent entry point — workflows and rules |
-| [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) | Wiki pattern, Obsidian, multi-device |
-| [LEARNING.md](LEARNING.md) | Learn modes, frameworks, multi-domain |
-| [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md) | Domain experts backed by your wiki |
-| [REFERENCE.md](REFERENCE.md) | EPUB, web, video, Readwise |
+| Read this | When |
+|-----------|------|
+| **`wiki/help.md`** | Every day in Obsidian |
+| [SIMPLE.md](SIMPLE.md) | First hour with Zhuomo |
+| [USER-GUIDE.md](USER-GUIDE.md) | Setup, habits, troubleshooting |
+| [SKILL.md](SKILL.md) | Customizing agent behavior |
+| [FRAMEWORK.md](FRAMEWORK.md) | Architecture deep dive *(optional)* |
+| [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) | Wiki schema, multi-device |
+| [LEARNING.md](LEARNING.md) · [RETENTION.md](RETENTION.md) | Learn + review |
+| [REFERENCE.md](REFERENCE.md) | EPUB, Readwise, sources |
 
 ---
 
-## Principles (short)
+## Principles
 
-1. **Knowledge is never write-once** — wrong? **Revise**, don't silently overwrite.
-2. **Skills are not book summaries** — they are triggers: *when X, do Y*.
-3. **Learn, don't just archive** — digests, cards, runs beat wall-of-text dumps.
-4. **Many domains, one vault** — frameworks per domain, synthesis across them.
-
----
-
-## Example prompts
-
-```
-/zhuomo Ingest: ~/zhuomo-data/raw/inbox/article.md
-/zhuomo Learn: digest + 10 recall cards for [[TCP congestion]]
-/zhuomo Framework: update domains/networking after ingest
-/zhuomo Run: random fuse, 3 floors, easy
-/zhuomo Revise: [[old-page]] contradicts new source — merge and supersede
-/zhuomo Weekly
-```
-
-More: [USER-GUIDE § Prompt cookbook](USER-GUIDE.md#6-prompt-cookbook)
+1. **Knowledge is never write-once** — wrong? **Revise**.
+2. **Wiki first, skills later** — triggers come from proven patterns.
+3. **Brain-first Query** — read your wiki before the web.
+4. **One vault, many domains** — `domains/*/overview.md` per subject.
 
 ---
 

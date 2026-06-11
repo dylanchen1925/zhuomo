@@ -75,7 +75,21 @@ In Cursor chat:
 /zhuomo Bootstrap: raw ~/zhuomo-data/raw/, Obsidian vault ~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen
 ```
 
-The agent should create:
+The agent should create folders and `AGENTS.md` with **reference depth default** (deepen all concepts on ingest). Then ingest your first source — same default unless you say `overview only`:
+
+```
+/zhuomo Bootstrap + ingest: ~/zhuomo-data/raw/books/my-first-book.epub
+```
+
+Or bootstrap first, ingest second:
+
+```
+/zhuomo Bootstrap: raw ~/zhuomo-data/raw/, Obsidian vault ~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen
+
+/zhuomo Ingest: ~/zhuomo-data/raw/books/my-first-book.epub
+```
+
+**Lite opt-out:** add `overview only` or use `Bootstrap lite:` for stub-first workflow.
 
 ```
 ~/zhuomo-data/raw/
@@ -119,19 +133,27 @@ Suggested settings:
 
 Details: [RETENTION.md](RETENTION.md).
 
-### Step 4: Add AGENTS.md conventions
+### Step 4: AGENTS.md + help
 
-Ensure vault `AGENTS.md` includes raw path, wiki path, ingest/query/lint/revise/learn rules. Template in [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md#schema-agentsmd-section).
+Bootstrap writes vault `AGENTS.md` and copies **`wiki/help.md`** — your daily command cheatsheet. Template: [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md#schema-agentsmd-section) · repo `templates/wiki/help.md`.
+
+Open **`[[help]]`** in Obsidian when you forget a command.
 
 ### Step 5: First ingest
 
-Save one article or book chapter to `raw/`, then:
+Save a book or article to `raw/`, then (default = deepen all + Evidence):
 
 ```
-/zhuomo Ingest raw/web/my-first-article.md — discover topics, learn mode recap
+/zhuomo Ingest: ~/zhuomo-data/raw/books/my-first-book.epub
 ```
 
-Open Obsidian and browse new pages under `wiki/`.
+Quick map only:
+
+```
+/zhuomo Ingest overview only: raw/web/my-first-article.md
+```
+
+Open Obsidian and browse full concept pages under `wiki/`.
 
 ---
 
@@ -169,19 +191,20 @@ You append to `wiki/log.md` via the agent.
 
 ## 5. Operations reference
 
+**Core loop (4 + 1):** Bootstrap → Ingest → Query → Revise; optional **Weekly**. Full cheatsheet: Obsidian `wiki/help.md`.
+
 | Operation | You say (examples) | You get |
 |-----------|-------------------|---------|
-| **Ingest** | `Ingest raw/books/ddia.epub ch.1` | Concept pages, source summary |
-| **Learn** | `Learn mode: preview ch.2` / `Learn fable: [[concept]]` | Pretest, digest, recall; **fable** (Askell story → reveal) |
-| **Run** | `Run: fuse networking + psychology, 5 floors` | Scenario, floors, debrief, loot |
-| **Review** | `Review networking recall` | Session plan, explain-back |
-| **Framework** | `Update my distributed-systems framework` | `framework.md` refresh |
-| **Weekly** | `Weekly review` | Checklist + log entry |
-| **Query** | `How does my wiki explain CAP?` | Cited answer; may file back |
-| **Revise** | `Wiki says X but that's wrong` | Fixed pages + propagation |
-| **Lint** | `Lint the networking domain` | Issue list |
+| **Ingest** | `Ingest: book.epub` | Deepened concepts + Evidence (default) |
+| **Query** | `Query: …` / `Query search: …` | Synthesis + Gaps, or page list |
+| **Revise** | `Revise [[page]] — …` | Fixed pages + propagation |
+| **Weekly** | `Weekly review` | Review + Lint + progress |
+| **Learn** | `Learn fable: [[concept]]` | Fable, digest, recall *(optional)* |
+| **Lint** | `Lint the wiki` | Health check *(or part of Weekly)* |
+| **Run** | `Run: fuse A + B` | Roguelike *(advanced)* |
+| **Framework** | *(usually automatic on ingest)* | Updates `domains/*/overview.md` |
 
-**Archive only:** add `archive only` to skip learn/framework:
+**Archive only:** add `archive only` to skip learn artifacts:
 
 ```
 /zhuomo Ingest raw/paper.pdf — archive only
@@ -290,6 +313,8 @@ Full detail: [LEARNING.md](LEARNING.md).
 
 ## 8. Building domain frameworks
 
+Domain **framework** = `wiki/domains/[slug]/overview.md` (pillars, progress, glossary). Optional `guide.md` = technical one-pager. **Ingest updates overview automatically** — you rarely need a separate Framework command.
+
 ### When to create a domain
 
 - You have a sustained interest (networking, psychology, finance, …)
@@ -297,11 +322,11 @@ Full detail: [LEARNING.md](LEARNING.md).
 
 ### Start L0: domain map
 
-File: `wiki/domain-map.md` — list domains, one-line description, link to each `framework.md`.
+File: `wiki/domain-map.md` — list domains, one-line description, link to each `overview.md`.
 
-### Build L1: framework.md
+### Build L1: overview.md
 
-Path: `wiki/domains/[slug]/framework.md`
+Path: `wiki/domains/[slug]/overview.md`
 
 Include:
 
@@ -312,6 +337,8 @@ Include:
 5. Cross-domain links
 6. Optional study path
 
+Template: [LEARNING.md § Domain overview](LEARNING.md#framework-operation)
+
 ### Progress strength
 
 | Strength | Meaning |
@@ -319,10 +346,10 @@ Include:
 | **learning** | Exposed, not yet teachable |
 | **solid** | You can explain and apply — see mastery in [RETENTION.md](RETENTION.md) |
 
-Ask the agent to update after each ingest touching that domain:
+Ask the agent to update after each ingest touching that domain (usually automatic):
 
 ```
-/zhuomo Update framework for domain networking after today's BGP ingest
+/zhuomo Update domains/networking/overview after today's BGP ingest
 ```
 
 Conceptual overview: [FRAMEWORK.md](FRAMEWORK.md#4-knowledge-framework-l0--l3).

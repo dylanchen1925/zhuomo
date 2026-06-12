@@ -257,6 +257,46 @@ ebook-convert book.epub book.txt
 - **MD 全文:** [[sources/my-book/md/index]]
 ```
 
+### Figure visuals on wiki pages
+
+When ingest, deepen, or revise mentions **Figure N** (or `#figure-*` anchors), embed the visual **where the figure is discussed** — not in a consolidated `## Figures` block at the end.
+
+**Placement:**
+
+1. **Body mention** — insert image/mermaid **immediately after** the paragraph or bullet that cites Figure N (prefer prose lines over `##` headings when both mention the same figure).
+2. **Evidence-only cite** — insert under the matching thematic section (e.g. `#figure-3-4` under `## Mechanics`, scheduler figures under `## Concept`); Evidence bullet keeps the wikilink only.
+3. **Never** append all figures before `## Evidence`.
+
+**Priority (what to embed):**
+
+1. **Source asset** — `![Figure N](sources/<slug>/md/assets/…)` from EPUB MD corpus (same image as `part-NNN.md`).
+2. **Mermaid schematic** — when no asset exists or book figure is unreadable; topology/flow only; must match wiki claims.
+3. **Link only** — never alone; always pair `→ [[sources/.../md/part-NNN#figure-x-y]]` with (1) or (2).
+
+**Inline template:**
+
+```markdown
+Guide **Figure 91** = …
+
+![Figure 91](sources/…/assets/…)
+
+→ [[sources/…/md/part-NNN#figure-91]]
+```
+
+**Backfill existing vault:**
+
+```bash
+python3 scripts/embed-figure-visuals.py ~/path/to/vault/wiki
+```
+
+Removes legacy `## Figures` sections and re-inlines at mention sites.
+
+**Lint:**
+
+```bash
+python3 scripts/lint-figure-visuals.py ~/path/to/vault/wiki
+```
+
 Python (when scripting ingest):
 
 ```python

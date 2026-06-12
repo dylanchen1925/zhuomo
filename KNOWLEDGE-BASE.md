@@ -242,6 +242,7 @@ architect lens, pillars, progress, gaps, glossary. Update on each domain-touchin
 
 **Page conventions:** wikilinks `[[concept-name]]`; YAML frontmatter optional
 (tags, source_count, epistemic, prereqs, status: active | stale | superseded | archived).
+**Figures:** when text cites Figure N, embed inline at the mention (or thematic `##` if Evidence-only) — source asset from `sources/*/md/assets/` or mermaid schematic ([REFERENCE.md](REFERENCE.md#figure-visuals-on-wiki-pages)).
 
 ## User-facing UX
 

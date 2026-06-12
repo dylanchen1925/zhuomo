@@ -99,6 +99,14 @@ New domain ingest: add a row to vault `overview.md` + `domain-map.md`; create `d
 
 **Concept pages (compiled truth):** body = current trusted claims; optional `## Changelog` or frontmatter records when ingest/revise changed what (never silent overwrite).
 
+**Figure visuals (required when cited):** If prose or Evidence mentions **Figure N** / `#figure-*`, embed the visual **inline at the first body mention** (or the thematic `##` section when the cite is Evidence-only):
+
+1. **Source image** — `![Figure N](sources/<slug>/md/assets/…)` immediately after the mentioning paragraph; add `→ [[sources/...#figure-n]]` on the next line.
+2. **No asset** — schematic **mermaid** at the same spot (topology/flow only; no fiction-as-fact).
+3. **Never** use a consolidated `## Figures` appendix; never leave bare "see Figure N" without image/mermaid + source link.
+
+Batch backfill / re-inline: `python3 scripts/embed-figure-visuals.py <vault>/wiki`. Details: [REFERENCE.md](REFERENCE.md#figure-visuals-on-wiki-pages).
+
 ## Bootstrap
 
 **When:** `/zhuomo Bootstrap: raw …, vault …` — optionally include first source on the same prompt.
@@ -202,6 +210,7 @@ Run on request, after large ingest, or as part of **Weekly**.
 | Concept mentioned in text but no page | Create stub or merge duplicate |
 | `overview` progress ≠ concept `status` / depth | Revise overview or concept |
 | Deepened book concept missing `## Evidence` | Add Evidence or downgrade progress note |
+| **Figure N** cited without inline visual | Run `scripts/lint-figure-visuals.py`; fix with embed script or manual inline |
 | Contradictions between pages | Revise; supersede stale claim |
 | Stale source (newer guide/version exists) | Note in Gaps; flag in `overview` |
 | Duplicate concept pages same topic | Merge; one canonical page |
@@ -233,7 +242,7 @@ Default after chapter ingest (unless you say **archive only**): digest + update 
 - [ ] 0. Wiki setup — bootstrap if needed; **reference depth** unless user says `overview only` / `lite`
 - [ ] 1. Intake — source; discover topics; assign domain(s)
 - [ ] 1b. EPUB/PDF — convert full text to wiki/sources/[slug]/md/ (**required** for reference depth)
-- [ ] 2. Ingest — topic map + **deepen all** concepts; Evidence on every concept page; flag contradictions
+- [ ] 2. Ingest — topic map + **deepen all** concepts; Evidence on every concept page; **Figures** when Figure N cited; flag contradictions
 - [ ] 2b. Learn — pretest + digest + recall for Spaced Repetition; **fable** for hard abstract concepts (skip if "archive only")
 - [ ] 2c. Framework — update `domains/<slug>/overview.md` (pillars, progress, gaps)
 - [ ] 3–10. Extract → skill pipeline if actionable

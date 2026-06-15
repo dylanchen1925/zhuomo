@@ -107,6 +107,12 @@ Run `scripts/lint-review-queue.py <vault>/wiki` or **Lint** / **Weekly**:
 - No `reviewed` + has Evidence → never reviewed
 - `reviewed` set but `explain_back` not `passed` → read but not tested
 
+Sync overview progress columns after Explain-back or Promote:
+
+```bash
+python3 scripts/sync-overview-review.py <vault>/wiki --write
+```
+
 ---
 
 ## Weekly checklist (~15 min)

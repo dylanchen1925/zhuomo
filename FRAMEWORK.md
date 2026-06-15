@@ -14,7 +14,7 @@ For step-by-step usage, see [USER-GUIDE.md](USER-GUIDE.md). For agent workflows,
 
 | You get | How |
 |---------|-----|
-| Learn faster | Digests, pretests, recall cards, frameworks — not just storage |
+| Learn faster | Digests, Explain-back prompts, frameworks — not just storage |
 | See the big picture | Domain frameworks (pillars, gaps, progress) across many subjects |
 | Correct over time | Revise supersedes wrong claims; nothing is write-once |
 | Agent leverage | Skills = triggers + workflows; wiki = facts + synthesis |
@@ -35,7 +35,7 @@ flowchart TD
   subgraph process [Zhuomo operations]
     IN[Ingest]
     LR[Learn]
-    RN[Run]
+    EB[Explain-back]
     FW[Framework]
     RV[Review / Weekly]
     QY[Query]
@@ -53,8 +53,8 @@ flowchart TD
   I --> IN
   IN --> W
   IN --> LR
-  LR --> RN
-  RN --> W
+  LR --> EB
+  EB --> W
   LR --> W
   IN --> FW
   FW --> W
@@ -93,7 +93,7 @@ Often: **wiki first → extraction card → skill** when an idea is actionable a
 
 **Daily use:** Bootstrap → Ingest → Query → Revise; optional **Weekly**. See Obsidian `wiki/help.md`.
 
-All nine operations (for power users):
+All eight operations (for power users):
 
 Operations are the **verbs** of Zhuomo. Each has a trigger, output, and typical prompt shape.
 
@@ -103,7 +103,7 @@ Operations are the **verbs** of Zhuomo. Each has a trigger, output, and typical 
 | **Learn** | You are studying (not archive-only) | Digest, `## Explain-back` on concepts | `wiki/learn/` |
 | **Review** | Explain-back or read session | Rubric score, `learn/reviews/` | [REVIEW.md](REVIEW.md) |
 | **Framework** | After ingest or on request | Updated pillars, progress, gaps | `wiki/domains/*/overview.md` |
-| **Weekly** | ~15 min ritual | Review + connect/run + lint + progress | `wiki/log.md` |
+| **Weekly** | ~15 min ritual | Review queue + Explain-back + lint + progress sync | `wiki/log.md` |
 | **Query** | You have a question | Answer (+ file back if valuable) | wiki + chat |
 | **Revise** | Wrong, stale, duplicate, contradicted | Corrected pages; skill merge | wiki, skills, `log.md` |
 | **Lint** | Periodic health | Issue list → Revise tasks | `log.md` |
@@ -117,19 +117,19 @@ flowchart LR
   IN[Ingest] --> LR[Learn]
   IN --> FW[Framework]
   IN --> EX[Extract → Skill]
-  LR --> RN[Run]
-  FW --> RN
+  LR --> EB[Explain-back]
+  FW --> EB
   LR --> RV[Review]
-  RN --> RV
+  EB --> RV
   FW --> RV
   RV --> WK[Weekly]
   LT[Lint] --> RZ[Revise]
   QY[Query] --> RZ
   IN --> RZ
-  RN --> RZ
+  EB --> RZ
 ```
 
-**Default after chapter ingest** (unless you say *archive only*): Ingest → Learn (digest + recall) → Framework update.
+**Default after chapter ingest** (unless you say *archive only*): Ingest → Learn (digest + `## Explain-back` on concepts) → Framework update.
 
 ---
 
@@ -144,7 +144,7 @@ How structured understanding scales inside the wiki.
 | **L2** | `wiki/domains/[domain]/guide.md` or `wiki/concepts/*.md` | Technical digest or concept depth |
 | **L3** | `wiki/sources/*.md` | Where did this claim come from? |
 
-**Learning artifacts** (digests, recall) sit between L2 and reading raw — optimized for *your* memory, not the agent's.
+**Learning artifacts** (digests, per-concept `## Explain-back`) sit between L2 and reading raw — optimized for *your* memory, not the agent's.
 
 ### Domain overview anatomy
 
@@ -153,7 +153,7 @@ Each domain `overview.md` should include:
 1. **North star** — one sentence: what this domain is for in your life/work
 2. **Pillars** — 3–7 big ideas, each wikilinked
 3. **Mental model** — diagram, analogy, or bullets for how pieces fit
-4. **Progress table** — pillar/topic, strength (`learning` → `solid`), sources, gaps
+4. **Progress table** — concept, mastery (`learning` → `solid`), **Review** (`reviewed` date), **Explain-back** (`explain_back` status), gaps — sync with `scripts/sync-overview-review.py` on Weekly
 5. **Cross-domain links** — bridges to other `domains/`
 6. **Study path** (optional) — ordered gaps → next reads
 
@@ -254,25 +254,28 @@ wiki/
 
 ## 8. Retention loop
 
-Human memory needs **scheduled retrieval** and **real-world use**.
+Human memory needs **retrieval practice** (Explain-back) and optional **real-world use** (applied journal).
 
 ```mermaid
 flowchart TD
-  IN[Ingest + Learn] --> RC[Recall cards in wiki/learn/recall/]
-  RC --> SR[Obsidian Spaced Repetition plugin]
-  SR --> RV[Review operation]
-  RV --> EB[Explain-it-back vs framework]
-  EB --> AP[Applied journal]
+  IN[Ingest + Learn] --> CP[Concept pages + Explain-back prompts]
+  CP --> RD[Review — mark read]
+  RD --> EB[Explain-back in chat]
+  EB --> MS[mastery solid if passed]
+  EB --> AP[Applied journal optional]
   AP --> RZ[Revise wiki if practice contradicts]
-  WK[Weekly ritual] --> SR
+  WK[Weekly ritual] --> RQ[Review queue lint]
+  RQ --> EB
   WK --> LT[Lint → Revise]
+  WK --> FW[Sync overview progress columns]
 ```
 
 | Mechanism | Owner |
 |-----------|--------|
-| Card content | Zhuomo writes; plugin schedules |
+| `## Explain-back` on concepts | Zhuomo on ingest/deepen; you teach back in chat |
+| Review queue | `wiki_revised > reviewed` — [REVIEW.md](REVIEW.md) |
 | Weekly (~15 min) | You + agent checklist — [RETENTION.md](RETENTION.md) |
-| Mastery → `solid` | Criteria in RETENTION.md |
+| Mastery → `solid` | `explain_back: passed` required — [RETENTION.md](RETENTION.md) |
 
 ---
 
@@ -305,7 +308,7 @@ Revision card (before editing): what was wrong, evidence, new claim — see [REF
 
 **Device roles:**
 
-- **Phone:** capture → `raw/inbox/`; read wiki; SR review
+- **Phone:** capture → `raw/inbox/`; read wiki; optional Explain-back in Cursor mobile/web
 - **Laptop:** ingest, learn, framework, revise, skill authoring
 
 ---
@@ -322,7 +325,7 @@ Revision card (before editing): what was wrong, evidence, new claim — see [REF
 8. **File answers back** — chat does not compound; wiki does
 9. **Laptop owns wiki edits** — phone read + capture
 10. **Short artifacts, deep links** — one screen digest → concept pages
-11. **Fiction tests truth** — Run scenarios are made up; answers must cite wiki — [RUN.md](RUN.md)
+11. **Teach to know** — Explain-back tests whether you can teach the Claim/mechanism; answers must match wiki Evidence — [REVIEW.md](REVIEW.md)
 
 ---
 
@@ -335,7 +338,8 @@ Revision card (before editing): what was wrong, evidence, new claim — see [REF
 | [SKILL.md](SKILL.md) | Agents | Operations checklist, mistakes |
 | [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) | Agents + you | Wiki schema, ingest/query/lint/revise |
 | [LEARNING.md](LEARNING.md) | Agents + you | Learn modes, framework templates |
-| [RUN.md](RUN.md) | Agents + you | Roguelike multi-domain runs |
-| [RETENTION.md](RETENTION.md) | You | SR plugin, weekly, mastery |
+| [REVIEW.md](REVIEW.md) | Agents + you | Per-concept Review, Explain-back, review queue |
+| [RETENTION.md](RETENTION.md) | You | Epistemic tags, applied (optional), mastery |
+| [docs/archive/RUN.md](docs/archive/RUN.md) | Archive | Deprecated Roguelike runs |
 | [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md) | Agents + you | Domain skill pattern |
 | [REFERENCE.md](REFERENCE.md) | Agents + you | EPUB, video, Readwise, revision cards |

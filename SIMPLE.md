@@ -35,7 +35,7 @@ Say **`overview only`** or **`lite`** anytime to get the old stub-first path ins
 |-------|---------|------------|
 | **1 — Map** | `Ingest overview only: book.epub` | Topic map + **stub** concepts (5–10 bullets each) |
 | **2 — Deepen** | `Deepen tenant` or `Deepen all` | Expand chosen concepts + Evidence links |
-| **3 — Remember** | `Learn recap` or `Learn fable: [[concept]]` | Digest + recall cards; optional Askell fable |
+| **3 — Remember** | `Explain-back [[concept]]` or `Learn fable: [[concept]]` | Teach-back or narrative intuition |
 
 Use lite for huge books when you only want a topic map first.
 
@@ -71,7 +71,8 @@ Set Obsidian **Settings → Files → Default open file** to `wiki/overview.md` 
 | Read | Skip until needed |
 |------|-------------------|
 | Obsidian **`wiki/help.md`** | — |
-| [USER-GUIDE.md](USER-GUIDE.md) § Quick start | RUN.md, RETENTION.md, WIKI-BACKED-SKILLS.md |
+| [USER-GUIDE.md](USER-GUIDE.md) | Full setup and daily use |
+| [REVIEW.md](REVIEW.md) | Explain-back and review queue |
 | This file (SIMPLE.md) | FRAMEWORK.md (same ideas, longer) |
 | [SKILL.md](SKILL.md) — only if customizing agent | KNOWLEDGE-BASE.md, REFERENCE.md (agent reference) |
 

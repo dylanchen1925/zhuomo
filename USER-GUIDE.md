@@ -1,10 +1,10 @@
 # Zhuomo User Guide
 
-Detailed guide for **you** (not the agent). How to set up 琢磨, run each operation, and build a personal wiki + skills over time.
+How to set up **琢磨 (Zhuomo)**, learn from sources **one concept at a time**, and keep a personal wiki + optional agent skills.
 
-**Quick links:** [REVIEW.md](REVIEW.md) (explain-back & review) · [FRAMEWORK.md](FRAMEWORK.md) · [SKILL.md](SKILL.md) · [README.md](README.md)
+**You read this guide.** The agent reads [SKILL.md](SKILL.md).
 
-> **2026-06-14:** Flashcards (Spaced Repetition) and Roguelike **Run** are removed. Use **Explain-back [[concept]]** per concept — see [REVIEW.md](REVIEW.md). Sections below on recall/Run are legacy until updated.
+**Quick links:** [REVIEW.md](REVIEW.md) · [LEARNING.md](LEARNING.md) · [FRAMEWORK.md](FRAMEWORK.md) · Obsidian `wiki/help.md`
 
 ---
 
@@ -13,40 +13,36 @@ Detailed guide for **you** (not the agent). How to set up 琢磨, run each opera
 1. [What Zhuomo is](#1-what-zhuomo-is)
 2. [Prerequisites](#2-prerequisites)
 3. [First-time setup](#3-first-time-setup)
-4. [Daily and weekly habits](#4-daily-and-weekly-habits)
-5. [Operations reference](#5-operations-reference)
-6. [Prompt cookbook](#6-prompt-cookbook)
-7. [Learning from sources](#7-learning-from-sources)
-8. [Building domain frameworks](#8-building-domain-frameworks)
-9. [Retention and review](#9-retention-and-review)
-10. [Creating agent skills](#10-creating-agent-skills)
-11. [Domain skills (wiki-backed experts)](#11-domain-skills-wiki-backed-experts)
-12. [Correcting and updating knowledge](#12-correcting-and-updating-knowledge)
-13. [Multi-device workflow](#13-multi-device-workflow)
-14. [Source types](#14-source-types)
-15. [Troubleshooting](#15-troubleshooting)
-16. [Roguelike runs](#16-roguelike-runs)
+4. [Learn by concept (Review & Explain-back)](#4-learn-by-concept-review--explain-back)
+5. [Lint vs Revise](#5-lint-vs-revise)
+6. [Daily and weekly habits](#6-daily-and-weekly-habits)
+7. [Operations reference](#7-operations-reference)
+8. [Prompt cookbook](#8-prompt-cookbook)
+9. [Learning from sources](#9-learning-from-sources)
+10. [Domain frameworks and progress](#10-domain-frameworks-and-progress)
+11. [Applied journal (optional)](#11-applied-journal-optional)
+12. [Creating agent skills](#12-creating-agent-skills)
+13. [Domain skills (wiki-backed experts)](#13-domain-skills-wiki-backed-experts)
+14. [Multi-device workflow](#14-multi-device-workflow)
+15. [Source types](#15-source-types)
+16. [Troubleshooting](#16-troubleshooting)
 17. [FAQ](#17-faq)
 
 ---
 
 ## 1. What Zhuomo is
 
-**琢磨** means to polish and chew over material until it is clear and usable.
+**琢磨** — polish raw material until it is clear, linked, and usable.
 
-You give Zhuomo:
+| You provide | Zhuomo helps produce |
+|-------------|----------------------|
+| EPUB, PDF, articles, video notes, highlights | **Wiki** (Obsidian) — concepts, Evidence, frameworks |
+| Repeatable agent behavior | **Skills** (Cursor) — triggers and workflows |
+| Your study time | **Digests**, **Explain-back** prompts, optional **fables** |
 
-- Books (EPUB), articles, videos, notes, highlights
+**You do not need to name topics upfront.** Drop a source; the agent proposes a topic map and ingests into `wiki/concepts/`.
 
-Zhuomo helps you produce:
-
-| Output | What it is for |
-|--------|----------------|
-| **Personal wiki** (Obsidian) | Concepts, frameworks, digests — your long-term memory |
-| **Agent skills** (Cursor) | When X happens, do Y — repeatable agent behavior |
-| **Learning artifacts** | Digests, quizzes, flashcards, **roguelike runs** — faster human learning |
-
-**You do not need to name topics upfront.** Drop a source; the agent discovers topics and proposes a topic map when useful.
+**Learning model (2026):** study **per concept** — read the page, **Review** (mark read), **Explain-back** (teach it aloud in chat). No flashcard decks, no Roguelike runs.
 
 ---
 
@@ -54,220 +50,286 @@ Zhuomo helps you produce:
 
 | Tool | Purpose |
 |------|---------|
-| **Cursor** | Agent runs Zhuomo skill (`/zhuomo` or natural language) |
-| **Obsidian** | Read and review wiki (recommended) |
-| **Git** (optional) | Version wiki and skill repos |
-| **Spaced Repetition plugin** | Review recall cards — [Obsidian plugin](https://github.com/st3v3nmw/obsidian-spaced-repetition) |
+| **Cursor** | Run Zhuomo (`/zhuomo` or natural language) |
+| **Obsidian** | Read wiki, graph, optional Dataview for review queue |
+| **Git** (optional) | Version wiki or skill repos |
 
-Install the Zhuomo skill where Cursor discovers skills, e.g. symlink:
+Install the skill:
 
 ```bash
 ln -sf /path/to/zhuomo ~/.cursor/skills/zhuomo
 ```
 
+You do **not** need the Obsidian Spaced Repetition plugin.
+
 ---
 
 ## 3. First-time setup
 
-### Step 1: Bootstrap paths
+### Step 1: Bootstrap
 
-In Cursor chat:
+In Cursor:
 
 ```
 /zhuomo Bootstrap: raw ~/zhuomo-data/raw/, Obsidian vault ~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen
 ```
 
-The agent should create folders and `AGENTS.md` with **reference depth default** (deepen all concepts on ingest). Then ingest your first source — same default unless you say `overview only`:
+Or bootstrap and ingest the first book in one line:
 
 ```
 /zhuomo Bootstrap + ingest: ~/zhuomo-data/raw/books/my-first-book.epub
 ```
 
-Or bootstrap first, ingest second:
+**Default:** reference depth — topic map, EPUB md corpus, **all concepts deepened** with `## Explain-back` + `## Evidence`.
 
-```
-/zhuomo Bootstrap: raw ~/zhuomo-data/raw/, Obsidian vault ~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen
+**Lite:** add `overview only` or `Bootstrap lite` for stubs first.
 
-/zhuomo Ingest: ~/zhuomo-data/raw/books/my-first-book.epub
-```
-
-**Lite opt-out:** add `overview only` or use `Bootstrap lite:` for stub-first workflow.
+### Step 2: Folder layout
 
 ```
 ~/zhuomo-data/raw/
 ├── inbox/          # phone captures
-├── web/
-├── video/
-├── books/
-├── assets/
+├── web/ · video/ · books/ · assets/
 └── processed/
 
-~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen/
-├── AGENTS.md       # wiki schema for agents
+vault/
+├── AGENTS.md
 └── wiki/
-    ├── index.md
-    ├── log.md
-    ├── domain-map.md   # when you have 2+ domains
-    ├── domains/
+    ├── overview.md · index.md · log.md · domain-map.md · help.md
+    ├── domains/<slug>/overview.md (+ optional guide.md)
+    ├── concepts/*.md
     ├── sources/
-    ├── concepts/
     ├── synthesis/
     └── learn/
         ├── digests/
-        ├── recall/
-        ├── quizzes/
-        ├── runs/
-        └── applied/
+        ├── fables/
+        ├── reviews/    # optional session logs
+        └── applied/    # optional practice notes
 ```
 
-### Step 2: Open Obsidian
+### Step 3: Open Obsidian
 
-Open the Obsidian vault folder **Dylan Chen** (iCloud); wiki lives under `wiki/`.
+Open the vault; start from `wiki/overview.md` or `wiki/help.md`.
 
-### Step 3: Install Spaced Repetition (recommended)
-
-In Obsidian → Community plugins → **Spaced Repetition** (st3v3nmw).
-
-Suggested settings:
-
-- Include folder: `wiki/learn/recall/`
-- Deck tags: `#flashcards/[domain]` matching your domain slugs
-
-Details: [RETENTION.md](RETENTION.md).
-
-### Step 4: AGENTS.md + help
-
-Bootstrap writes vault `AGENTS.md` and copies **`wiki/help.md`** — your daily command cheatsheet. Template: [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md#schema-agentsmd-section) · repo `templates/wiki/help.md`.
-
-Open **`[[help]]`** in Obsidian when you forget a command.
-
-### Step 5: First ingest
-
-Save a book or article to `raw/`, then (default = deepen all + Evidence):
+### Step 4: First ingest
 
 ```
 /zhuomo Ingest: ~/zhuomo-data/raw/books/my-first-book.epub
 ```
 
-Quick map only:
+Map only:
 
 ```
-/zhuomo Ingest overview only: raw/web/my-first-article.md
+/zhuomo Ingest overview only: raw/web/article.md
 ```
 
-Open Obsidian and browse full concept pages under `wiki/`.
+Browse `wiki/concepts/` — each deepened page should have **Explain-back** then **Evidence**.
 
 ---
 
-## 4. Daily and weekly habits
+## 4. Learn by concept (Review & Explain-back)
+
+### The loop
+
+```mermaid
+flowchart LR
+  R[Read concept] --> V[Review]
+  V --> E[Explain-back]
+  E --> P{passed?}
+  P -->|yes| S[solid]
+  P -->|no| F[Fable or Revise]
+```
+
+| Step | You say | What happens |
+|------|---------|----------------|
+| **Read** | Open `wiki/concepts/…` | Claim, mechanics, figures inline |
+| **Review** | `Review [[concept]]` | `reviewed: YYYY-MM-DD` on the page |
+| **Explain-back** | `Explain-back [[concept]]` | Agent uses `## Explain-back` prompts, scores you |
+| **Promote** | `Promote [[concept]] to solid` | After **passed** — updates mastery + domain overview |
+
+Full spec: [REVIEW.md](REVIEW.md).
+
+### Concept page shape
+
+```markdown
+## Claim
+…
+
+## Mechanics / …
+…
+
+## Explain-back
+1. *"Walk me through …"*
+2. *"What's the trap …"*
+
+## Evidence
+- [[sources/…]]
+```
+
+### Frontmatter (progress)
+
+| Field | Meaning |
+|-------|---------|
+| `reviewed` | You read and accept this version |
+| `explain_back` | `not_started` · `attempted` · `passed` |
+| `mastery` | `learning` · `solid` |
+| `wiki_revised` | Agent last edited — if **after** `reviewed`, read again |
+
+**Agent revise ≠ you reviewed.** After you and the agent fix a page in chat, run `Review [[concept]]` when satisfied.
+
+### Explain-back rubric (summary)
+
+**Passed:** correct Claim, mechanism OK, at least one constraint/trap, aligns with Evidence, handles one follow-up.
+
+**Partial / fail:** agent suggests re-read, **Learn fable**, or **Revise**.
+
+### Review queue
+
+```
+Review queue: cisco-aci
+```
+
+Or run `python3 scripts/lint-review-queue.py <vault>/wiki` from the zhuomo repo.
+
+Shows concepts where:
+
+- `wiki_revised > reviewed` (agent changed page)
+- never `reviewed`
+- reviewed but `explain_back` not `passed`
+
+---
+
+## 5. Lint vs Revise
+
+| | **Lint** | **Revise** |
+|---|----------|------------|
+| **Purpose** | Health scan — find problems | Fix a specific page |
+| **Trigger** | `Lint`, `Weekly`, after big ingest | You spot error; Explain-back fail; Lint item |
+| **Changes wiki?** | Usually lists issues only | **Yes** — edits content |
+| **Log** | `lint | …` | `revise | [[concept]]` |
+| **Side effect** | — | Sets `wiki_revised` → may need **Review** again |
+
+**Typical flow:**
+
+```
+Lint  →  "aci-border-leaf missing inline Figure"
+Revise →  Revise [[aci-border-leaf-l3out]] — add Figure 91 inline
+Review →  Review [[aci-border-leaf-l3out]] — I've read the fix
+Explain-back →  test mastery
+```
+
+---
+
+## 6. Daily and weekly habits
 
 ### Light daily (5–10 min)
 
-- Capture URLs or notes to `raw/inbox/` (phone or laptop)
-- Read one digest in Obsidian
-- Review due flashcards (Spaced Repetition)
+- Drop captures in `raw/inbox/`
+- Read one concept or digest
+- `Review [[concept]]` or `Explain-back [[concept]]` for what you studied
 
-### After reading a chapter (15–30 min)
-
-```
-/zhuomo I finished ch.3 of [book] — recap quiz + update [domain] framework
-```
-
-### Weekly ritual (~15 min)
+### After a chapter (15–30 min)
 
 ```
-/zhuomo Weekly review
+/zhuomo I finished ch.3 — recap digest + ensure Explain-back on new concepts
 ```
 
-Agent runs:
+### Weekly (~15 min)
 
-1. **Review** — SR cards + one explain-back
-2. **Connect** — cross-domain link prompt
-3. **Lint** — top issues → revise tasks
-4. **Progress** — bump one gap on a study path
-5. **Applied** — scan `wiki/learn/applied/` for wiki updates
+```
+/zhuomo Weekly
+```
 
-You append to `wiki/log.md` via the agent.
+1. **Review queue** — re-read `wiki_revised > reviewed`
+2. **One Explain-back** on a weak concept
+3. **Lint** — links, Evidence, figures, review queue
+4. **Sync** `domains/*/overview.md` progress
+5. **Applied** (optional) — scan `learn/applied/`
+
+Agent appends `wiki/log.md`.
 
 ---
 
-## 5. Operations reference
+## 7. Operations reference
 
-**Core loop (4 + 1):** Bootstrap → Ingest → Query → Revise; optional **Weekly**. Full cheatsheet: Obsidian `wiki/help.md`.
+**Core loop:** Bootstrap → Ingest → Query → Revise; optional **Weekly**.
 
-| Operation | You say (examples) | You get |
-|-----------|-------------------|---------|
-| **Ingest** | `Ingest: book.epub` | Deepened concepts + Evidence (default) |
+| Operation | Examples | Output |
+|-----------|----------|--------|
+| **Ingest** | `Ingest: book.epub` | Concepts + Explain-back + Evidence (default) |
 | **Query** | `Query: …` / `Query search: …` | Synthesis + Gaps, or page list |
-| **Revise** | `Revise [[page]] — …` | Fixed pages + propagation |
-| **Weekly** | `Weekly review` | Review + Lint + progress |
-| **Learn** | `Learn fable: [[concept]]` | Fable, digest, recall *(optional)* |
-| **Lint** | `Lint the wiki` | Health check *(or part of Weekly)* |
-| **Run** | `Run: fuse A + B` | Roguelike *(advanced)* |
-| **Framework** | *(usually automatic on ingest)* | Updates `domains/*/overview.md` |
+| **Review** | `Review [[concept]]` | `reviewed` date |
+| **Explain-back** | `Explain-back [[concept]]` | Rubric score, optional `solid` |
+| **Revise** | `Revise [[page]] — …` | Fixed pages + `wiki_revised` |
+| **Lint** | `Lint` | Issue list (+ review queue) |
+| **Weekly** | `Weekly` | Ritual above |
+| **Learn** | `Learn fable: [[concept]]` | Digest, fable (optional) |
+| **Framework** | *(usually on ingest)* | `domains/*/overview.md` |
 
-**Archive only:** add `archive only` to skip learn artifacts:
+**Archive only** (no learn artifacts):
 
 ```
 /zhuomo Ingest raw/paper.pdf — archive only
 ```
 
+**Overview only:**
+
+```
+/zhuomo Ingest overview only: book.epub
+```
+
 ---
 
-## 6. Prompt cookbook
+## 8. Prompt cookbook
 
 ### Bootstrap and maintenance
 
 ```
-/zhuomo Bootstrap: raw ~/zhuomo-data/raw/, Obsidian vault ~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen
+/zhuomo Bootstrap: raw ~/zhuomo-data/raw/, Obsidian vault ~/path/to/vault
 
 /zhuomo Process everything in ~/zhuomo-data/raw/inbox/
 
-/zhuomo Lint the whole wiki — top 10 issues
+/zhuomo Lint
 
-/zhuomo Weekly review
+/zhuomo Weekly
 ```
 
-### Roguelike runs
+### Per-concept study
 
 ```
-/zhuomo Run: fuse networking + psychology — roguelike, 5 floors, medium
+Review [[aci-spine-leaf-topology]]
 
-/zhuomo Run random — 2 domains from domain-map, easy, 3 floors
+Explain-back [[aci-border-leaf-l3out]]
 
-/zhuomo Run themed "incident response" — weakest domains from framework progress
+Review queue: cisco-aci
 
-/zhuomo Run rematch seed:2026-06-01-net-psych-7
+Promote [[aci-spine-leaf-topology]] to solid — explain-back passed
 ```
 
-### Ingest (no topic required)
+### Ingest
 
 ```
-/zhuomo Ingest raw/ddia.epub ch. 1 — discover topics, no lens from me.
+/zhuomo Ingest raw/ddia.epub — discover topics, deepen all.
 
-/zhuomo Ingest this blog. I care about caching only; still list other topics at the end.
+/zhuomo Ingest this blog — focus caching; list other topics at end.
 
-/zhuomo Here's a paper — topic map first, then ingest everything into wiki.
+/zhuomo Ingest overview only: huge-book.epub
 ```
 
 ### Learn
 
 ```
-/zhuomo Learn mode: preview raw/new-book.epub ch.1 before I read it.
+/zhuomo Learn mode: preview raw/new-book.epub ch.1
 
-/zhuomo I finished ch.3 — recap quiz + update my distributed-systems framework.
+/zhuomo Learn fable: [[aci-tenant-epg-contract]] — reveal at end
 
-/zhuomo Explain event sourcing back to me; correct me using the wiki.
-
-/zhuomo Learn fable: [[event-sourcing]] — don't name it until the end; then map story beats to the wiki.
-
-/zhuomo Learn fable mode — pick the weakest pillar on my ACI overview.
+/zhuomo Connect: how does [[aci-multi-pod]] relate to [[aci-multi-site]]?
 ```
 
 ### Skills
 
 ```
-/zhuomo Extract a skill from [[concept-page]] — RED first.
+/zhuomo Extract skill from [[concept-page]] — RED first
 
 /zhuomo Domain skill: network-expert — wiki backend wiki/domains/networking/
 ```
@@ -275,348 +337,224 @@ You append to `wiki/log.md` via the agent.
 ### Revise
 
 ```
-/zhuomo Revise [[bgp]] — MED is lower preferred in my notes but wiki says higher wins locally. Source: [link].
+/zhuomo Revise [[bgp]] — claim was wrong; evidence: [link]
 
-/zhuomo Merge duplicate pages [[foo]] and [[foo-bar]].
+/zhuomo Merge [[foo]] and [[foo-bar]]
+```
+
+### Applied (optional)
+
+```
+/zhuomo Applied: production incident — [[aci-border-leaf-l3out]] — static route asymmetry
 ```
 
 ---
 
-## 7. Learning from sources
+## 9. Learning from sources
 
-Zhuomo supports four **learn modes** (agent can suggest):
+### Learn modes
 
 | Mode | When | Output |
 |------|------|--------|
-| **Preview** | Before reading | Topic map, pretest, links to framework |
-| **Companion** | While reading | Per-chunk digest tied to pillars |
-| **Recap** | After ingest | Quiz, recall cards, framework progress |
+| **Preview** | Before reading | Topic map, pretest, link to domain overview |
+| **Companion** | While reading | Chunk digests tied to pillars |
+| **Recap** | After ingest | Digest; `## Explain-back` on concepts |
 | **Connect** | Any time | Cross-domain relations |
+| **Fable** | Hard abstract concept | `wiki/learn/fables/` — Askell narrative |
 
-### Artifacts (where to find them)
+### Artifacts
 
 | Artifact | Path |
 |----------|------|
 | Study digest | `wiki/learn/digests/[source-slug].md` |
-| Recall cards | `wiki/learn/recall/[domain]/` |
-| Quizzes | `wiki/learn/quizzes/` |
-| Applied journal | `wiki/learn/applied/` |
-| Pretest | In digest `## Pretest` |
+| Explain-back prompts | `wiki/concepts/*.md` → `## Explain-back` |
+| Review session log | `wiki/learn/reviews/YYYY-MM-DD.md` |
+| Fable | `wiki/learn/fables/[domain]/` |
+| Applied | `wiki/learn/applied/` (optional) |
+| Pretest | digest `## Pretest` |
 
-**Rules for you:**
+**Rules:**
 
-- Digests should fit **one screen** — drill down via wikilinks
+- Digests fit **one screen** — depth via wikilinks to concepts
 - Learning artifacts teach **you**; skills teach **agents**
-- Default after ingest: digest + framework update (unless archive only)
+- Default after ingest: deepen concepts + optional digest (unless `archive only`)
 
-Full detail: [LEARNING.md](LEARNING.md).
-
----
-
-## 8. Building domain frameworks
-
-Domain **framework** = `wiki/domains/[slug]/overview.md` (pillars, progress, glossary). Optional `guide.md` = technical one-pager. **Ingest updates overview automatically** — you rarely need a separate Framework command.
-
-### When to create a domain
-
-- You have a sustained interest (networking, psychology, finance, …)
-- Multiple sources map to the same pillar structure
-
-### Start L0: domain map
-
-File: `wiki/domain-map.md` — list domains, one-line description, link to each `overview.md`.
-
-### Build L1: overview.md
-
-Path: `wiki/domains/[slug]/overview.md`
-
-Include:
-
-1. North star (one sentence)
-2. Pillars (wikilinked big ideas)
-3. Mental model
-4. Progress table (strength, sources, gaps)
-5. Cross-domain links
-6. Optional study path
-
-Template: [LEARNING.md § Domain overview](LEARNING.md#framework-operation)
-
-### Progress strength
-
-| Strength | Meaning |
-|----------|---------|
-| **learning** | Exposed, not yet teachable |
-| **solid** | You can explain and apply — see mastery in [RETENTION.md](RETENTION.md) |
-
-Ask the agent to update after each ingest touching that domain (usually automatic):
-
-```
-/zhuomo Update domains/networking/overview after today's BGP ingest
-```
-
-Conceptual overview: [FRAMEWORK.md](FRAMEWORK.md#4-knowledge-framework-l0--l3).
+Detail: [LEARNING.md](LEARNING.md).
 
 ---
 
-## 9. Retention and review
+## 10. Domain frameworks and progress
 
-### Flashcards
+Each domain has **`wiki/domains/<slug>/overview.md`** — why learn, pillars, **progress table**, glossary. Optional **`guide.md`** = one-scroll technical digest.
 
-Zhuomo writes cards under `wiki/learn/recall/` with tags like `#flashcards/networking`.
+### Progress (掌握度)
 
-**You review** in Obsidian: *Spaced Repetition: Review flashcards* (phone or laptop).
+| Level | Meaning |
+|-------|---------|
+| **learning** | Deepened; has Evidence |
+| **solid** | **Explain-back passed** |
+| **gap** | Stub or not ingested yet |
 
-Example card shape:
+Ingest usually updates overview automatically. After Explain-back:
+
+```
+/zhuomo Promote [[aci-spine-leaf-topology]] to solid
+```
+
+**Epistemic** (`tentative` / `established`) = how **trustworthy** the claim is (sources, applied). **Mastery** = how well **you** know it. They are separate.
+
+Template: [LEARNING.md](LEARNING.md) · [FRAMEWORK.md](FRAMEWORK.md).
+
+---
+
+## 11. Applied journal (optional)
+
+Record **real-world use** — not required for ingest, Weekly, or `solid`.
+
+Path: `wiki/learn/applied/YYYY-MM-DD-slug.md`
 
 ```markdown
-#flashcards/networking
+# Applied — L3Out change window
 
-What are typical BGP path attributes in evaluation order (simplified)?
-
-?
-
-1. Weight → 2. Local pref → …
-
-→ [[concepts/bgp-path-selection]]
+- **Concepts:** [[aci-border-leaf-l3out]], [[aci-l3out-static-routes]]
+- **Context:** Change window on border pair
+- **Decision:** …
+- **Outcome:** …
+- **Wiki revise?** no / yes
 ```
 
-### Review operation
+- Supports `epistemic: established` when you have multiple real uses
+- **Cannot** replace Explain-back for `solid` — you still need to teach it back
 
-When you want agent help beyond the plugin:
-
-```
-/zhuomo Review — explain-back on weak pillars in networking framework
-```
-
-### Readwise pipeline
-
-1. Export Readwise markdown on laptop
-2. Save to `raw/inbox/readwise-2026-05.md`
-3. `Process inbox — ingest highlights, recall cards for starred items only`
-
-See [REFERENCE.md](REFERENCE.md#readwise--highlights-pipeline).
-
-Full retention spec: [RETENTION.md](RETENTION.md).
+Detail: [RETENTION.md](RETENTION.md).
 
 ---
 
-## 10. Creating agent skills
-
-### When to create a skill
+## 12. Creating agent skills
 
 Create a **technique skill** when:
 
-- There is a clear **trigger** (symptom, situation)
-- The move is **actionable** and **non-default** for the agent
-- You want the agent to follow it under pressure
+- Clear **trigger** (symptom, situation)
+- Action is **non-default** for the agent
+- You want compliance under pressure
 
-Do **not** create a skill for:
-
-- Book plot or chapter summaries
-- Facts that belong in wiki only
-- Generic advice ("be careful", "think step by step")
+Do **not** skill-ify book summaries or wiki-only facts.
 
 ### Workflow (TDD)
 
-1. **Ingest to wiki first** — synthesis and contradictions stay in KB
-2. **Extraction card** — trigger, core move, steps, anti-pattern, example, type
-3. **Filter** — actionable AND non-default?
-4. **RED** — verify baseline fails without skill
-5. **GREEN** — minimal `SKILL.md`
-6. **REFACTOR** — counters, edge cases, re-test
-7. Update `SOURCES.md` and wiki links
+1. Ingest to wiki first
+2. Extraction card — trigger, move, steps, anti-pattern
+3. RED → GREEN → REFACTOR on `SKILL.md`
+4. Link wiki + `SOURCES.md`
 
 ```
-/zhuomo Extract skill for condition-based waiting — RED then GREEN, link wiki [[flaky-tests]]
+/zhuomo Extract skill from [[concept]] — RED then GREEN
 ```
 
-Requires agent skills: **writing-skills**, **write-a-skill** (Cursor superpowers).
-
-### Skill types
-
-| Type | Holds |
-|------|--------|
-| **Technique** | One workflow + trigger |
-| **Domain** | Persona + WIKI-SCOPE (see next section) |
+Requires Cursor skills: **writing-skills**, **write-a-skill**.
 
 ---
 
-## 11. Domain skills (wiki-backed experts)
+## 13. Domain skills (wiki-backed experts)
 
-Use when you want an agent to **reason like an expert** in a field you have already built in the wiki (e.g. BGP, distributed systems).
-
-**Facts stay in wiki.** Skill holds:
-
-- `SKILL.md` — persona, workflow, anti-patterns (lean)
-- `WIKI-SCOPE.md` — which pages to load at invoke time
-- `SOURCES.md` — wiki paths + raw provenance
-
-Example:
+Expert persona + **WIKI-SCOPE.md** manifest. Facts stay in wiki.
 
 ```
-/zhuomo Domain skill: network-expert — wiki backend wiki/domains/networking/ + BGP concepts. WIKI-SCOPE manifest only; no fact dump in SKILL.md.
+/zhuomo Domain skill: network-expert — wiki backend wiki/domains/cisco-aci/
 ```
 
-When facts change: **Revise wiki only** — redeploy skill only if workflow/discipline changed.
+When facts change: **Revise wiki** — redeploy skill only if workflow changed.
 
-Full pattern: [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md).
+[WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md).
 
 ---
 
-## 12. Correcting and updating knowledge
-
-### When to revise
-
-- You spot an error
-- New source contradicts old wiki claim
-- Lint reports duplicate or stale pages
-- Practice (applied journal) contradicts theory
-
-### What to say
-
-```
-/zhuomo Revise [[page]] — [what was wrong], evidence: [source or reasoning], new claim: […]
-```
-
-Agent should:
-
-1. Fill a **revision card** (see [REFERENCE.md](REFERENCE.md))
-2. Edit, supersede, merge, or retract — **not** silent delete
-3. **Propagate** to all pages and skills citing old claim
-4. Append `wiki/log.md`: `revise | [[page]] | reason`
-
-### Supersede pattern
-
-Old page: `status: superseded` + link to canonical page.  
-Git keeps history; `log.md` keeps intent.
-
----
-
-## 13. Multi-device workflow
+## 14. Multi-device workflow
 
 | Device | Do | Don't |
 |--------|-----|--------|
-| **iPhone** | Save to `raw/inbox/`; read wiki; SR review | Full EPUB ingest; paywalled fetch |
-| **Laptop** | Ingest, learn, framework, revise, skills | Rely on phone for heavy processing |
+| **Phone** | `raw/inbox/`; read wiki; Review/Explain-back in Cursor mobile if available | Heavy EPUB ingest |
+| **Laptop** | Ingest, Revise, Learn, skills | — |
 
-### Sync suggestions
+| Layer | Sync |
+|-------|------|
+| Wiki | iCloud / Obsidian Sync / Git |
+| `raw/inbox/` | iCloud / Dropbox |
 
-| Layer | Method |
-|-------|--------|
-| Wiki | Obsidian Sync, iCloud, or Git + Working Copy |
-| Raw `inbox/` | iCloud Drive / Dropbox / Syncthing |
-| Raw `books/` | Usually laptop-only |
-
-### Inbox capture template (phone)
+Phone capture template:
 
 ```markdown
 ---
 url:
-title:
-captured: 2026-05-30
-device: iphone
+captured: 2026-06-14
 status: inbox
 ---
-
-One line: why I saved this.
+Why I saved this.
 ```
 
 Laptop:
 
 ```
-/zhuomo Process raw/inbox/ — ingest to wiki, move to processed/
+/zhuomo Process raw/inbox/
 ```
-
-Details: [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md#multi-device-sync-laptop--iphone).
 
 ---
 
-## 14. Source types
+## 15. Source types
 
 | Source | Raw location | Notes |
 |--------|--------------|-------|
-| Web article | `raw/web/` | Clip or save markdown; URL alone is not enough |
-| EPUB / PDF | `raw/books/` | Ingest by chapter for large books |
+| Web | `raw/web/` | Save content, not URL alone |
+| EPUB / PDF | `raw/books/` | Default: full md corpus + deepen all |
 | Video | `raw/video/` | Transcript or notes |
-| Readwise export | `raw/inbox/readwise-*.md` | Ingest to wiki; optional recall for ★ highlights |
+| Readwise | `raw/inbox/readwise-*.md` | Ingest to wiki |
 | Phone note | `raw/inbox/` | Process on laptop |
 
-EPUB, video, O'Reilly: see [REFERENCE.md](REFERENCE.md).
+EPUB detail: [REFERENCE.md](REFERENCE.md#epub-epub).
 
 ---
 
-## 15. Troubleshooting
+## 16. Troubleshooting
 
 | Problem | Likely cause | Fix |
 |---------|--------------|-----|
-| Agent gives chat-only answers | Query not filed back | Ask to file answer to `wiki/synthesis/` |
-| Duplicate concept pages | Skipped topic map / search | Lint + merge; search before ingest |
-| Skill is a book summary | Skipped filter | Wiki for narrative; skill needs trigger |
-| Wiki and skill disagree | No revise after correction | Revise wiki + update skill |
-| Flashcards never reviewed | No SR plugin / habit | Install plugin; Weekly review |
-| Phone can't find raw books | Books not synced | Keep `books/` laptop-only |
-| Ingest twice same URL | No duplicate check | Agent checks `wiki/sources/` first |
-| Overwhelming topic map | Large source | Ingest 1–2 clusters per session |
-| Run questions not from my wiki | Agent skipped concept pages | Require wiki cites; see [RUN.md](RUN.md) |
-| Story filed as wiki fact | Missing `fictional-scenario` tag | Revise if needed; runs go in `wiki/learn/runs/` only |
-| Book ingest lost detail / no provenance | Pillar-only pass; no MD corpus | Run `scripts/epub-to-wiki-md.py`; deepen by chapter; add `## Evidence` per [REFERENCE.md](REFERENCE.md#epub-epub) |
-
----
-
-## 16. Roguelike runs
-
-**Run** turns your multi-domain wiki into a **roguelike learning game**: fictional scenario, escalating floors, wiki-grounded questions, debrief + loot.
-
-| Piece | Meaning |
-|-------|---------|
-| **Scenario** | Made-up setting (bank outage, Mars colony, etc.) |
-| **Floors** | Harder questions each floor; death = failed explain-back |
-| **Fusion** | 2+ domains from `domain-map.md` combined in one story |
-| **Loot** | New recall cards, synthesis stubs, framework progress |
-| **Boss** | Final cross-domain tradeoff question |
-
-**Rules:** fiction is allowed; **answers must cite your wiki**. Contested topics stay contested. If a run exposes a wiki error → **Revise**, don't patch via story.
-
-### When to use
-
-- After you have concept pages in 2+ domains
-- Weekly ritual alternative to Connect (10 min)
-- When quizzes feel too flat — you want **integration under pressure**
-
-### Example
-
-```
-/zhuomo Run: fuse networking + psychology — 5 floors, medium
-```
-
-You play in chat; agent files `wiki/learn/runs/YYYY-MM-DD-seed.md` with grades and loot.
-
-Full spec: [RUN.md](RUN.md).
+| Chat-only answers | Query not filed | File to `wiki/synthesis/` or deepen concept |
+| Duplicate concepts | Skipped search | `Lint` + merge |
+| Wiki vs skill disagree | Stale skill | `Revise` wiki; update skill if workflow changed |
+| Page changed but I didn't notice | `wiki_revised` after chat Revise | `Review queue: <domain>` |
+| No Explain-back section | Old stub or skipped deepen | `Revise` or re-run `migrate-concept-review.py` |
+| `solid` too early | Ingest marked solid | Only **Promote** after Explain-back passed |
+| Ingest shallow / no Evidence | `overview only` | Full `Ingest` or `Deepen all` |
+| Broken wikilinks | Moved/deleted page | `Lint` |
+| Phone can't read `raw/books/` | Laptop-only folder | Expected — use inbox on phone |
 
 ---
 
 ## 17. FAQ
 
 **Do I have to name the topic?**  
-No. Optional lens only. Agent discovers from TOC/headings.
+No. Optional lens only.
 
 **Wiki only or skill only?**  
-Say `wiki only` or `one skill` as your goal. Default is wiki + learn + framework; skills when actionable.
+Say explicitly. Default: wiki + learn + framework.
 
-**One vault for unrelated subjects?**  
-Yes. Use `domain-map.md` and `wiki/domains/*/`.
+**One vault for many subjects?**  
+Yes. Use `domain-map.md` and `domains/*/overview.md`.
 
 **Is Obsidian required?**  
-No, but recommended for reading, graph, and spaced repetition.
+No, but best for reading and links.
 
 **Where does the agent write?**  
-Only under `wiki/`. Raw is read-only for the agent.
+Only `wiki/`. Raw is read-only for the agent.
 
-**Can I use RAG instead of a wiki?**  
-Zhuomo assumes compile-once wiki. RAG-only loses revise, links, and frameworks.
+**Flashcards / Run?**  
+Removed. Use **Explain-back** per concept. Old Run spec: [docs/archive/RUN.md](docs/archive/RUN.md).
 
-**How is this different from Readwise → Obsidian sync?**  
-Readwise sync is another raw snapshot until **ingest** compiles concepts and frameworks.
+**Readwise vs Zhuomo ingest?**  
+Readwise export is raw until ingest compiles concepts.
+
+**How long per concept?**  
+Read 5–15 min; Explain-back 5–10 min when ready.
 
 ---
 
@@ -624,12 +562,14 @@ Readwise sync is another raw snapshot until **ingest** compiles concepts and fra
 
 | File | Use when |
 |------|----------|
-| [USER-GUIDE.md](USER-GUIDE.md) | This guide — setup and daily use |
-| [FRAMEWORK.md](FRAMEWORK.md) | Understanding the system model |
-| [RUN.md](RUN.md) | Roguelike multi-domain runs |
-| [SKILL.md](SKILL.md) | What the agent reads first |
-| [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) | Wiki layout and operations |
-| [LEARNING.md](LEARNING.md) | Learn modes and framework template |
-| [RETENTION.md](RETENTION.md) | Flashcards and weekly ritual |
+| [USER-GUIDE.md](USER-GUIDE.md) | This guide |
+| [REVIEW.md](REVIEW.md) | Explain-back, review fields, Weekly |
+| [LEARNING.md](LEARNING.md) | Digests, fable, learn modes |
+| [RETENTION.md](RETENTION.md) | Epistemic tags, applied (optional) |
+| [FRAMEWORK.md](FRAMEWORK.md) | System model |
+| [SKILL.md](SKILL.md) | Agent entry point |
+| [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) | Wiki layout (agents) |
+| [REFERENCE.md](REFERENCE.md) | EPUB, Readwise, revision cards |
 | [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md) | Domain expert skills |
-| [REFERENCE.md](REFERENCE.md) | EPUB, video, revision cards |
+| [SIMPLE.md](SIMPLE.md) | Minimal path |
+| Obsidian `wiki/help.md` | Daily cheatsheet |

@@ -20,13 +20,12 @@ How to set up **琢磨 (Zhuomo)**, learn from sources **one concept at a time**,
 8. [Prompt cookbook](#8-prompt-cookbook)
 9. [Learning from sources](#9-learning-from-sources)
 10. [Domain frameworks and progress](#10-domain-frameworks-and-progress)
-11. [Applied journal (optional)](#11-applied-journal-optional)
-12. [Creating agent skills](#12-creating-agent-skills)
-13. [Domain skills (wiki-backed experts)](#13-domain-skills-wiki-backed-experts)
-14. [Multi-device workflow](#14-multi-device-workflow)
-15. [Source types](#15-source-types)
-16. [Troubleshooting](#16-troubleshooting)
-17. [FAQ](#17-faq)
+11. [Creating agent skills](#11-creating-agent-skills)
+12. [Domain skills (wiki-backed experts)](#12-domain-skills-wiki-backed-experts)
+13. [Multi-device workflow](#13-multi-device-workflow)
+14. [Source types](#14-source-types)
+15. [Troubleshooting](#15-troubleshooting)
+16. [FAQ](#16-faq)
 
 ---
 
@@ -101,10 +100,7 @@ vault/
     ├── sources/
     ├── synthesis/
     └── learn/
-        ├── digests/
-        ├── fables/
-        ├── reviews/    # optional session logs
-        └── applied/    # optional practice notes
+        └── fables/     # optional
 ```
 
 ### Step 3: Open Obsidian
@@ -145,7 +141,7 @@ flowchart LR
 | **Read** | Open `wiki/concepts/…` | Claim, mechanics, figures inline |
 | **Review** | `Review [[concept]]` | `reviewed: YYYY-MM-DD` on the page |
 | **Explain-back** | `Explain-back [[concept]]` | Agent uses `## Explain-back` prompts, scores you |
-| **Promote** | `Promote [[concept]] to solid` | After **passed** — updates mastery + domain overview |
+| **Promote** | `Promote [[concept]] to solid` | After **passed** — updates concept frontmatter |
 
 Full spec: [REVIEW.md](REVIEW.md).
 
@@ -173,7 +169,7 @@ Full spec: [REVIEW.md](REVIEW.md).
 | `reviewed` | You read and accept this version |
 | `explain_back` | `not_started` · `attempted` · `passed` |
 | `mastery` | `learning` · `solid` |
-| `wiki_revised` | Agent last edited — if **after** `reviewed`, read again |
+| `updated` | Agent last edited — if **after** `reviewed`, read again |
 
 **Agent revise ≠ you reviewed.** After you and the agent fix a page in chat, run `Review [[concept]]` when satisfied.
 
@@ -193,7 +189,7 @@ Or run `python3 scripts/lint-review-queue.py <vault>/wiki` from the zhuomo repo.
 
 Shows concepts where:
 
-- `wiki_revised > reviewed` (agent changed page)
+- `updated > reviewed` (agent changed page)
 - never `reviewed`
 - reviewed but `explain_back` not `passed`
 
@@ -207,7 +203,7 @@ Shows concepts where:
 | **Trigger** | `Lint`, `Weekly`, after big ingest | You spot error; Explain-back fail; Lint item |
 | **Changes wiki?** | Usually lists issues only | **Yes** — edits content |
 | **Log** | `lint | …` | `revise | [[concept]]` |
-| **Side effect** | — | Sets `wiki_revised` → may need **Review** again |
+| **Side effect** | — | Sets `updated` → may need **Review** again |
 
 **Typical flow:**
 
@@ -225,46 +221,35 @@ Explain-back →  test mastery
 ### Light daily (5–10 min)
 
 - Drop captures in `raw/inbox/`
-- Read one concept or digest
-- `Review [[concept]]` or `Explain-back [[concept]]` for what you studied
+- Read one concept
+- `Review [[concept]]` or `Explain-back [[concept]]`
 
-### After a chapter (15–30 min)
+### Weekly (optional)
 
-```
-/zhuomo I finished ch.3 — recap digest + ensure Explain-back on new concepts
-```
-
-### Weekly (~15 min)
+**Not required.** `Weekly` ≈ `Lint` + suggest one Explain-back (~15 min). Study ad hoc is enough.
 
 ```
 /zhuomo Weekly
 ```
 
-1. **Review queue** — re-read `wiki_revised > reviewed`
-2. **One Explain-back** on a weak concept
-3. **Lint** — links, Evidence, figures, review queue
-4. **Sync** `domains/*/overview.md` progress
-5. **Applied** (optional) — scan `learn/applied/`
+Or anytime: `Lint` · `Review queue: cisco-aci` · `Explain-back [[concept]]`
 
-Agent appends `wiki/log.md`.
+Agent may append `wiki/log.md`.
 
 ---
 
 ## 7. Operations reference
 
-**Core loop:** Bootstrap → Ingest → Query → Revise; optional **Weekly**.
+**Six verbs:** Bootstrap · Ingest · Query · Revise · Study · Lint. **Weekly** optional.
 
-| Operation | Examples | Output |
-|-----------|----------|--------|
-| **Ingest** | `Ingest: book.epub` | Concepts + Explain-back + Evidence (default) |
-| **Query** | `Query: …` / `Query search: …` | Synthesis + Gaps, or page list |
-| **Review** | `Review [[concept]]` | `reviewed` date |
-| **Explain-back** | `Explain-back [[concept]]` | Rubric score, optional `solid` |
-| **Revise** | `Revise [[page]] — …` | Fixed pages + `wiki_revised` |
-| **Lint** | `Lint` | Issue list (+ review queue) |
-| **Weekly** | `Weekly` | Ritual above |
-| **Learn** | `Learn fable: [[concept]]` | Digest, fable (optional) |
-| **Framework** | *(usually on ingest)* | `domains/*/overview.md` |
+| Verb | Examples | Output |
+|------|----------|--------|
+| **Ingest** | `Ingest: book.epub` | Concepts + Explain-back + Evidence |
+| **Query** | `Query: …` | Synthesis + Gaps |
+| **Study** | `Review` / `Explain-back` / `Promote` | Frontmatter mastery |
+| **Revise** | `Revise [[page]] — …` | Fixed pages + `updated` |
+| **Lint** | `Lint` | Issues + review queue |
+| **Learn fable** | `Learn fable: [[concept]]` | `wiki/learn/fables/` |
 
 **Archive only** (no learn artifacts):
 
@@ -352,85 +337,44 @@ Promote [[aci-spine-leaf-topology]] to solid — explain-back passed
 
 ## 9. Learning from sources
 
-### Learn modes
+Default ingest: **concepts only** — no `learn/digests/`.
 
-| Mode | When | Output |
-|------|------|--------|
-| **Preview** | Before reading | Topic map, pretest, link to domain overview |
-| **Companion** | While reading | Chunk digests tied to pillars |
-| **Recap** | After ingest | Digest; `## Explain-back` on concepts |
-| **Connect** | Any time | Cross-domain relations |
-| **Fable** | Hard abstract concept | `wiki/learn/fables/` — Askell narrative |
+| On demand | Output |
+|-----------|--------|
+| **Fable** | `Learn fable: [[concept]]` → `wiki/learn/fables/` |
+| **Connect** | Cross-domain relations in chat |
 
-### Artifacts
-
-| Artifact | Path |
-|----------|------|
-| Study digest | `wiki/learn/digests/[source-slug].md` |
-| Explain-back prompts | `wiki/concepts/*.md` → `## Explain-back` |
-| Review session log | `wiki/learn/reviews/YYYY-MM-DD.md` |
-| Fable | `wiki/learn/fables/[domain]/` |
-| Applied | `wiki/learn/applied/` (optional) |
-| Pretest | digest `## Pretest` |
-
-**Rules:**
-
-- Digests fit **one screen** — depth via wikilinks to concepts
-- Learning artifacts teach **you**; skills teach **agents**
-- Default after ingest: deepen concepts + optional digest (unless `archive only`)
-
-Detail: [LEARNING.md](LEARNING.md).
+Explain-back prompts live on each concept page. Detail: [LEARNING.md](LEARNING.md).
 
 ---
 
 ## 10. Domain frameworks and progress
 
-Each domain has **`wiki/domains/<slug>/overview.md`** — why learn, pillars, **progress table**, glossary. Optional **`guide.md`** = one-scroll technical digest.
+Each domain: **`wiki/domains/<slug>/overview.md`** — pillars, glossary, **Dataview progress**. **`guide.md`** = concept index only (concept-first).
 
-### Progress (掌握度)
+### Progress (Dataview)
 
-| Level | Meaning |
+Install Obsidian **Dataview**. Open domain overview → **学习进度** table reads concept frontmatter automatically.
+
+| Field | Meaning |
 |-------|---------|
-| **learning** | Deepened; has Evidence |
-| **solid** | **Explain-back passed** |
-| **gap** | Stub or not ingested yet |
+| `mastery: learning` | Has Evidence |
+| `mastery: solid` | Explain-back passed |
+| `reviewed` | You read this version |
+| `explain_back` | Teach-back status |
+| `updated` | Last page change |
 
-Ingest usually updates overview automatically. After Explain-back:
+How to use queries: [REVIEW.md](REVIEW.md#progress-in-obsidian-dataview).
 
 ```
 /zhuomo Promote [[aci-spine-leaf-topology]] to solid
 ```
 
-**Epistemic** (`tentative` / `established`) = how **trustworthy** the claim is (sources, applied). **Mastery** = how well **you** know it. They are separate.
-
 Template: [LEARNING.md](LEARNING.md) · [FRAMEWORK.md](FRAMEWORK.md).
 
 ---
 
-## 11. Applied journal (optional)
-
-Record **real-world use** — not required for ingest, Weekly, or `solid`.
-
-Path: `wiki/learn/applied/YYYY-MM-DD-slug.md`
-
-```markdown
-# Applied — L3Out change window
-
-- **Concepts:** [[aci-border-leaf-l3out]], [[aci-l3out-static-routes]]
-- **Context:** Change window on border pair
-- **Decision:** …
-- **Outcome:** …
-- **Wiki revise?** no / yes
-```
-
-- Supports `epistemic: established` when you have multiple real uses
-- **Cannot** replace Explain-back for `solid` — you still need to teach it back
-
-Detail: [RETENTION.md](RETENTION.md).
-
----
-
-## 12. Creating agent skills
+## 11. Creating agent skills
 
 Create a **technique skill** when:
 
@@ -455,7 +399,7 @@ Requires Cursor skills: **writing-skills**, **write-a-skill**.
 
 ---
 
-## 13. Domain skills (wiki-backed experts)
+## 12. Domain skills (wiki-backed experts)
 
 Expert persona + **WIKI-SCOPE.md** manifest. Facts stay in wiki.
 
@@ -469,7 +413,7 @@ When facts change: **Revise wiki** — redeploy skill only if workflow changed.
 
 ---
 
-## 14. Multi-device workflow
+## 13. Multi-device workflow
 
 | Device | Do | Don't |
 |--------|-----|--------|
@@ -500,7 +444,7 @@ Laptop:
 
 ---
 
-## 15. Source types
+## 14. Source types
 
 | Source | Raw location | Notes |
 |--------|--------------|-------|
@@ -514,14 +458,14 @@ EPUB detail: [REFERENCE.md](REFERENCE.md#epub-epub).
 
 ---
 
-## 16. Troubleshooting
+## 15. Troubleshooting
 
 | Problem | Likely cause | Fix |
 |---------|--------------|-----|
 | Chat-only answers | Query not filed | File to `wiki/synthesis/` or deepen concept |
 | Duplicate concepts | Skipped search | `Lint` + merge |
 | Wiki vs skill disagree | Stale skill | `Revise` wiki; update skill if workflow changed |
-| Page changed but I didn't notice | `wiki_revised` after chat Revise | `Review queue: <domain>` |
+| Page changed but I didn't notice | `updated` after chat Revise | `Review queue: <domain>` |
 | No Explain-back section | Old stub or skipped deepen | `Revise` or re-run `migrate-concept-review.py` |
 | `solid` too early | Ingest marked solid | Only **Promote** after Explain-back passed |
 | Ingest shallow / no Evidence | `overview only` | Full `Ingest` or `Deepen all` |
@@ -530,7 +474,7 @@ EPUB detail: [REFERENCE.md](REFERENCE.md#epub-epub).
 
 ---
 
-## 17. FAQ
+## 16. FAQ
 
 **Do I have to name the topic?**  
 No. Optional lens only.
@@ -548,7 +492,7 @@ No, but best for reading and links.
 Only `wiki/`. Raw is read-only for the agent.
 
 **Flashcards / Run?**  
-Removed. Use **Explain-back** per concept. Old Run spec: [docs/archive/RUN.md](docs/archive/RUN.md).
+Removed. Use **Explain-back** per concept.
 
 **Readwise vs Zhuomo ingest?**  
 Readwise export is raw until ingest compiles concepts.
@@ -563,9 +507,8 @@ Read 5–15 min; Explain-back 5–10 min when ready.
 | File | Use when |
 |------|----------|
 | [USER-GUIDE.md](USER-GUIDE.md) | This guide |
-| [REVIEW.md](REVIEW.md) | Explain-back, review fields, Weekly |
-| [LEARNING.md](LEARNING.md) | Digests, fable, learn modes |
-| [RETENTION.md](RETENTION.md) | Epistemic tags, applied (optional) |
+| [REVIEW.md](REVIEW.md) | Study, Explain-back, Dataview, optional Weekly |
+| [LEARNING.md](LEARNING.md) | Fable, framework |
 | [FRAMEWORK.md](FRAMEWORK.md) | System model |
 | [SKILL.md](SKILL.md) | Agent entry point |
 | [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) | Wiki layout (agents) |

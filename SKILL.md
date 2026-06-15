@@ -25,29 +25,30 @@ Give future agents: *when* to act, *what* to do, *how* to decide, *what mistakes
 
 **REQUIRED:** **superpowers:writing-skills**, **write-a-skill**  
 **User:** [USER-GUIDE.md](USER-GUIDE.md) · **Framework:** [FRAMEWORK.md](FRAMEWORK.md)  
-**Wiki:** [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) · **Learn:** [LEARNING.md](LEARNING.md) · **Review:** [REVIEW.md](REVIEW.md) · **Retention:** [RETENTION.md](RETENTION.md) · **Domain skills:** [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md)
+**Wiki:** [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) · **Learn:** [LEARNING.md](LEARNING.md) · **Study:** [REVIEW.md](REVIEW.md) · **Domain skills:** [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md) *(advanced)*
 
 ## When to Use / NOT
 
-**Use:** sources → wiki and/or skill; **learn** from resources (digests, fable); **review / explain-back** per concept; **build/update domain frameworks**; multi-domain vault; correct or update existing pages.
+**Use:** sources → wiki; **study** per concept (Review, Explain-back); **fable** on demand; correct wiki; optional skill extraction.
 
-**Don't:** one-off answers without filing; silent overwrite; delete history instead of supersede/archive; wall-of-text summaries instead of linked learning artifacts.
+**Don't:** one-off answers without filing; silent overwrite; digest duplicates of concepts; hand-maintained 100-row progress tables.
 
-## Eight operations
+## User verbs (6) — agent routing
 
-| Op | When | Output |
-|----|------|--------|
-| **Ingest** | New source | Wiki pages + `## Evidence` + `## Explain-back` per concept |
-| **Learn** | User studying | Digests, pretest, **fable** (Askell) → `wiki/learn/` |
-| **Review** | Read a concept | `reviewed:` date; optional `learn/reviews/` note — [REVIEW.md](REVIEW.md) |
-| **Explain-back** | Test mastery | Rubric score → `explain_back`, optional `solid` — [REVIEW.md](REVIEW.md) |
-| **Framework** | After ingest or on request | `domain-map`, per-domain `overview.md` (pillars + progress), optional `guide.md` |
-| **Weekly** | ~15 min ritual | Review queue + explain-back + Lint → `log.md` |
-| **Query** | Question | **search** (page list) or **think** (synthesis + gaps + file back) |
-| **Revise** | Wrong, stale, duplicate | Corrected pages + `wiki_revised:` + log |
-| **Lint** | Periodic health | Links, Evidence, figures, **review queue** → often Revise |
+| Verb | Ops bundled | Output |
+|------|-------------|--------|
+| **Bootstrap** | setup + optional first ingest | Folders, `AGENTS.md`, wiki skeleton |
+| **Ingest** | topic map, deepen, framework | Concepts + Evidence + `## Explain-back`; slim `guide.md` index |
+| **Query** | search / think | Answer + Gaps; file back if valuable |
+| **Revise** | propagate fix | Corrected pages; `updated:` date; log |
+| **Study** | Review, Explain-back, Promote, Review queue | Frontmatter mastery fields |
+| **Lint** | doctor-lite + review queue | Issue list → Revise |
 
-Details: [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md), [LEARNING.md](LEARNING.md), [REVIEW.md](REVIEW.md), [RETENTION.md](RETENTION.md)
+**Weekly** (optional): alias for Lint + suggest one Explain-back — not required.
+
+Internal names still valid: `Review [[x]]`, `Explain-back [[x]]`, `Framework`, `Learn fable`.
+
+Details: [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md), [LEARNING.md](LEARNING.md), [REVIEW.md](REVIEW.md)
 
 ## Wiki vs Skill
 
@@ -89,8 +90,8 @@ One resource → **one source summary** + **many concept pages** across **one or
 | Page | Path | Holds |
 |------|------|-------|
 | **Vault hub** | `wiki/overview.md` | Domain table + ingest rules only — **no domain prose** |
-| **Domain entry** | `wiki/domains/<slug>/overview.md` | Why learn, architect lens, pillars, progress, glossary, study order, gaps |
-| **Domain guide** (optional) | `wiki/domains/<slug>/guide.md` | One-page technical digest (merge of concept pages) |
+| **Domain entry** | `wiki/domains/<slug>/overview.md` | Why learn, pillars, **Dataview progress**, glossary, gaps |
+| **Domain guide** (optional) | `wiki/domains/<slug>/guide.md` | Concept index + mental model only (concept-first) |
 | **Concepts** | `wiki/concepts/*.md` | Full depth + `## Explain-back` + `## Evidence` when deepened |
 
 New domain ingest: add a row to vault `overview.md` + `domain-map.md`; create `domains/<slug>/overview.md`. Add `guide.md` when domain has enough deepened concepts for one-scroll digest.
@@ -114,7 +115,7 @@ Batch backfill / re-inline: `python3 scripts/embed-figure-visuals.py <vault>/wik
 **Agent does:**
 
 1. Create `raw/` tree (`inbox/`, `web/`, `video/`, `books/`, `assets/`, `processed/`).
-2. Create wiki skeleton: `index.md`, `log.md`, `overview.md`, `help.md` (from `templates/wiki/help.md`), `domain-map.md` (empty table OK), `learn/` (`digests/`, `fables/`, `reviews/`, `applied/`, …).
+2. Create wiki skeleton: `index.md`, `log.md`, `overview.md`, `help.md` (from `templates/wiki/help.md`), `domain-map.md`, `learn/fables/` only.
 3. Write vault `AGENTS.md` from [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md#schema-agentsmd-section) — **reference depth default**.
 4. **First source** (on bootstrap line or immediate follow-up ingest):
    - Topic map on `wiki/sources/[slug].md`
@@ -208,10 +209,10 @@ Run on request, after large ingest, or as part of **Weekly**.
 | Broken `[[wikilinks]]` | Fix path or create stub concept linked from domain `overview` pillar |
 | Orphan concept pages (no inbound links) | Link from `overview`, `guide`, or related concepts |
 | Concept mentioned in text but no page | Create stub or merge duplicate |
-| `overview` progress ≠ concept `status` / depth | Revise overview or concept |
+| `overview` progress stale | Progress is Dataview on concepts — no hand table |
 | Deepened book concept missing `## Evidence` | Add Evidence or downgrade progress note |
 | **Figure N** cited without inline visual | Run `scripts/lint-figure-visuals.py`; fix with embed script or manual inline |
-| **Review queue** | `scripts/lint-review-queue.py` — `wiki_revised > reviewed`, missing `## Explain-back` |
+| **Review queue** | `scripts/lint-review-queue.py` — `updated > reviewed`, missing `## Explain-back` |
 | Contradictions between pages | Revise; supersede stale claim |
 | Stale source (newer guide/version exists) | Note in Gaps; flag in `overview` |
 | Duplicate concept pages same topic | Merge; one canonical page |
@@ -221,20 +222,19 @@ Append `## [date] lint | …` to `wiki/log.md`. Turn each row into **Revise** or
 
 **Auto-stub (on ingest/lint):** when a pillar or guide links `[[aci-foo]]` and page missing, create minimal stub with `domain:` frontmatter and link back to pillar — do not leave dangling wikilinks.
 
-## Weekly — mini dream cycle
+## Weekly (optional)
 
-~15 min ritual ([REVIEW.md](REVIEW.md)): **Review queue** → one **Explain-back** → **Lint** → sync overview progress → optional synthesis → `log.md`.
+~15 min: **Lint** + review queue + suggest one **Explain-back** → `log.md`. User can skip; **Lint** + **Study** ad hoc is enough. [REVIEW.md](REVIEW.md)
 
-## Learn & framework (for you, not agents)
+## Learn & framework
 
 | Goal | Ask for |
 |------|---------|
-| Learn faster | **Learn** — digest, **Explain-back**, **fable** |
-| Cross-domain links | **Connect** mode in Learn — [LEARNING.md](LEARNING.md) |
-| See the big picture | **Framework** — update `domains/<slug>/overview.md` (pillars, progress) |
-| Many unrelated subjects | **Multi-domain** — `wiki/domain-map.md` + `wiki/domains/*/` |
+| Hard concept | **Learn fable** → `wiki/learn/fables/` |
+| Big picture | **Framework** — `domains/<slug>/overview.md` pillars + Dataview |
+| Cross-domain | **Connect** in chat |
 
-Default after chapter ingest (unless you say **archive only**): digest + update domain framework. Full guide: [LEARNING.md](LEARNING.md).
+Default ingest: deepen all + `## Explain-back` on concepts — **no digest**. [LEARNING.md](LEARNING.md)
 
 ## Workflow Checklist
 
@@ -244,8 +244,8 @@ Default after chapter ingest (unless you say **archive only**): digest + update 
 - [ ] 1. Intake — source; discover topics; assign domain(s)
 - [ ] 1b. EPUB/PDF — convert full text to wiki/sources/[slug]/md/ (**required** for reference depth)
 - [ ] 2. Ingest — topic map + **deepen all** concepts; Evidence on every concept page; **Figures** when Figure N cited; flag contradictions
-- [ ] 2b. Learn — pretest + digest + `## Explain-back` on concepts; **fable** for hard abstract concepts (skip if "archive only")
-- [ ] 2c. Framework — update `domains/<slug>/overview.md` (pillars, progress, gaps)
+- [ ] 2b. Study — `## Explain-back` on every concept; **fable** only if user asks (skip if "archive only")
+- [ ] 2c. Framework — `overview.md` pillars, gaps, Dataview block; slim `guide.md` index
 - [ ] 3–10. Extract → skill pipeline if actionable
 ```
 
@@ -304,20 +304,20 @@ Full ingest checklist:
 | Duplicate concept pages | Merge on lint/revise; one canonical page |
 | One topic per resource assumed | Multi-topic normal — topic map first, one concept page each |
 | User must name topic upfront | Optional — agent infers; user topic = priority lens only |
-| Summary dump, no framework | Digest + link to pillars; update `domains/<slug>/overview.md` |
-| Hard concept, definition only | **Learn fable** — Askell narrative → reveal → beat map; file `wiki/learn/fables/` |
+| Summary dump, no framework | Link concepts to pillars; update `overview` gaps |
+| Hard concept, definition only | **Learn fable** → `wiki/learn/fables/` |
 | `framework.md` / `mega-overview.md` | Use `overview.md` + optional `guide.md` only — see Wiki page layout |
 | Single-domain assumed | Use domain-map + wiki/domains/* for varied subjects |
 | BGP facts pasted into skill | Domain skill + WIKI-SCOPE; Revise wiki only when facts change |
 | Explain-back never run | `Explain-back [[concept]]` after reading; see [REVIEW.md](REVIEW.md) |
-| Cross-domain only in chat | **Run** — fuse domains, file debrief to `wiki/learn/runs/` |
-| Bootstrap stops at stubs | Default is **deepen all** + md corpus + Evidence; use `overview only` to opt out |
-| Silent long ingest | Confirm once on large books; use closing block + [[help]] |
-| Dump nine operations in chat | Link `wiki/help.md`; core = Bootstrap → Ingest → Query → Revise + Weekly |
+| Cross-domain only in chat | File synthesis to `wiki/synthesis/` or link concepts |
+| Bootstrap stops at stubs | Default **deepen all**; `overview only` to opt out |
+| Silent long ingest | Confirm once; closing block + [[help]] |
+| Dump verbs in chat | Link `wiki/help.md`; core = Bootstrap → Ingest → Query → Revise + Study + Lint |
 
 - [ ] Skill: name, description, SOURCES.md, RED/GREEN/REFACTOR
 - [ ] Raw: local path (e.g. `~/zhuomo-data/raw/`), `inbox/` for phone captures, immutable snapshots
 - [ ] Wiki: Obsidian vault — `wiki/`, index.md, log.md, schema in AGENTS.md; sync to phone for read
 - [ ] Review: explain-back per concept — [REVIEW.md](REVIEW.md); optional Readwise → inbox
 
-Details: [REFERENCE.md](REFERENCE.md), [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md), [LEARNING.md](LEARNING.md), [RETENTION.md](RETENTION.md), [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md)
+Details: [REFERENCE.md](REFERENCE.md), [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md), [LEARNING.md](LEARNING.md), [REVIEW.md](REVIEW.md), [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md)

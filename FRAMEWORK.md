@@ -101,14 +101,12 @@ Operations are the **verbs** of Zhuomo. Each has a trigger, output, and typical 
 |-----------|------|----------------|----------|
 | **Ingest** | New source landed in `raw/` | Concept pages, source summary, index updates | `wiki/` |
 | **Learn** | You are studying (not archive-only) | Digest, `## Explain-back` on concepts | `wiki/learn/` |
-| **Review** | Explain-back or read session | Rubric score, `learn/reviews/` | [REVIEW.md](REVIEW.md) |
+| **Review** | Explain-back or read session | Rubric → concept frontmatter | [REVIEW.md](REVIEW.md) |
 | **Framework** | After ingest or on request | Updated pillars, progress, gaps | `wiki/domains/*/overview.md` |
 | **Weekly** | ~15 min ritual | Review queue + Explain-back + lint + progress sync | `wiki/log.md` |
 | **Query** | You have a question | Answer (+ file back if valuable) | wiki + chat |
 | **Revise** | Wrong, stale, duplicate, contradicted | Corrected pages; skill merge | wiki, skills, `log.md` |
 | **Lint** | Periodic health | Issue list → Revise tasks | `log.md` |
-
-Full Run spec (deprecated): [docs/archive/RUN.md](docs/archive/RUN.md). Use [REVIEW.md](REVIEW.md) Explain-back instead.
 
 ### Operation dependencies
 
@@ -153,7 +151,7 @@ Each domain `overview.md` should include:
 1. **North star** — one sentence: what this domain is for in your life/work
 2. **Pillars** — 3–7 big ideas, each wikilinked
 3. **Mental model** — diagram, analogy, or bullets for how pieces fit
-4. **Progress table** — concept, mastery (`learning` → `solid`), **Review** (`reviewed` date), **Explain-back** (`explain_back` status), gaps — sync with `scripts/sync-overview-review.py` on Weekly
+4. **Progress** — Dataview on concept frontmatter in `overview.md` (no hand-maintained table) — [REVIEW.md](REVIEW.md)
 5. **Cross-domain links** — bridges to other `domains/`
 6. **Study path** (optional) — ordered gaps → next reads
 
@@ -170,7 +168,7 @@ Concept pages use frontmatter where helpful:
 | `contested` | Sources disagree — wiki shows both |
 | `deprecated` | Superseded — link to replacement |
 
-Domain **progress** strength (`learning` / `solid`) is separate — see [RETENTION.md](RETENTION.md).
+Domain **mastery** (`learning` / `solid`) — see [REVIEW.md](REVIEW.md).
 
 ---
 
@@ -273,9 +271,9 @@ flowchart TD
 | Mechanism | Owner |
 |-----------|--------|
 | `## Explain-back` on concepts | Zhuomo on ingest/deepen; you teach back in chat |
-| Review queue | `wiki_revised > reviewed` — [REVIEW.md](REVIEW.md) |
-| Weekly (~15 min) | You + agent checklist — [RETENTION.md](RETENTION.md) |
-| Mastery → `solid` | `explain_back: passed` required — [RETENTION.md](RETENTION.md) |
+| Review queue | `updated > reviewed` — [REVIEW.md](REVIEW.md) |
+| Weekly (optional) | Lint + suggest Explain-back — not required |
+| Mastery → `solid` | `explain_back: passed` — [REVIEW.md](REVIEW.md) |
 
 ---
 
@@ -324,7 +322,7 @@ Revision card (before editing): what was wrong, evidence, new claim — see [REF
 7. **Test skills before writing** — RED/GREEN/REFACTOR
 8. **File answers back** — chat does not compound; wiki does
 9. **Laptop owns wiki edits** — phone read + capture
-10. **Short artifacts, deep links** — one screen digest → concept pages
+10. **Concept-first** — truth on concept pages; guide = index only
 11. **Teach to know** — Explain-back tests whether you can teach the Claim/mechanism; answers must match wiki Evidence — [REVIEW.md](REVIEW.md)
 
 ---
@@ -337,9 +335,7 @@ Revision card (before editing): what was wrong, evidence, new claim — see [REF
 | [FRAMEWORK.md](FRAMEWORK.md) | You + architects | This file — conceptual model |
 | [SKILL.md](SKILL.md) | Agents | Operations checklist, mistakes |
 | [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) | Agents + you | Wiki schema, ingest/query/lint/revise |
-| [LEARNING.md](LEARNING.md) | Agents + you | Learn modes, framework templates |
-| [REVIEW.md](REVIEW.md) | Agents + you | Per-concept Review, Explain-back, review queue |
-| [RETENTION.md](RETENTION.md) | You | Epistemic tags, applied (optional), mastery |
-| [docs/archive/RUN.md](docs/archive/RUN.md) | Archive | Deprecated Roguelike runs |
+| [LEARNING.md](LEARNING.md) | Agents + you | Fable, framework templates |
+| [REVIEW.md](REVIEW.md) | You + agents | Study, Explain-back, Dataview progress |
 | [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md) | Agents + you | Domain skill pattern |
 | [REFERENCE.md](REFERENCE.md) | Agents + you | EPUB, video, Readwise, revision cards |

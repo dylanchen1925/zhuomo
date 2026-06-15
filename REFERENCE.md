@@ -51,7 +51,7 @@ Multi-device: phone saves to `raw/inbox/` (iCloud/Dropbox); laptop ingests and m
 
 ### Review & Explain-back
 
-Per-concept teach-back prompts live on `wiki/concepts/*.md` under `## Explain-back`. Session logs: `wiki/learn/reviews/`. Details: [REVIEW.md](REVIEW.md).
+Per-concept teach-back on `wiki/concepts/*.md` under `## Explain-back`. Details: [REVIEW.md](REVIEW.md).
 
 ## Readwise & highlights pipeline
 

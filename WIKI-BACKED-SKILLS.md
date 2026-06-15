@@ -63,7 +63,7 @@ Vault: `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen/wiki/
 1. Prefer **established** claims over **tentative** (see concept frontmatter).
 2. If wiki **contested**, present both sides; don't flatten.
 3. Cite wiki page names in reasoning; if wiki gap, say so and suggest ingest.
-4. After solving a novel case, offer to file under `wiki/learn/applied/` or revise concept.
+4. After solving a novel case, offer to **Revise** the concept or file synthesis in `wiki/synthesis/`.
 ```
 
 ### SOURCES.md

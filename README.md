@@ -19,9 +19,9 @@
 
 ---
 
-## Core loop (4 + 1)
+## Core loop
 
-You only need five verbs day to day. Everything else is optional.
+**Six verbs:** Bootstrap · Ingest · Query · Revise · Study · Lint. **Weekly** is optional (bundled Lint + Explain-back nudge).
 
 ```mermaid
 flowchart LR
@@ -38,7 +38,8 @@ flowchart LR
 | **Ingest** | `Ingest: path/to/source` | Concepts + Evidence (default: deepen all) |
 | **Query** | `Query: your question` | Answer + Gaps; cites your wiki |
 | **Revise** | `Revise [[page]] — what's wrong` | Fixed pages, no silent overwrite |
-| **Weekly** *(optional)* | `Weekly` | ~15 min review + lint + progress |
+| **Lint** | `Lint` | Health + review queue |
+| **Weekly** *(optional)* | `Weekly` | Same as Lint + suggest one Explain-back |
 
 **Quick start:**
 
@@ -104,7 +105,8 @@ Lite mode: add `overview only` on ingest. Full setup: [USER-GUIDE § First-time 
 | [SKILL.md](SKILL.md) | Customizing agent behavior |
 | [FRAMEWORK.md](FRAMEWORK.md) | Architecture deep dive *(optional)* |
 | [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) | Wiki schema, multi-device |
-| [LEARNING.md](LEARNING.md) · [RETENTION.md](RETENTION.md) | Learn + review |
+| [REVIEW.md](REVIEW.md) | Study, Explain-back, Dataview progress |
+| [LEARNING.md](LEARNING.md) | Fable mode, framework |
 | [REFERENCE.md](REFERENCE.md) | EPUB, Readwise, sources |
 
 ---
@@ -120,4 +122,4 @@ Lite mode: add `overview only` on ingest. Full setup: [USER-GUIDE § First-time 
 
 ## License & credits
 
-Design informed by personal wiki patterns (Karpathy LLM Wiki), spaced repetition, and agent skills (Cursor). See [SOURCES.md](SOURCES.md).
+Design informed by personal wiki patterns (Karpathy LLM Wiki) and agent skills (Cursor). See [SOURCES.md](SOURCES.md).

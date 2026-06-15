@@ -229,9 +229,7 @@ Log every revision. Prefer supersede/archive over delete.
 
 **Learn:** After ingest (unless archive only), digest + `## Explain-back` on concepts under `wiki/learn/`; **fable** optional. See [LEARNING.md](LEARNING.md), [REVIEW.md](REVIEW.md).
 
-**Review / Explain-back:** Per-concept teach-back; `wiki/learn/reviews/` for session logs — [REVIEW.md](REVIEW.md).
-
-**Applied (optional):** `wiki/learn/applied/` — not required for ingest or Weekly.
+**Study / Explain-back:** Per-concept; frontmatter `mastery`, `reviewed`, `explain_back`, `updated` — [REVIEW.md](REVIEW.md).
 
 **Weekly:** Review queue + explain-back + lint — [REVIEW.md](REVIEW.md).
 
@@ -408,4 +406,4 @@ Don't build infrastructure before the wiki outgrows the index.
 ## Reference
 
 - Pattern: [Karpathy llm-wiki.md](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)
-- Zhuomo workflow: [SKILL.md](SKILL.md), [REFERENCE.md](REFERENCE.md), [LEARNING.md](LEARNING.md), [RETENTION.md](RETENTION.md), [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md)
+- Zhuomo workflow: [SKILL.md](SKILL.md), [REFERENCE.md](REFERENCE.md), [LEARNING.md](LEARNING.md), [REVIEW.md](REVIEW.md), [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md)

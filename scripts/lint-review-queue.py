@@ -51,16 +51,16 @@ def main() -> int:
 
         name = path.stem
         reviewed = fm_val(fm, "reviewed")
-        wiki_revised = fm_val(fm, "wiki_revised") or fm_val(fm, "revised")
+        page_updated = fm_val(fm, "updated") or fm_val(fm, "wiki_revised") or fm_val(fm, "revised")
         explain_back = fm_val(fm, "explain_back") or "not_started"
         mastery = fm_val(fm, "mastery") or fm_val(fm, "status")
 
         rel = path.relative_to(wiki)
         page_issues: list[str] = []
 
-        if wiki_revised and DATE_RE.match(wiki_revised):
-            if not reviewed or wiki_revised > reviewed:
-                page_issues.append(f"wiki_revised {wiki_revised} > reviewed {reviewed or '—'}")
+        if page_updated and DATE_RE.match(page_updated):
+            if not reviewed or page_updated > reviewed:
+                page_issues.append(f"updated {page_updated} > reviewed {reviewed or '—'}")
         elif not reviewed:
             page_issues.append("never reviewed")
 

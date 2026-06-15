@@ -49,9 +49,9 @@ Internet capture still lands in **local raw** first; ingest writes **only** unde
 
 Multi-device: phone saves to `raw/inbox/` (iCloud/Dropbox); laptop ingests and moves to `processed/`. Wiki syncs via Obsidian Sync or iCloud; laptop owns wiki edits. Details: [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md#multi-device-sync-laptop--iphone).
 
-### Obsidian Spaced Repetition (recall cards)
+### Review & Explain-back
 
-Install **[Spaced Repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition)** (st3v3nmw). Zhuomo writes cards under `wiki/learn/recall/` with `#flashcards/[domain]` tags and `::` / `?` syntax. Plugin owns scheduling. Details: [RETENTION.md](RETENTION.md).
+Per-concept teach-back prompts live on `wiki/concepts/*.md` under `## Explain-back`. Session logs: `wiki/learn/reviews/`. Details: [REVIEW.md](REVIEW.md).
 
 ## Readwise & highlights pipeline
 
@@ -62,7 +62,7 @@ For Kindle, O'Reilly, Instapaper, web highlights — when full raw EPUB isn't av
 3. Ingest:
 
 ```
-/zhuomo Process raw/inbox/readwise-2026-05.md — ingest to wiki, recall cards for ★ highlights only.
+/zhuomo Process raw/inbox/readwise-2026-05.md — ingest highlights to wiki.
 ```
 
 4. Wiki source page cites Readwise export path + original book URL.

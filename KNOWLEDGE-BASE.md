@@ -90,7 +90,7 @@ Single-domain wikis can omit `domain-map.md` and use flat `wiki/concepts/`. Add 
 
 | Layer | Sync to phone? | Method | Phone role |
 |-------|----------------|--------|------------|
-| **Wiki** (Obsidian vault) | Yes | Obsidian Sync, iCloud vault, Git + Working Copy | Read frameworks, digests, recall |
+| **Wiki** (Obsidian vault) | Yes | Obsidian Sync, iCloud vault, Git + Working Copy | Read frameworks, digests, explain-back |
 | **Raw** | Partial | iCloud Drive, Dropbox, Syncthing on `~/zhuomo-data/raw/` | Capture → `inbox/` only |
 | **Raw/books/** | Usually no | Laptop-only or cloud “online-only” | Skip — process on laptop |
 
@@ -190,7 +190,7 @@ User says `archive only` → ingest wiki pages only; skip learn artifacts.
 2. **EPUB/PDF** → `wiki/sources/[slug]/md/` via `scripts/epub-to-wiki-md.py` (images to `md/assets/`)
 3. **Deepen all** — expand every topic-map concept; no stub left behind unless user opted out
 4. **Framework** — `domains/<slug>/overview.md` pillars, progress, gaps; optional `guide.md`
-5. **Learn** (unless archive only) — digest + recall; fable for stubborn concepts
+5. **Learn** (unless archive only) — digest; `## Explain-back` on concepts; fable optional — [REVIEW.md](REVIEW.md)
 
 ## Human entry point
 
@@ -221,19 +221,19 @@ Wiki path: Obsidian vault `wiki/` — all agent output goes here.
 
 **Lint (doctor-lite):** broken links, orphans, stub gaps, progress/Evidence mismatch, contradictions, duplicates. Log + Revise/deepen. Auto-stub missing pillar links.
 
-**Weekly:** Review + Lint + overview progress + optional synthesis note.
+**Weekly:** Review queue + Explain-back + Lint + overview progress — [REVIEW.md](REVIEW.md).
 
 **Revise:** Correct or update wiki pages and linked skills when wrong, stale,
 contradicted, or duplicated. Propagate fixes to all pages citing old claims.
 Log every revision. Prefer supersede/archive over delete.
 
-**Learn:** After ingest (unless archive only), add pretest/digest/recall/quiz
-under `wiki/learn/`; **fable** (`wiki/learn/fables/`) for hard abstract concepts — Askell narrative → reveal → beat map. See LEARNING.md, RETENTION.md.
+**Learn:** After ingest (unless archive only), digest + `## Explain-back` on concepts under `wiki/learn/`; **fable** optional. See [LEARNING.md](LEARNING.md), [REVIEW.md](REVIEW.md).
 
-**Run:** Fuse 2+ domains into fictional scenario; floor questions cite wiki;
-file debrief to `wiki/learn/runs/`; loot = recall cards + synthesis. See RUN.md.
+**Review / Explain-back:** Per-concept teach-back; `wiki/learn/reviews/` for session logs — [REVIEW.md](REVIEW.md).
 
-**Review / Weekly:** Scheduled retrieval + 15-min ritual — RETENTION.md.
+**Applied (optional):** `wiki/learn/applied/` — not required for ingest or Weekly.
+
+**Weekly:** Review queue + explain-back + lint — [REVIEW.md](REVIEW.md).
 
 **Domain overview:** Maintain `wiki/domains/*/overview.md` and `domain-map.md` —
 architect lens, pillars, progress, gaps, glossary. Update on each domain-touching ingest.
@@ -277,7 +277,7 @@ Co-evolve this schema as you learn what works for your domain.
    - Entry in `wiki/log.md`
 8. If source was in `raw/inbox/`, move to `raw/processed/` or typed folder (`web/`, `video/`, `books/`).
 9. **Then** run zhuomo extraction card on actionable techniques (per topic, not per book).
-10. **Learn + framework** — digest, recall cards, update domain framework (see LEARNING.md).
+10. **Learn + framework** — digest, `## Explain-back`, update domain overview (see LEARNING.md, REVIEW.md).
 
 Prefer one source at a time with user in the loop; batch ingest possible with less supervision.
 
@@ -377,7 +377,7 @@ When enhancing a skill from a new source, ingest to wiki first so synthesis and 
 
 - **Obsidian vault = wiki only** — graph, daily notes, frameworks; raw stays in `~/zhuomo-data/raw/`
 - **Multi-device** — phone → `raw/inbox/`; laptop ingests; Obsidian wiki syncs for reading on phone
-- **Spaced repetition** — Obsidian **Spaced Repetition** plugin on `wiki/learn/recall/` — see [RETENTION.md](RETENTION.md)
+- **Spaced repetition** — per-concept **Explain-back** — see [REVIEW.md](REVIEW.md)
 - **Web Clipper** — save articles to `raw/web/` (export/move from Obsidian if clipped into vault by mistake)
 - **Download images locally** — store under `raw/assets/`; wiki pages embed or link as needed
 - **Graph view** — see hubs, orphans, connection shape

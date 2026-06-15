@@ -1,6 +1,6 @@
 ---
 name: zhuomo
-description: Use when turning books, EPUBs, blogs, videos, or notes into a personal wiki or agent skills; when learning from resources quickly, building domain frameworks, running roguelike multi-domain learning scenarios, or mapping progress across varied domains; when discovering topics or correcting existing wiki/skills.
+description: Use when turning books, EPUBs, blogs, videos, or notes into a personal wiki or agent skills; when learning from resources quickly, building domain frameworks, explain-back review per concept, or mapping progress across varied domains; when discovering topics or correcting existing wiki/skills.
 disable-model-invocation: true
 ---
 
@@ -25,29 +25,29 @@ Give future agents: *when* to act, *what* to do, *how* to decide, *what mistakes
 
 **REQUIRED:** **superpowers:writing-skills**, **write-a-skill**  
 **User:** [USER-GUIDE.md](USER-GUIDE.md) · **Framework:** [FRAMEWORK.md](FRAMEWORK.md)  
-**Wiki:** [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) · **Learn:** [LEARNING.md](LEARNING.md) · **Run:** [RUN.md](RUN.md) · **Retention:** [RETENTION.md](RETENTION.md) · **Domain skills:** [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md)
+**Wiki:** [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) · **Learn:** [LEARNING.md](LEARNING.md) · **Review:** [REVIEW.md](REVIEW.md) · **Retention:** [RETENTION.md](RETENTION.md) · **Domain skills:** [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md)
 
 ## When to Use / NOT
 
-**Use:** sources → wiki and/or skill; **learn** from resources (digests, quizzes, recall); **run** roguelike multi-domain scenarios; **build/update domain frameworks**; multi-domain vault; correct or update existing pages.
+**Use:** sources → wiki and/or skill; **learn** from resources (digests, fable); **review / explain-back** per concept; **build/update domain frameworks**; multi-domain vault; correct or update existing pages.
 
 **Don't:** one-off answers without filing; silent overwrite; delete history instead of supersede/archive; wall-of-text summaries instead of linked learning artifacts.
 
-## Nine operations
+## Eight operations
 
 | Op | When | Output |
 |----|------|--------|
-| **Ingest** | New source | Wiki pages (multi-topic, multi-domain) |
-| **Learn** | User studying | Digests, pretest, recall, **fable** (Askell) → `wiki/learn/` |
-| **Run** | Multi-domain practice | Fictional scenario + floors + debrief → `wiki/learn/runs/` — [RUN.md](RUN.md) |
-| **Review** | Due cards / study session | SR review + explain-back → [RETENTION.md](RETENTION.md) |
+| **Ingest** | New source | Wiki pages + `## Evidence` + `## Explain-back` per concept |
+| **Learn** | User studying | Digests, pretest, **fable** (Askell) → `wiki/learn/` |
+| **Review** | Read a concept | `reviewed:` date; optional `learn/reviews/` note — [REVIEW.md](REVIEW.md) |
+| **Explain-back** | Test mastery | Rubric score → `explain_back`, optional `solid` — [REVIEW.md](REVIEW.md) |
 | **Framework** | After ingest or on request | `domain-map`, per-domain `overview.md` (pillars + progress), optional `guide.md` |
-| **Weekly** | ~15 min ritual | Review + Connect/Run + Lint + progress → `log.md` |
+| **Weekly** | ~15 min ritual | Review queue + explain-back + Lint → `log.md` |
 | **Query** | Question | **search** (page list) or **think** (synthesis + gaps + file back) |
-| **Revise** | Wrong, stale, duplicate | Corrected pages/skills + log |
-| **Lint** | Periodic health | Doctor-lite checklist → issues → often Revise |
+| **Revise** | Wrong, stale, duplicate | Corrected pages + `wiki_revised:` + log |
+| **Lint** | Periodic health | Links, Evidence, figures, **review queue** → often Revise |
 
-Details: [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md), [LEARNING.md](LEARNING.md), [RUN.md](RUN.md), [RETENTION.md](RETENTION.md)
+Details: [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md), [LEARNING.md](LEARNING.md), [REVIEW.md](REVIEW.md), [RETENTION.md](RETENTION.md)
 
 ## Wiki vs Skill
 
@@ -91,7 +91,7 @@ One resource → **one source summary** + **many concept pages** across **one or
 | **Vault hub** | `wiki/overview.md` | Domain table + ingest rules only — **no domain prose** |
 | **Domain entry** | `wiki/domains/<slug>/overview.md` | Why learn, architect lens, pillars, progress, glossary, study order, gaps |
 | **Domain guide** (optional) | `wiki/domains/<slug>/guide.md` | One-page technical digest (merge of concept pages) |
-| **Concepts** | `wiki/concepts/*.md` | Full depth + `## Evidence` when deepened |
+| **Concepts** | `wiki/concepts/*.md` | Full depth + `## Explain-back` + `## Evidence` when deepened |
 
 New domain ingest: add a row to vault `overview.md` + `domain-map.md`; create `domains/<slug>/overview.md`. Add `guide.md` when domain has enough deepened concepts for one-scroll digest.
 
@@ -114,7 +114,7 @@ Batch backfill / re-inline: `python3 scripts/embed-figure-visuals.py <vault>/wik
 **Agent does:**
 
 1. Create `raw/` tree (`inbox/`, `web/`, `video/`, `books/`, `assets/`, `processed/`).
-2. Create wiki skeleton: `index.md`, `log.md`, `overview.md`, `help.md` (from `templates/wiki/help.md`), `domain-map.md` (empty table OK), `learn/` (`digests/`, `fables/`, `recall/`, `runs/`, …).
+2. Create wiki skeleton: `index.md`, `log.md`, `overview.md`, `help.md` (from `templates/wiki/help.md`), `domain-map.md` (empty table OK), `learn/` (`digests/`, `fables/`, `reviews/`, `applied/`, …).
 3. Write vault `AGENTS.md` from [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md#schema-agentsmd-section) — **reference depth default**.
 4. **First source** (on bootstrap line or immediate follow-up ingest):
    - Topic map on `wiki/sources/[slug].md`
@@ -211,6 +211,7 @@ Run on request, after large ingest, or as part of **Weekly**.
 | `overview` progress ≠ concept `status` / depth | Revise overview or concept |
 | Deepened book concept missing `## Evidence` | Add Evidence or downgrade progress note |
 | **Figure N** cited without inline visual | Run `scripts/lint-figure-visuals.py`; fix with embed script or manual inline |
+| **Review queue** | `scripts/lint-review-queue.py` — `wiki_revised > reviewed`, missing `## Explain-back` |
 | Contradictions between pages | Revise; supersede stale claim |
 | Stale source (newer guide/version exists) | Note in Gaps; flag in `overview` |
 | Duplicate concept pages same topic | Merge; one canonical page |
@@ -222,14 +223,14 @@ Append `## [date] lint | …` to `wiki/log.md`. Turn each row into **Revise** or
 
 ## Weekly — mini dream cycle
 
-~15 min ritual ([RETENTION.md](RETENTION.md)): **Review** due cards → **Lint** (doctor-lite) → merge duplicates → bump `overview` progress → optional one `wiki/synthesis/` cross-concept note → `log.md`.
+~15 min ritual ([REVIEW.md](REVIEW.md)): **Review queue** → one **Explain-back** → **Lint** → sync overview progress → optional synthesis → `log.md`.
 
 ## Learn & framework (for you, not agents)
 
 | Goal | Ask for |
 |------|---------|
-| Learn faster | **Learn** — preview, digest, quiz, explain-back, **fable** (story → reveal → map) |
-| Cross-domain under pressure | **Run** — roguelike scenario fused from 2+ domains — [RUN.md](RUN.md) |
+| Learn faster | **Learn** — digest, **Explain-back**, **fable** |
+| Cross-domain links | **Connect** mode in Learn — [LEARNING.md](LEARNING.md) |
 | See the big picture | **Framework** — update `domains/<slug>/overview.md` (pillars, progress) |
 | Many unrelated subjects | **Multi-domain** — `wiki/domain-map.md` + `wiki/domains/*/` |
 
@@ -243,7 +244,7 @@ Default after chapter ingest (unless you say **archive only**): digest + update 
 - [ ] 1. Intake — source; discover topics; assign domain(s)
 - [ ] 1b. EPUB/PDF — convert full text to wiki/sources/[slug]/md/ (**required** for reference depth)
 - [ ] 2. Ingest — topic map + **deepen all** concepts; Evidence on every concept page; **Figures** when Figure N cited; flag contradictions
-- [ ] 2b. Learn — pretest + digest + recall for Spaced Repetition; **fable** for hard abstract concepts (skip if "archive only")
+- [ ] 2b. Learn — pretest + digest + `## Explain-back` on concepts; **fable** for hard abstract concepts (skip if "archive only")
 - [ ] 2c. Framework — update `domains/<slug>/overview.md` (pillars, progress, gaps)
 - [ ] 3–10. Extract → skill pipeline if actionable
 ```
@@ -308,8 +309,7 @@ Full ingest checklist:
 | `framework.md` / `mega-overview.md` | Use `overview.md` + optional `guide.md` only — see Wiki page layout |
 | Single-domain assumed | Use domain-map + wiki/domains/* for varied subjects |
 | BGP facts pasted into skill | Domain skill + WIKI-SCOPE; Revise wiki only when facts change |
-| Recall cards never reviewed | Obsidian Spaced Repetition + Weekly Review — [RETENTION.md](RETENTION.md) |
-| Scenario fiction filed as facts | Run artifacts use `type: fictional-scenario`; Revise only for wiki errors — [RUN.md](RUN.md) |
+| Explain-back never run | `Explain-back [[concept]]` after reading; see [REVIEW.md](REVIEW.md) |
 | Cross-domain only in chat | **Run** — fuse domains, file debrief to `wiki/learn/runs/` |
 | Bootstrap stops at stubs | Default is **deepen all** + md corpus + Evidence; use `overview only` to opt out |
 | Silent long ingest | Confirm once on large books; use closing block + [[help]] |
@@ -318,6 +318,6 @@ Full ingest checklist:
 - [ ] Skill: name, description, SOURCES.md, RED/GREEN/REFACTOR
 - [ ] Raw: local path (e.g. `~/zhuomo-data/raw/`), `inbox/` for phone captures, immutable snapshots
 - [ ] Wiki: Obsidian vault — `wiki/`, index.md, log.md, schema in AGENTS.md; sync to phone for read
-- [ ] Retention: Spaced Repetition plugin on `wiki/learn/recall/` (`#flashcards/domain`); optional Readwise → inbox
+- [ ] Review: explain-back per concept — [REVIEW.md](REVIEW.md); optional Readwise → inbox
 
 Details: [REFERENCE.md](REFERENCE.md), [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md), [LEARNING.md](LEARNING.md), [RETENTION.md](RETENTION.md), [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md)

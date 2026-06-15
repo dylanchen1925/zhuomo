@@ -74,9 +74,9 @@ Lite mode: add `overview only` on ingest. Full setup: [USER-GUIDE § First-time 
 
 | Feature | You say | Notes |
 |---------|---------|-------|
-| **Learn** | `Learn fable: [[concept]]` | Fables, digests, flashcards |
+| **Learn** | `Learn fable: [[concept]]` | Fables, digests |
+| **Review** | `Explain-back [[concept]]` | Mastery tracking — [REVIEW.md](REVIEW.md) |
 | **Lint** | `Lint` | Wiki health check *(included in Weekly)* |
-| **Run** | `Run: fuse A + B, 3 floors` | Roguelike multi-domain practice — [RUN.md](RUN.md) |
 | **Skill extract** | `Extract skill from [[concept]]` | Cursor agent workflows |
 | **Domain skill** | `Domain skill: network-expert` | Wiki-backed expert — [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md) |
 

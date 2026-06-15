@@ -2,7 +2,9 @@
 
 Detailed guide for **you** (not the agent). How to set up 琢磨, run each operation, and build a personal wiki + skills over time.
 
-**Quick links:** [FRAMEWORK.md](FRAMEWORK.md) (conceptual model) · [SKILL.md](SKILL.md) (agent entry) · [README.md](README.md) (repo index)
+**Quick links:** [REVIEW.md](REVIEW.md) (explain-back & review) · [FRAMEWORK.md](FRAMEWORK.md) · [SKILL.md](SKILL.md) · [README.md](README.md)
+
+> **2026-06-14:** Flashcards (Spaced Repetition) and Roguelike **Run** are removed. Use **Explain-back [[concept]]** per concept — see [REVIEW.md](REVIEW.md). Sections below on recall/Run are legacy until updated.
 
 ---
 

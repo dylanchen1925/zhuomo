@@ -100,16 +100,15 @@ Operations are the **verbs** of Zhuomo. Each has a trigger, output, and typical 
 | Operation | When | Primary output | Filed to |
 |-----------|------|----------------|----------|
 | **Ingest** | New source landed in `raw/` | Concept pages, source summary, index updates | `wiki/` |
-| **Learn** | You are studying (not archive-only) | Digest, pretest, recall cards, quiz | `wiki/learn/` |
-| **Run** | Multi-domain integration practice | Fictional scenario, floors, debrief, loot | `wiki/learn/runs/` |
-| **Review** | Due cards or study session | Explain-back, optional session note | `wiki/learn/reviews/` |
+| **Learn** | You are studying (not archive-only) | Digest, `## Explain-back` on concepts | `wiki/learn/` |
+| **Review** | Explain-back or read session | Rubric score, `learn/reviews/` | [REVIEW.md](REVIEW.md) |
 | **Framework** | After ingest or on request | Updated pillars, progress, gaps | `wiki/domains/*/overview.md` |
 | **Weekly** | ~15 min ritual | Review + connect/run + lint + progress | `wiki/log.md` |
 | **Query** | You have a question | Answer (+ file back if valuable) | wiki + chat |
 | **Revise** | Wrong, stale, duplicate, contradicted | Corrected pages; skill merge | wiki, skills, `log.md` |
 | **Lint** | Periodic health | Issue list → Revise tasks | `log.md` |
 
-Full Run spec: [RUN.md](RUN.md).
+Full Run spec (deprecated): [docs/archive/RUN.md](docs/archive/RUN.md). Use [REVIEW.md](REVIEW.md) Explain-back instead.
 
 ### Operation dependencies
 

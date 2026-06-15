@@ -13,7 +13,7 @@ That's it for phase 1. **Daily cheatsheet:** Obsidian `wiki/help.md` (created on
 | Keep | Drop (until you want them) |
 |------|----------------------------|
 | `~/zhuomo-data/raw/` inbox | Domain skills |
-| Obsidian `wiki/concepts/` | Run (roguelike) |
+| Obsidian `wiki/concepts/` | Explain-back per concept |
 | `wiki/overview.md` | Weekly ritual |
 | `wiki/sources/` + md corpus | 10 repo markdown files — read only USER-GUIDE + this file |
 | Natural-language chat with agent | — |

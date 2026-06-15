@@ -65,7 +65,7 @@ ln -sf /path/to/zhuomo ~/.cursor/skills/zhuomo
 |------|--------|------|
 | **Learn** | `Learn fable: [[概念]]` | 寓言、摘要、闪卡 |
 | **Lint** | `Lint` | wiki 健康检查（Weekly 已含） |
-| **Run** | `Run: fuse A + B` | 多域 Roguelike — [RUN.md](RUN.md) |
+| **Review** | `Explain-back [[concept]]` | 按 concept 讲回来 — [REVIEW.md](REVIEW.md) |
 | **Skill** | `Extract skill from [[概念]]` | Cursor 技能 |
 | **Domain skill** | `Domain skill: xxx` | wiki 后端专家 |
 

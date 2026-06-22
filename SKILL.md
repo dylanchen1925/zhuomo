@@ -1,191 +1,247 @@
 ---
 name: zhuomo
-description: Use when turning books, EPUBs, blogs, videos, or notes into a personal wiki or agent skills; when learning from resources quickly, building domain frameworks, explain-back review per concept, or mapping progress across varied domains; when discovering topics or correcting existing wiki/skills.
+description: Turn books, EPUBs, blogs, videos, or notes into a personal Obsidian wiki and agent skills; ingest with Evidence, query brain-first, Study via Explain-back, Lint health. Use when user says zhuomo, ingest, bootstrap, query wiki, revise concept, explain-back, lint, weekly, or wants to build/learn from a knowledge base across domains.
 disable-model-invocation: true
 ---
 
 # 琢磨 (Zhuomo)
 
-**琢磨** — to polish, refine, and chew over raw material until it becomes clear and usable. Turn sources into a **personal wiki** and **agent skills** — help **you learn faster**, **build frameworks** of what you know, and keep knowledge correct across **many domains**.
+**琢磨** — polish raw sources into a **personal wiki** + optional **agent skills**. This file is **self-contained**: follow it without loading other Cursor skills. Extended detail: [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md), [REFERENCE.md](REFERENCE.md), [REVIEW.md](REVIEW.md).
 
-## Overview
+**Human docs:** [USER-GUIDE.md](USER-GUIDE.md) · [SIMPLE.md](SIMPLE.md) · [FRAMEWORK.md](FRAMEWORK.md)
 
-**Skills are proven techniques with triggers — not book summaries.**
+---
 
-Give future agents: *when* to act, *what* to do, *how* to decide, *what mistakes* to avoid. Drop narrative, anecdotes, repetition.
+## Step 0 — Intent router (match first, then act)
 
-**Knowledge is never write-once.** Ingest adds; **revise** corrects, updates, merges, and supersedes. See [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md#revise-correct--update) and [REFERENCE.md](REFERENCE.md#correcting--updating-existing-knowledge).
+Scan the user message **top to bottom**. First matching row wins. If two verbs apply, run in order: **Lint → Revise → Ingest → Study → Query**.
 
-**Two compounding outputs:**
+| If message contains… | Verb | First action |
+|----------------------|------|--------------|
+| `Bootstrap`, `建库`, first-time setup | **Bootstrap** | § Bootstrap |
+| `Ingest`, `ingest:`, `Process raw`, book/EPUB/PDF path + import intent | **Ingest** | § Ingest — step 1 topic map |
+| `Query search:` or "list wiki pages" | **Query (search)** | § Query — search template only |
+| `Query`, `Query think:`, question about existing wiki | **Query (think)** | § Query — read wiki brain-first |
+| `Revise`, `修正`, user reports wiki error | **Revise** | § Revise |
+| `Review [[`, `Explain-back`, `explain-back`, `Promote [[`, `Review queue` | **Study** | § Study |
+| `Lint`, `Weekly`, `doctor`, health check | **Lint** (+ Weekly if said) | Run scripts § Scripts |
+| `Learn fable`, `Framework`, `Connect` | **Learn** (subset) | [LEARNING.md](LEARNING.md) |
+| `Extract skill`, `RED`, skill from concept | **Skill extract** | § Skill extraction |
+| "怎么用", "有哪些功能" | **Help** | Link vault `[[help]]` + `SIMPLE.md`; do not dump full spec |
+| Ambiguous + large book/EPUB, no `overview only` / `lite` | **Confirm** | § Confirm menu — **stop** until user replies |
 
-| Output | Holds | Agent use |
-|--------|-------|-----------|
-| **Wiki** | Synthesis, entities, links, contradictions | Query, browse, **domain skill backend** |
-| **Skill** | Triggers + workflows (+ WIKI-SCOPE for domain skills) | Auto-invoke under symptoms |
+**Default paths** (override only if user gives paths):
 
-**REQUIRED:** **superpowers:writing-skills**, **write-a-skill**  
-**User:** [USER-GUIDE.md](USER-GUIDE.md) · **Framework:** [FRAMEWORK.md](FRAMEWORK.md)  
-**Wiki:** [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) · **Learn:** [LEARNING.md](LEARNING.md) · **Study:** [REVIEW.md](REVIEW.md) · **Domain skills:** [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md) *(advanced)*
+| What | Path |
+|------|------|
+| Raw (read-only) | `~/zhuomo-data/raw/` |
+| Wiki (Obsidian) | `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen/wiki/` |
+| Repo scripts | `~/zhuomo/scripts/` |
 
-## When to Use / NOT
+---
 
-**Use:** sources → wiki; **study** per concept (Review, Explain-back); **fable** on demand; correct wiki; optional skill extraction.
+## Hard rules (every model, every turn)
 
-**Don't:** one-off answers without filing; silent overwrite; digest duplicates of concepts; hand-maintained 100-row progress tables.
+1. **Brain-first:** Read wiki (`overview` → `domain-map` → domain `overview`/`guide` → `index` → `concepts/`) **before** web search or re-reading raw EPUB.
+2. **Never silent overwrite:** Revise in place or supersede with link; append `log.md`; set `updated:` on changed concept pages.
+3. **No hand-maintained progress tables:** Domain progress = Dataview on concept frontmatter only.
+4. **No default digests:** Do not create `learn/digests/` unless user explicitly asks.
+5. **Explain-back:** One prompt per turn unless user says `batch` / `一次出题`.
+6. **Figure N cited:** Inline image or mermaid at first mention — never bare "see Figure N".
+7. **Closing block:** After Bootstrap / Ingest / Revise / Lint / major Query file-back — use exact 3-line shape in § Output templates.
+8. **Promote to `solid`:** Only when `explain_back: passed` (never on Review alone).
+9. **Skills ≠ wiki:** Wiki holds facts/synthesis; skills hold triggers + workflows. Do not paste BGP facts into SKILL.md — use domain skill + WIKI-SCOPE ([WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md)).
 
-## User verbs (6) — agent routing
+---
 
-| Verb | Ops bundled | Output |
-|------|-------------|--------|
+## User verbs (6)
+
+| Verb | Bundled ops | Primary output |
+|------|-------------|----------------|
 | **Bootstrap** | setup + optional first ingest | Folders, `AGENTS.md`, wiki skeleton |
-| **Ingest** | topic map, deepen, framework | Concepts + Evidence + `## Explain-back`; slim `guide.md` index |
-| **Query** | search / think | Answer + Gaps; file back if valuable |
-| **Revise** | propagate fix | Corrected pages; `updated:` date; log |
-| **Study** | Review, Explain-back, Promote, Review queue | Frontmatter mastery fields |
+| **Ingest** | topic map, md corpus, deepen, framework | Concepts + Evidence + `## Explain-back` |
+| **Query** | search / think | Answer + Gaps; optional file to `synthesis/` |
+| **Revise** | propagate fix | Corrected pages; `updated:`; log |
+| **Study** | Review, Explain-back, Promote, queue | Frontmatter mastery fields |
 | **Lint** | doctor-lite + review queue | Issue list → Revise |
 
-**Weekly** (optional): alias for Lint + suggest one Explain-back — not required.
+**Weekly** = optional alias for Lint + suggest one Explain-back (~15 min). Not required.
 
-Internal names still valid: `Review [[x]]`, `Explain-back [[x]]`, `Framework`, `Learn fable`.
+---
 
-Details: [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md), [LEARNING.md](LEARNING.md), [REVIEW.md](REVIEW.md)
-
-## Wiki vs Skill
-
-| Put in **wiki** | **Zhuomo** into skill |
-|-------------------------|------------------------|
-| Entity pages, themes, synthesis | Named technique with clear trigger |
-| Cross-source contradictions | Iron law / discipline rule |
-| Research thesis evolving over weeks | "When X symptom, do Y" |
-| Comparison tables, cited answers | Agent must comply under pressure |
-
-Often: **topic map → ingest → wiki first → zhuomo extraction card → skill** when actionable + non-default.
-
-## Domain skills (wiki as backend)
-
-**Technique skill** = one workflow. **Domain skill** = expert persona + **WIKI-SCOPE.md** manifest — agent loads your wiki (e.g. BGP concepts) at invoke time; facts stay in wiki, not in SKILL.md.
-
-Example: `network-expert` + `wiki/domains/networking/` + `[[concepts/bgp]]`. Full pattern: [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md).
-
-```
-/zhuomo Domain skill: network-expert — wiki backend wiki/domains/networking/
-```
-
-## Topics (optional from you)
-
-**You do not need to name the topic.** Provide a source; the agent reads structure (TOC, headings, skim) and **discovers topics** — often several per book, paper, or video.
-
-| You provide | Agent does |
-|-------------|------------|
-| Nothing | Infer all major topics; present topic map; proceed unless you narrow |
-| Topic / lens ("focus on ch. 5–7") | Prioritize those; still note other topics for later |
-| Goal ("wiki only" / "one skill") | Filter extraction toward that output |
-
-One resource → **one source summary** + **many concept pages** across **one or more domains**. Details: [REFERENCE.md](REFERENCE.md#topic-discovery-multi-topic-resources), [LEARNING.md](LEARNING.md).
-
-## Wiki page layout (per domain)
-
-**Two pages per domain — do not create `framework.md` or `mega-overview.md`.**
+## Wiki layout (do not invent other shapes)
 
 | Page | Path | Holds |
 |------|------|-------|
-| **Vault hub** | `wiki/overview.md` | Domain table + ingest rules only — **no domain prose** |
-| **Domain entry** | `wiki/domains/<slug>/overview.md` | Why learn, pillars, **Dataview progress**, glossary, gaps |
-| **Domain guide** (optional) | `wiki/domains/<slug>/guide.md` | Concept index + mental model only (concept-first) |
-| **Concepts** | `wiki/concepts/*.md` | Full depth + `## Explain-back` + `## Evidence` when deepened |
+| Vault hub | `wiki/overview.md` | Domain table + ingest rules — **no domain prose** |
+| Domain entry | `wiki/domains/<slug>/overview.md` | Why learn, pillars, **Dataview progress**, glossary, gaps |
+| Domain guide | `wiki/domains/<slug>/guide.md` | Concept index + mental model only (concept-first) |
+| Concepts | `wiki/concepts/*.md` | Claim, `## Explain-back`, `## Evidence` |
+| Synthesis | `wiki/synthesis/*.md` | Cross-concept answers, comparisons |
+| Sources | `wiki/sources/<slug>.md` + `md/` | Topic map, raw path, md corpus |
+| Log | `wiki/log.md` | Append-only audit |
+| Help | `wiki/help.md` | Human cheatsheet (from `templates/wiki/help.md`) |
 
-New domain ingest: add a row to vault `overview.md` + `domain-map.md`; create `domains/<slug>/overview.md`. Add `guide.md` when domain has enough deepened concepts for one-scroll digest.
+**Do not create:** `framework.md`, `mega-overview.md`, `learn/digests/`, `learn/reviews/`, `learn/applied/` (unless user explicitly requests).
 
-**Reference depth default:** Bootstrap and ingest **deepen all** topic-map concepts unless user says `overview only` / `lite`. Vault `AGENTS.md` must mirror this block. Opt-in lite: [SIMPLE.md](SIMPLE.md#lite-mode-opt-in).
+**New domain:** Add row to `wiki/overview.md` + `domain-map.md`; create `domains/<slug>/overview.md`.
 
-**Concept pages (compiled truth):** body = current trusted claims; optional `## Changelog` or frontmatter records when ingest/revise changed what (never silent overwrite).
+**Reference depth (default):** Deepen **all** topic-map concepts with full pages + Evidence + Explain-back. Opt-out keywords: `overview only`, `lite`, `archive only`, `bootstrap lite`.
 
-**Figure visuals (required when cited):** If prose or Evidence mentions **Figure N** / `#figure-*`, embed the visual **inline at the first body mention** (or the thematic `##` section when the cite is Evidence-only):
+---
 
-1. **Source image** — `![Figure N](sources/<slug>/md/assets/…)` immediately after the mentioning paragraph; add `→ [[sources/...#figure-n]]` on the next line.
-2. **No asset** — schematic **mermaid** at the same spot (topology/flow only; no fiction-as-fact).
-3. **Never** use a consolidated `## Figures` appendix; never leave bare "see Figure N" without image/mermaid + source link.
+## Concept page contract
 
-Batch backfill / re-inline: `python3 scripts/embed-figure-visuals.py <vault>/wiki`. Details: [REFERENCE.md](REFERENCE.md#figure-visuals-on-wiki-pages).
+Every deepened concept **must** include these sections **in order**:
+
+```markdown
+---
+domain: <slug>
+mastery: learning
+reviewed:
+explain_back: not_started
+updated: YYYY-MM-DD
+---
+
+# Title
+
+## Claim
+One paragraph — current trusted statement.
+
+## Explain-back
+1. *"Open question testing mechanism…"*
+2. *"Trap or contrast…"*
+3. *"Procedure or object model…"*
+
+## Evidence
+| 要点 | 原文 |
+|------|------|
+| … | [[sources/<slug>/md/part-NNN#anchor]] |
+
+## Sources
+- **Raw:** `~/zhuomo-data/raw/…`
+```
+
+**Frontmatter rules:**
+
+| Field | Who sets | Values |
+|-------|----------|--------|
+| `domain` | Agent on create | slug matching `domains/<slug>/` |
+| `mastery` | Promote or passed explain-back | `learning` \| `solid` |
+| `reviewed` | Review / Explain-back end | `YYYY-MM-DD` or empty |
+| `explain_back` | Explain-back session | `not_started` \| `attempted` \| `passed` |
+| `updated` | Any agent edit or explain-back | `YYYY-MM-DD` |
+
+**Re-read trigger:** `updated > reviewed` → user should Review again.
+
+---
 
 ## Bootstrap
 
-**When:** `/zhuomo Bootstrap: raw …, vault …` — optionally include first source on the same prompt.
+**Trigger:** `Bootstrap: raw …, vault …` optionally `+ ingest: …`
 
-**Agent does:**
-
-1. Create `raw/` tree (`inbox/`, `web/`, `video/`, `books/`, `assets/`, `processed/`).
-2. Create wiki skeleton: `index.md`, `log.md`, `overview.md`, `help.md` (from `templates/wiki/help.md`), `domain-map.md`, `learn/fables/` only.
-3. Write vault `AGENTS.md` from [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md#schema-agentsmd-section) — **reference depth default**.
-4. **First source** (on bootstrap line or immediate follow-up ingest):
-   - Topic map on `wiki/sources/[slug].md`
-   - EPUB/PDF → full md corpus under `wiki/sources/[slug]/md/` ([REFERENCE.md](REFERENCE.md#epub-epub))
-   - **Deepen all** concepts from topic map — full pages, `## Evidence` on every concept, domain `overview.md`, optional `guide.md`
-   - Update `index.md`; log `bootstrap | …` and `ingest | … reference depth`
-
-**Opt-out:** `bootstrap lite` or `overview only` on bootstrap/ingest → stub-only pass (old lite behavior); deepen later on demand.
-
-**Subsequent ingests:** Same default — reference depth / deepen all unless user says `overview only`, `lite`, or `archive only`.
-
-## User-facing UX (required)
-
-Keep responses **short, actionable, friendly**. Human cheatsheet lives in vault `wiki/help.md` (copy from repo `templates/wiki/help.md` on bootstrap).
-
-### Before large Ingest
-
-If source is a **book / large EPUB** and user did **not** already say `overview only` / `lite`, **confirm once**:
-
-```markdown
-**Ingest 计划：** [书名] → topic map → md 全文 → deepen **约 N 个概念** + Evidence。
-继续默认 reference depth？回复 **继续** / **overview only** / **只 deepen [[某主题]]**
+```
+1. Create raw/ tree: inbox/, web/, video/, books/, assets/, processed/
+2. Create wiki skeleton:
+   index.md, log.md, overview.md, help.md (copy ~/zhuomo/templates/wiki/help.md),
+   domain-map.md, learn/fables/ only
+3. Copy AGENTS.md template — do NOT write from scratch:
+   cp ~/zhuomo/templates/AGENTS.md → <vault>/AGENTS.md
+   Replace placeholders only:
+   | Placeholder | Value |
+   |-------------|-------|
+   | {{RAW_PATH}} | User raw path (e.g. ~/zhuomo-data/raw/) |
+   | {{VAULT_PATH}} | Vault root with trailing / (e.g. ~/…/Dylan Chen/) |
+   | {{BOOTSTRAP_DATE}} | Today YYYY-MM-DD |
+4. If first source on same line → run Ingest § steps on that source
+5. log.md: ## [date] bootstrap | …
+6. Closing block § Output templates
 ```
 
-If user already said `Ingest: path` without opt-out, proceed — no extra confirm for small articles.
+---
 
-### After any major operation — closing block
+## Ingest
 
-End with **exactly this shape** (3 lines):
+**Trigger:** `Ingest: <path>` or ingest after Bootstrap.
 
-```markdown
-**✓ 完成：** [操作] — [1 句结果，如 12 concepts + Evidence]
-**→ 下一步：** [1–2 个具体建议，链到 [[wikilinks]] 或指令]
-**⚙ 可选：** `overview only` · `Learn fable [[stub]]` · `Weekly` · `Lint`
+### Decision gate (before writing files)
+
+| Condition | Action |
+|-----------|--------|
+| Book/large EPUB AND user did NOT say `overview only`/`lite` AND not already confirmed | Post § Confirm menu; **stop** |
+| User said `Ingest: path` (explicit) for article/small source | Proceed |
+| `raw/inbox/` non-empty | Process inbox files first |
+
+### Procedure (numbered — complete in order)
+
+```
+1. Read source structure: TOC, headings, timestamps (video), intro/conclusion
+2. Search existing wiki for related [[concepts]] before creating duplicates
+3. Write topic map on wiki/sources/<slug>.md (table: Topic | Evidence location | Existing page? | Action)
+4. EPUB/PDF → convert full md corpus:
+   python3 ~/zhuomo/scripts/epub-to-wiki-md.py <epub> <vault>/wiki/sources/<slug>/md/
+   (or pdf-to-wiki-md.py / pdf-ocr-to-wiki-md.py per REFERENCE.md)
+5. For each topic-map row (unless overview only):
+   a. Create/update wiki/concepts/<slug>.md per § Concept page contract
+   b. Add/update wikilinks in domain overview pillars + slim guide.md
+   c. Embed figures per § Figure rule
+6. Update wiki/index.md; domain overview gaps if needed
+7. log.md: ## [date] ingest | <title> | N concepts deepened
+8. Optional: run lint-figure-visuals.py, lint-review-queue.py
+9. Closing block
 ```
 
-### Ambiguous request — menu first
-
-If intent unclear (ingest depth, domain, or operation), **ask before running**:
+### Topic map template
 
 ```markdown
-你要哪种？
-1. **Ingest 全书 deepen**（默认）
-2. **overview only** — 只要 topic map
-3. **Query** — 问现有 wiki
-4. **其他** — 说明一下
+## Topic map — [source title]
+
+| Topic | Evidence (§/ch./time) | Existing wiki? | Action |
+|-------|----------------------|----------------|--------|
+| … | … | [[…]] or — | Create / Update / Merge |
 ```
 
-Do not silently run multi-hour deepen on ambiguous phrasing.
+### Figure rule
 
-### Point humans to help
+When prose cites **Figure N** or `#figure-*`:
 
-When user asks "怎么用" / "有哪些功能", link vault `[[help]]` and repo `SIMPLE.md` — do not dump nine operations inline.
+1. Insert `![Figure N](sources/<slug>/md/assets/…)` immediately after mentioning paragraph
+2. Next line: `→ [[sources/.../md/part-NNN#figure-n]]`
+3. No asset → mermaid schematic at same spot (topology/flow only)
+4. Never a consolidated `## Figures` appendix
 
-**Brain-first (always):** read wiki before web or raw EPUB.
+Backfill: `python3 ~/zhuomo/scripts/embed-figure-visuals.py <vault>/wiki`
 
-1. `wiki/overview.md` → `domain-map.md` → `domains/<domain>/overview.md` / `guide.md`
-2. `wiki/index.md` → relevant `concepts/` + `sources/`
-3. Only if insufficient: raw `~/zhuomo-data/raw/` or external search
+---
 
-| Mode | User says | Agent returns |
-|------|-----------|---------------|
-| **search** | `Query search: …` or "list wiki pages about …" | Ranked page list + one-line why each matters — user reads pages |
-| **think** (default) | `Query: …` or `Query think: …` | Synthesized answer + citations + **## Gaps** |
+## Query
 
-**Think output template (required sections):**
+### Read order (mandatory)
+
+```
+wiki/overview.md
+→ wiki/domain-map.md
+→ wiki/domains/<domain>/overview.md (+ guide.md if exists)
+→ wiki/index.md
+→ wiki/concepts/*.md + wiki/sources/*.md relevant to question
+→ only if insufficient: raw/ or external search
+```
+
+### Search mode
+
+**Trigger:** `Query search: …`
+
+Output: numbered list — `[[page]] — one line why relevant`. No synthesis essay.
+
+### Think mode (default)
+
+**Trigger:** `Query: …` or `Query think: …`
+
+**Required sections (exact headings):**
 
 ```markdown
 ## Answer
-…synthesis with [[wikilinks]] and Evidence anchors where deepened…
+…synthesis with [[wikilinks]]; cite Evidence anchors for deepened concepts…
 
 ## Sources
 - [[concept-or-page]] — what you used
@@ -193,131 +249,288 @@ When user asks "怎么用" / "有哪些功能", link vault `[[help]]` and repo `
 ## Gaps
 | Gap | Why it matters | Suggested next step |
 |-----|----------------|---------------------|
-| … | stub / no Evidence / stale source / contradiction | deepen X / Revise Y / new source |
+| stub / no Evidence / stale / contradiction | … | deepen X / Revise Y / new source |
 ```
 
-**Network/IT:** lead Answer with business constraint → design lever → technical object (see domain `overview` architect lens).
+**Network/IT domains:** Answer leads with business constraint → design lever → technical object.
 
-**File back:** comparisons, cross-concept synthesis, or durable Q&A → `wiki/synthesis/` or strengthen an existing concept; append `log.md` if substantial.
+**File back when:** comparison, cross-concept synthesis, or durable Q&A → `wiki/synthesis/<slug>.md` or extend concept; append `log.md` if substantial.
 
-## Lint — doctor-lite
+---
 
-Run on request, after large ingest, or as part of **Weekly**.
+## Revise
 
-| Check | Action if failed |
-|-------|------------------|
-| Broken `[[wikilinks]]` | Fix path or create stub concept linked from domain `overview` pillar |
-| Orphan concept pages (no inbound links) | Link from `overview`, `guide`, or related concepts |
-| Concept mentioned in text but no page | Create stub or merge duplicate |
-| `overview` progress stale | Progress is Dataview on concepts — no hand table |
-| Deepened book concept missing `## Evidence` | Add Evidence or downgrade progress note |
-| **Figure N** cited without inline visual | Run `scripts/lint-figure-visuals.py`; fix with embed script or manual inline |
-| **Review queue** | `scripts/lint-review-queue.py` — `updated > reviewed`, missing `## Explain-back` |
-| Contradictions between pages | Revise; supersede stale claim |
-| Stale source (newer guide/version exists) | Note in Gaps; flag in `overview` |
-| Duplicate concept pages same topic | Merge; one canonical page |
-| Domain `overview` gaps list outdated | Refresh after ingest |
+**Trigger:** user error report, lint finding, or new source contradicts wiki.
 
-Append `## [date] lint | …` to `wiki/log.md`. Turn each row into **Revise** or **deepen** follow-up.
+```
+1. Locate: target page, backlinks (grep wiki), related skills
+2. Fill revision card (mental or chat):
+   - Old claim | New claim | Evidence | Pages to propagate
+3. Choose action:
+   - Edit in place (minor)
+   - Supersede (old wrong → status: superseded + forward link)
+   - Merge (duplicates → one canonical)
+   - Retract (archive + why)
+4. Propagate: fix every page citing old claim
+5. Set updated: today on all touched concept pages
+6. log.md: ## [date] revise | [[page]] | reason
+7. Closing block
+```
 
-**Auto-stub (on ingest/lint):** when a pillar or guide links `[[aci-foo]]` and page missing, create minimal stub with `domain:` frontmatter and link back to pillar — do not leave dangling wikilinks.
+**Never:** delete history silently; leave contradictory claims on two pages as both true.
 
-## Weekly (optional)
+---
 
-~15 min: **Lint** + review queue + suggest one **Explain-back** → `log.md`. User can skip; **Lint** + **Study** ad hoc is enough. [REVIEW.md](REVIEW.md)
+## Study
 
-## Learn & framework
+### Operations
 
-| Goal | Ask for |
+| User says | Agent does |
+|-----------|------------|
+| `Review [[concept]]` | Set `reviewed: <today>` in frontmatter |
+| `Explain-back [[concept]]` | § Explain-back protocol |
+| `Review queue: <domain>` | List concepts where `reviewed = null` OR `updated > reviewed` |
+| `Promote [[concept]] to solid` | If `explain_back: passed` → `mastery: solid`; else refuse and say run Explain-back |
+| `Weekly` | Lint + review queue + suggest one Explain-back → log |
+
+### Explain-back protocol (interactive — default)
+
+**Do not** dump all questions, model answers, or final score in one message.
+
+```
+START:
+  1. Read wiki/concepts/<slug>.md (Claim, Explain-back bullets, Evidence)
+  2. Post intro: one-line Claim context
+  3. Post ONLY prompt 1 from ## Explain-back — nothing else
+
+EACH USER REPLY:
+  4. Grade THIS prompt only: ✅ / ⚠️ / ❌ (see table below)
+  5. 1–3 sentence correction if ⚠️ or ❌ — not full wiki rewrite
+  6. Post ONLY next prompt (or go to END if done)
+
+END (after last prompt):
+  7. Session verdict: passed | partial | fail (see table below)
+  8. Update frontmatter per verdict table
+  9. Offer: Promote to solid (if passed) or retake weak prompts
+  10. Optional log: ## [date] explain-back | [[slug]] — passed (3/3)
+```
+
+**Per-prompt grades:**
+
+| Mark | Meaning |
 |------|---------|
-| Hard concept | **Learn fable** → `wiki/learn/fables/` |
-| Big picture | **Framework** — `domains/<slug>/overview.md` pillars + Dataview |
-| Cross-domain | **Connect** in chat |
+| ✅ | Mechanism correct; aligns with Evidence |
+| ⚠️ | Framework OK; missing detail |
+| ❌ | Wrong or contradicts wiki |
 
-Default ingest: deepen all + `## Explain-back` on concepts — **no digest**. [LEARNING.md](LEARNING.md)
+**Session → frontmatter:**
 
-## Workflow Checklist
+| Verdict | Criteria | Set |
+|---------|----------|-----|
+| **passed** | No ❌ on core mechanism; ≥1 trap shown across session | `explain_back: passed`, `reviewed: today`, `updated: today` |
+| **partial** | Mix ⚠️/❌ but Claim salvageable | `explain_back: attempted`, `reviewed: today`, `updated: today` |
+| **fail** | Wrong Claim or repeated ❌ on mechanism | `explain_back: attempted`; suggest Revise or re-read Evidence |
 
-**New source:**
-```
-- [ ] 0. Wiki setup — bootstrap if needed; **reference depth** unless user says `overview only` / `lite`
-- [ ] 1. Intake — source; discover topics; assign domain(s)
-- [ ] 1b. EPUB/PDF — convert full text to wiki/sources/[slug]/md/ (**required** for reference depth)
-- [ ] 2. Ingest — topic map + **deepen all** concepts; Evidence on every concept page; **Figures** when Figure N cited; flag contradictions
-- [ ] 2b. Study — `## Explain-back` on every concept; **fable** only if user asks (skip if "archive only")
-- [ ] 2c. Framework — `overview.md` pillars, gaps, Dataview block; slim `guide.md` index
-- [ ] 3–10. Extract → skill pipeline if actionable
-```
+**Batch mode:** Only if user says `batch` or `一次出题`.
 
-**Correct or update existing knowledge:**
-```
-- [ ] 1. Locate — index.md, backlinks, related skills
-- [ ] 2. Revision card — what was wrong, evidence, new claim (REFERENCE.md)
-- [ ] 3. Propagate — fix all pages that cite the old claim
-- [ ] 4. Wiki — edit in place or supersede; never silent delete
-- [ ] 5. Skill — merge correction; re-run RED if discipline changed
-- [ ] 6. Log — append wiki/log.md: revise | target | reason
+---
+
+## Lint
+
+**Trigger:** `Lint`, after large ingest, or part of Weekly.
+
+Run (replace `<vault>`):
+
+```bash
+python3 ~/zhuomo/scripts/lint-review-queue.py <vault>/wiki
+python3 ~/zhuomo/scripts/lint-figure-visuals.py <vault>/wiki
 ```
 
-Full ingest checklist:
+| Check | If failed |
+|-------|-----------|
+| Broken `[[wikilinks]]` | Fix path or create stub with `domain:` |
+| Orphan concept (no inbound link) | Link from overview / guide / peer concept |
+| Text mentions concept, no page | Stub or merge duplicate |
+| Deepened concept missing `## Evidence` | Add Evidence or note in overview gaps |
+| Figure N without inline visual | embed-figure-visuals.py or manual inline |
+| `updated > reviewed` | Report in review queue (user Study) |
+| Missing `## Explain-back` on deepened concept | Add 3 prompts |
+| Contradiction between pages | Revise |
+| Duplicate topic pages | Merge to one canonical |
 
-```
-- [ ] 3. Extract — extraction card per candidate idea
-- [ ] 4. Filter — actionable AND non-default
-- [ ] 5. Classify — technique / pattern / reference / discipline
-- [ ] 6. Decide — new vs enhance vs split; run Revise if source contradicts wiki
-- [ ] 7. RED — baseline WITHOUT draft skill
-- [ ] 8. GREEN — minimal SKILL.md
-- [ ] 9. REFACTOR — counters; re-test
-- [ ] 10. Update SOURCES.md (+ wiki log.md)
-```
+**Auto-stub:** Pillar links `[[missing-slug]]` → minimal concept page + link back to pillar.
 
-### Extraction card
+Append `## [date] lint | N issues` to `log.md`. List each issue with suggested Revise/deepen. Closing block.
 
-| Field | Capture |
+---
+
+## Skill extraction (self-contained RED / GREEN / REFACTOR)
+
+**No external skill required.** Use when user says `Extract skill from [[concept]]` or after ingest for actionable techniques.
+
+### Extraction card (fill before writing SKILL.md)
+
+| Field | Content |
 |-------|---------|
-| Trigger | Situation/symptoms (not chapter title) |
+| Trigger | Situation/symptoms — not chapter title |
 | Core move | One non-obvious action |
-| Steps | Workflow or decision tree |
+| Steps | Numbered workflow or decision tree |
 | Anti-pattern | Common failure |
-| Example | One adapted before/after |
+| Example | One before/after |
 | Type | technique / pattern / reference / discipline |
 
-### Validate (TDD)
+**Filter:** Keep only if **actionable AND non-default** (agent would not do this without the skill).
 
-**No SKILL.md until RED completes.** See **superpowers:writing-skills**.
+### RED (baseline — before SKILL.md exists)
 
-## Common Mistakes
+1. Describe trigger scenario to agent **without** showing draft skill.
+2. Record what agent actually does (especially wrong shortcuts).
+3. For **discipline** type: add time pressure / authority / sunk cost; note verbatim rationalizations.
+
+**Gate:** Do not write SKILL.md until RED shows a gap the skill must fix.
+
+### GREEN (minimal skill)
+
+Write SKILL.md with: name, description (CSO ≤1024 chars, third person, "Use when…"), trigger keywords, numbered steps, anti-pattern counter.
+
+### REFACTOR
+
+Add explicit counters for each RED rationalization. Re-run one RED scenario — agent must follow skill.
+
+Update `SOURCES.md` + `log.md`: `## [date] skill | <name> | from [[concept]]`
+
+---
+
+## Output templates
+
+### Confirm menu (ambiguous large ingest)
+
+```markdown
+**Ingest 计划：** [书名] → topic map → md 全文 → deepen **约 N 个概念** + Evidence。
+继续默认 reference depth？回复 **继续** / **overview only** / **只 deepen [[某主题]]**
+```
+
+### Closing block (required after major ops)
+
+```markdown
+**✓ 完成：** [操作] — [1 句结果，如 12 concepts + Evidence]
+**→ 下一步：** [1–2 个具体建议，链到 [[wikilinks]] 或指令]
+**⚙ 可选：** `overview only` · `Learn fable [[stub]]` · `Weekly` · `Lint`
+```
+
+### log.md lines
+
+```markdown
+## [YYYY-MM-DD] bootstrap | vault created
+## [YYYY-MM-DD] ingest | Book Title | 12 concepts deepened
+## [YYYY-MM-DD] revise | [[aci-foo]] | corrected FD_VNID claim
+## [YYYY-MM-DD] lint | 3 broken links
+## [YYYY-MM-DD] explain-back | [[aci-foo]] — passed (3/3)
+## [YYYY-MM-DD] weekly | lint + suggested [[aci-bar]]
+```
+
+### Source page header
+
+```markdown
+# Source — [Title]
+
+- **Raw:** `~/zhuomo-data/raw/…`
+- **URL:** … (accessed YYYY-MM-DD)
+- **Topics:** [[concept-a]], [[concept-b]]
+```
+
+---
+
+## Scripts (deterministic — prefer over guessing)
+
+| Script | When |
+|--------|------|
+| `epub-to-wiki-md.py` | EPUB → `sources/<slug>/md/` |
+| `pdf-to-wiki-md.py` | Text PDF |
+| `pdf-ocr-to-wiki-md.py` | Scanned PDF |
+| `embed-figure-visuals.py` | Inline figures at mentions |
+| `lint-figure-visuals.py` | Find missing figure embeds |
+| `lint-review-queue.py` | `updated > reviewed`, missing Explain-back |
+| `add-evidence-sections.py` | Backfill Evidence blocks |
+| `simplify-vault.py` | One-shot vault migration (archive) |
+
+All under `~/zhuomo/scripts/`. Pass `<vault>/wiki` as argument unless script docs say otherwise.
+
+---
+
+## Validation gates (before saying "done")
+
+### Ingest
+
+- [ ] Topic map on source page
+- [ ] EPUB/PDF has md corpus under `sources/<slug>/md/` (unless overview only)
+- [ ] Every deepened concept has Claim, Explain-back (3+), Evidence table
+- [ ] `index.md` updated; `log.md` appended
+- [ ] No dangling `[[wikilinks]]` on touched pages
+- [ ] Closing block posted
+
+### Query (think)
+
+- [ ] Brain-first read order followed
+- [ ] Output has `## Answer`, `## Sources`, `## Gaps`
+- [ ] Gaps table non-empty if any stub/contradiction exists
+
+### Explain-back
+
+- [ ] One prompt per turn (unless batch)
+- [ ] Frontmatter updated only at session end
+- [ ] `passed` not set if core mechanism contradicts wiki
+
+### Revise
+
+- [ ] Old claim propagated fix on all citing pages
+- [ ] `updated:` set; `log.md` appended
+
+### Lint
+
+- [ ] Scripts run or manual equivalent checks listed
+- [ ] Each issue maps to Revise or deepen action
+
+---
+
+## Good vs bad (calibrate output)
+
+| Bad | Good |
+|-----|------|
+| Chapter summary pasted as concept Claim | One-sentence Claim + Evidence row per fact |
+| All Explain-back Q&A in one message | One prompt → wait → grade → next |
+| Progress table edited by hand in overview | Dataview reads concept frontmatter |
+| Web search before reading wiki | overview → concepts → then web |
+| Skill file full of BGP facts | Domain skill + wiki backend; Revise wiki when facts change |
+| "See Figure 5" with no image | Inline `![Figure 5](…)` + source link |
+| Query answer with no Gaps section | Gaps table flags stubs and contradictions |
+| `mastery: solid` after Review only | solid only after `explain_back: passed` |
+
+---
+
+## Common mistakes
 
 | Mistake | Fix |
 |---------|-----|
-| Chapter summary as skill | Wiki for synthesis; skill for triggers only |
-| RAG-only (no wiki) | Ingest compiles once; wiki stays current |
-| Wiki without schema | AGENTS.md/CLAUDE.md defines ingest/query/lint |
-| Skip RED | Test skill first |
-| Query answers lost in chat | File good answers back to wiki |
-| Web search before wiki | Brain-first: overview → guide → concepts |
-| Query without Gaps section | Think mode must end with ## Gaps |
-| Lint only when user complains | Run doctor-lite after big ingest + Weekly |
-| Fix only in chat | Revise wiki/skill + log.md |
-| New source contradicts old | Revise affected pages, don't append both as true |
-| Duplicate concept pages | Merge on lint/revise; one canonical page |
-| One topic per resource assumed | Multi-topic normal — topic map first, one concept page each |
-| User must name topic upfront | Optional — agent infers; user topic = priority lens only |
-| Summary dump, no framework | Link concepts to pillars; update `overview` gaps |
-| Hard concept, definition only | **Learn fable** → `wiki/learn/fables/` |
-| `framework.md` / `mega-overview.md` | Use `overview.md` + optional `guide.md` only — see Wiki page layout |
-| Single-domain assumed | Use domain-map + wiki/domains/* for varied subjects |
-| BGP facts pasted into skill | Domain skill + WIKI-SCOPE; Revise wiki only when facts change |
-| Explain-back never run | `Explain-back [[concept]]` after reading; see [REVIEW.md](REVIEW.md) |
-| Cross-domain only in chat | File synthesis to `wiki/synthesis/` or link concepts |
-| Bootstrap stops at stubs | Default **deepen all**; `overview only` to opt out |
-| Silent long ingest | Confirm once; closing block + [[help]] |
-| Dump verbs in chat | Link `wiki/help.md`; core = Bootstrap → Ingest → Query → Revise + Study + Lint |
+| RAG-only, no wiki | Ingest compiles once; wiki stays current |
+| User must name topic | Infer from TOC; user topic = priority lens only |
+| One concept per whole book | Topic map → many concept pages |
+| Skip confirm on ambiguous huge ingest | § Confirm menu |
+| Fix only in chat | Revise wiki + log.md |
+| New source contradicts old | Revise affected pages; don't keep both as true |
+| `framework.md` / mega-overview | `overview.md` + optional `guide.md` only |
+| Dump nine verbs in chat | Link `[[help]]` |
 
-- [ ] Skill: name, description, SOURCES.md, RED/GREEN/REFACTOR
-- [ ] Raw: local path (e.g. `~/zhuomo-data/raw/`), `inbox/` for phone captures, immutable snapshots
-- [ ] Wiki: Obsidian vault — `wiki/`, index.md, log.md, schema in AGENTS.md; sync to phone for read
-- [ ] Review: explain-back per concept — [REVIEW.md](REVIEW.md); optional Readwise → inbox
+---
 
-Details: [REFERENCE.md](REFERENCE.md), [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md), [LEARNING.md](LEARNING.md), [REVIEW.md](REVIEW.md), [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md)
+## Extended docs (optional depth)
+
+| Doc | Use when |
+|-----|----------|
+| [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) | Multi-device, operations detail, bridge to skills |
+| [templates/AGENTS.md](templates/AGENTS.md) | Vault AGENTS.md — copy on Bootstrap |
+| [REFERENCE.md](REFERENCE.md) | EPUB/video/Readwise edge cases, revision cards |
+| [REVIEW.md](REVIEW.md) | Human-facing Study guide, Dataview examples |
+| [LEARNING.md](LEARNING.md) | Fable, Connect, framework rituals |
+| [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md) | Domain skills with WIKI-SCOPE |
+| [USER-GUIDE.md](USER-GUIDE.md) | Full user manual |

@@ -2,7 +2,7 @@
 
 Help the user **learn from concepts** and **maintain domain overviews** — not duplicate content in digests.
 
-**Study loop:** [REVIEW.md](REVIEW.md) — per-concept `## Explain-back`.
+**Study loop:** [REVIEW.md](REVIEW.md) — per-concept `## Explain-back`; on demand, **interactive explain-back** (one prompt per turn).
 
 ---
 

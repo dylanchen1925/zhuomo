@@ -87,7 +87,7 @@ Lite mode: add `overview only` on ingest. Full setup: [USER-GUIDE § First-time 
 
 | Path | Role |
 |------|------|
-| This repo | Skill docs + `templates/wiki/help.md` |
+| This repo | Skill docs + `templates/AGENTS.md`, `templates/wiki/help.md` |
 | `~/.cursor/skills/zhuomo` | Symlink → clone |
 | `~/zhuomo-data/raw/` | Sources + `inbox/` |
 | Obsidian vault `wiki/` | Your knowledge base |

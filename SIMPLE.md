@@ -28,7 +28,7 @@ Bootstrap + first ingest **deepen all** concepts unless you say `overview only` 
 |-------|---------|--------|
 | Map | `Ingest overview only: book.epub` | Stubs + topic map |
 | Deepen | `Deepen all` or `Deepen tenant` | Full concepts + Evidence |
-| Study | `Explain-back [[concept]]` | Mastery in frontmatter |
+| Study | `Explain-back [[concept]]` | Interactive prompts → grade per turn → frontmatter ([REVIEW.md](REVIEW.md#interactive-explain-back-default)) |
 
 ## Ingest depth
 

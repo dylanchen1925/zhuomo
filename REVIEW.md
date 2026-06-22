@@ -26,7 +26,7 @@
 | You say | Agent does |
 |---------|------------|
 | `Review [[concept]]` | Set `reviewed:` today |
-| `Explain-back [[concept]]` | Prompts from `## Explain-back` → rubric → update fields |
+| `Explain-back [[concept]]` | **Interactive (default):** one `## Explain-back` prompt at a time → you answer → brief feedback → next — [§ Interactive explain-back](#interactive-explain-back-default) |
 | `Review queue: cisco-aci` | List `updated > reviewed` and never reviewed |
 | `Promote [[concept]] to solid` | Only if `explain_back: passed` |
 | `Weekly` | Optional: lint + review queue + suggest one Explain-back → `log.md` |
@@ -83,6 +83,75 @@ Place **before** `## Evidence`. Ingest/deepen adds 3–4 prompts per concept.
 | **fail** | Wrong or contradicts wiki | `explain_back: attempted`; suggest **Revise** |
 
 **Promote to `solid`:** `explain_back: passed` required.
+
+---
+
+## Interactive explain-back (default)
+
+When the user says `Explain-back [[concept]]` or `/zhuomo explain-back <concept>`, run **one prompt per turn** from the concept’s `## Explain-back` section. **Do not** dump all questions, model answers, or a score sheet in one message.
+
+### Flow
+
+```mermaid
+flowchart TD
+  A[Read concept: Claim, Explain-back, Evidence] --> B[Post intro + Question 1 only]
+  B --> C[User answers]
+  C --> D[Brief grade + hint if needed — no full answer key]
+  D --> E{More prompts?}
+  E -->|yes| F[Question N+1 only]
+  F --> C
+  E -->|no| G[Session summary + rubric]
+  G --> H[Update frontmatter]
+```
+
+| Step | Agent | User |
+|------|-------|------|
+| 1 | Read `wiki/concepts/<slug>.md` + Evidence as needed | `Explain-back [[slug]]` |
+| 2 | Short intro (Claim one-liner); **only prompt 1** | — |
+| 3 | Wait | Teach back in own words |
+| 4 | ✅ / ⚠️ / ❌ for **this prompt only**; 1–3 sentence correction if partial/fail; optional one follow-up probe | — |
+| 5 | **Only prompt 2** (no preview of 3–4) | Answer |
+| 6 | Repeat until all `## Explain-back` items done | — |
+| 7 | Session summary → `passed` \| `partial` \| `fail`; update frontmatter | `Promote [[slug]] to solid` if passed |
+
+### Agent rules
+
+| Rule | Detail |
+|------|--------|
+| **One at a time** | Never list all questions upfront; never publish answers for prompts not yet asked |
+| **Prompt source** | Numbered bullets under `## Explain-back` on the concept page |
+| **Feedback** | After each answer: what was right, what was missing, one trap if relevant — **not** a full wiki rewrite |
+| **Partial answer** | One clarifying follow-up allowed, then move on; mark that prompt partial |
+| **Evidence** | Grade against wiki + cited Evidence; flag contradictions |
+| **End only** | Full rubric verdict and frontmatter update **after last prompt**, not mid-session |
+
+### Per-prompt grade (inline)
+
+| Mark | Meaning |
+|------|---------|
+| ✅ | Mechanism correct; aligns with Evidence |
+| ⚠️ | Framework OK; missing detail or imprecise |
+| ❌ | Wrong or contradicts wiki |
+
+### Session → frontmatter
+
+| Session result | Criteria | Updates |
+|----------------|----------|---------|
+| **passed** | All prompts ✅ or ⚠️ with no ❌ on core mechanism; ≥1 trap demonstrated across session | `explain_back: passed`, `reviewed: <today>`, `updated: <today>` |
+| **partial** | Mix of ⚠️/❌ but Claim/framework salvageable | `explain_back: attempted`, `reviewed: <today>`, `updated: <today>` |
+| **fail** | Wrong Claim or core mechanism on multiple prompts | `explain_back: attempted`; suggest re-read Evidence or **Revise** |
+
+**Retake:** `Explain-back [[slug]]` again on missed prompts only, or full session.
+
+### Optional log line
+
+```markdown
+## [YYYY-MM-DD] explain-back | [[concept-slug]] — passed (4/4)
+```
+
+### Batch mode (opt-in)
+
+If user says `Explain-back [[concept]] batch` or `一次出题`, may publish all prompts without answers, then grade when they submit — same rubric. **Not default.**
 
 ---
 
@@ -167,6 +236,7 @@ Append `wiki/log.md`: `## [YYYY-MM-DD] weekly | …`
 
 ```
 Explain-back [[aci-border-leaf-l3out]]
+/zhuomo explain-back eigrp
 
 Review [[aci-spine-leaf-topology]]
 

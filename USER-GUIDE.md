@@ -140,7 +140,7 @@ flowchart LR
 |------|---------|----------------|
 | **Read** | Open `wiki/concepts/…` | Claim, mechanics, figures inline |
 | **Review** | `Review [[concept]]` | `reviewed: YYYY-MM-DD` on the page |
-| **Explain-back** | `Explain-back [[concept]]` | Agent uses `## Explain-back` prompts, scores you |
+| **Explain-back** | `Explain-back [[concept]]` | Agent 逐题用 `## Explain-back` 提问 → 你讲回来 → 简短反馈 → 全部完成后更新 frontmatter（[REVIEW.md](REVIEW.md#interactive-explain-back-default)） |
 | **Promote** | `Promote [[concept]] to solid` | After **passed** — updates concept frontmatter |
 
 Full spec: [REVIEW.md](REVIEW.md).
@@ -174,6 +174,8 @@ Full spec: [REVIEW.md](REVIEW.md).
 **Agent revise ≠ you reviewed.** After you and the agent fix a page in chat, run `Review [[concept]]` when satisfied.
 
 ### Explain-back rubric (summary)
+
+**Default mode:** interactive — one explain-back prompt per turn; agent grades each answer before the next. Full spec: [REVIEW.md § Interactive explain-back](REVIEW.md#interactive-explain-back-default).
 
 **Passed:** correct Claim, mechanism OK, at least one constraint/trap, aligns with Evidence, handles one follow-up.
 
@@ -395,7 +397,7 @@ Do **not** skill-ify book summaries or wiki-only facts.
 /zhuomo Extract skill from [[concept]] — RED then GREEN
 ```
 
-Requires Cursor skills: **writing-skills**, **write-a-skill**.
+Follow [SKILL.md § Skill extraction](SKILL.md#skill-extraction-self-contained-red--green--refactor) — RED/GREEN/REFACTOR is inlined; no other Cursor skill required.
 
 ---
 

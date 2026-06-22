@@ -75,7 +75,7 @@ ln -sf /path/to/zhuomo ~/.cursor/skills/zhuomo
 
 | 路径 | 作用 |
 |------|------|
-| 本仓库 | 技能文档 + `templates/wiki/help.md` |
+| 本仓库 | 技能文档 + `templates/AGENTS.md`、`templates/wiki/help.md` |
 | Obsidian `wiki/help.md` | **日常指令表** |
 | `~/zhuomo-data/raw/` | 原始资料 |
 | Obsidian `wiki/` | 知识库 |

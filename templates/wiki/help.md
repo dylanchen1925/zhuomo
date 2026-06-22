@@ -1,6 +1,6 @@
 ---
 type: help
-updated: 2026-06-14
+updated: 2026-06-18
 ---
 
 # Zhuomo 怎么用
@@ -31,9 +31,11 @@ updated: 2026-06-14
 | 我想… | 说 |
 |-------|-----|
 | 标记读过了 | `Review [[概念]]` |
-| 讲回来测掌握 | `Explain-back [[概念]]` |
+| 讲回来测掌握 | `Explain-back [[概念]]` 或 `/zhuomo explain-back 概念` |
 | 待复习列表 | `Review queue: cisco-aci` |
 | 升掌握度 | `Promote [[概念]] to solid` |
+
+**Explain-back 默认（交互式）：** 每次只出 **1 道** `## Explain-back` 题 → 你用自己话讲回来 → Agent 简短反馈（✅/⚠️/❌）→ 下一题。**不会一次列出全部题目或标准答案。** 全部完成后更新 `reviewed` / `explain_back`。规范：`~/zhuomo/REVIEW.md` § Interactive explain-back。
 
 Agent 改页会更新 `updated`；你读完打 `reviewed`。`updated > reviewed` → 该再读。
 

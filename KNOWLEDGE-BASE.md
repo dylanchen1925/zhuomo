@@ -167,95 +167,27 @@ Phone: Obsidian wiki only + bookmark list. Laptop: weekly batch — export bookm
 
 At moderate scale (~100 sources, hundreds of pages), **index.md + wikilinks** often beats embedding RAG. Add search CLI/MCP only when the wiki outgrows the index.
 
-## Schema (AGENTS.md section)
+## Schema (AGENTS.md)
 
-On **Bootstrap**, write this file to the vault root (customize paths). **Default ingest depth = reference depth (deepen all)** — not stub-only lite.
+On **Bootstrap**, **copy** the repo template — do not write AGENTS.md from scratch:
 
-```markdown
-# Zhuomo vault — agent conventions
-
-Bootstrapped: [YYYY-MM-DD]
-
-## Ingest depth (default)
-
-**Default:** `reference depth` — topic map → EPUB/PDF md corpus → **deepen all** topic-map concepts with `## Evidence` → domain `overview.md` (+ optional `guide.md`).
-
-**Opt-out:** User says `overview only`, `lite`, or `bootstrap lite` → stub-only pass; deepen later on demand.
-
-User says `archive only` → ingest wiki pages only; skip learn artifacts.
-
-## Reference depth workflow
-
-1. **Topic map** on `wiki/sources/[slug].md`
-2. **EPUB/PDF** → `wiki/sources/[slug]/md/` via `scripts/epub-to-wiki-md.py` (images to `md/assets/`)
-3. **Deepen all** — expand every topic-map concept; no stub left behind unless user opted out
-4. **Framework** — `domains/<slug>/overview.md` pillars, progress, gaps; optional `guide.md`
-5. **Learn** (unless archive only) — digest; `## Explain-back` on concepts; fable optional — [REVIEW.md](REVIEW.md)
-
-## Human entry point
-
-`wiki/overview.md` (Obsidian Homepage) — **vault hub only; keep short.**
-
-**Per domain — two pages only:**
-- `domains/<domain>/overview.md` — why learn, pillars, progress, glossary (entry)
-- `domains/<domain>/guide.md` — optional one-page technical digest
-
-**Vault overview rule:** New domain → add row to `wiki/overview.md` + `domain-map.md` only — never append domain prose to vault `overview.md`.
-
-**Architect framing (network/IT):** Query leads business → constraint → technical object.
-
-**New source layout:** `wiki/sources/<slug>.md` + flat `wiki/concepts/` (`domain:` frontmatter). No `wiki/<book-name>/` top-level folders.
-
-## Knowledge base
-
-Raw path: `[raw path]` (local, read only, never edit).
-Wiki path: Obsidian vault `wiki/` — all agent output goes here.
-
-**Multi-device:** Phone captures → `raw/inbox/` only. Laptop processes inbox before other ingest; move done files to `raw/processed/` or typed folder. Laptop owns wiki edits.
-
-**Ingest:** Process `raw/inbox/` when non-empty → read source → topic map → reference depth (above) → update `wiki/index.md` → append `wiki/log.md`.
-
-**Query — brain-first:** overview → domain-map → domain overview/guide → index → concepts; then raw/web.
-
-**Query modes:** `search` = page list; `think` (default) = synthesis + Sources + **Gaps**; file back to synthesis/ or concepts.
-
-**Lint (doctor-lite):** broken links, orphans, stub gaps, progress/Evidence mismatch, contradictions, duplicates. Log + Revise/deepen. Auto-stub missing pillar links.
-
-**Weekly:** Review queue + Explain-back + Lint + overview progress — [REVIEW.md](REVIEW.md).
-
-**Revise:** Correct or update wiki pages and linked skills when wrong, stale,
-contradicted, or duplicated. Propagate fixes to all pages citing old claims.
-Log every revision. Prefer supersede/archive over delete.
-
-**Learn:** After ingest (unless archive only), digest + `## Explain-back` on concepts under `wiki/learn/`; **fable** optional. See [LEARNING.md](LEARNING.md), [REVIEW.md](REVIEW.md).
-
-**Study / Explain-back:** Per-concept; frontmatter `mastery`, `reviewed`, `explain_back`, `updated` — [REVIEW.md](REVIEW.md).
-
-**Weekly:** Review queue + explain-back + lint — [REVIEW.md](REVIEW.md).
-
-**Domain overview:** Maintain `wiki/domains/*/overview.md` and `domain-map.md` —
-architect lens, pillars, progress, gaps, glossary. Update on each domain-touching ingest.
-
-**Log format:** `## [YYYY-MM-DD] ingest | Title` or `revise | learn | review | weekly | framework | bootstrap | …`
-
-**Page conventions:** wikilinks `[[concept-name]]`; YAML frontmatter optional
-(tags, source_count, epistemic, prereqs, status: active | stale | superseded | archived).
-**Figures:** when text cites Figure N, embed inline at the mention (or thematic `##` if Evidence-only) — source asset from `sources/*/md/assets/` or mermaid schematic ([REFERENCE.md](REFERENCE.md#figure-visuals-on-wiki-pages)).
-
-## User-facing UX
-
-Human cheatsheet: `wiki/help.md` (copy from repo `templates/wiki/help.md` on bootstrap).
-
-**Before large book ingest:** confirm once unless user said `overview only` / `lite`.
-
-**After major ops:** 3-line closing — ✓ 完成 / → 下一步 / ⚙ 可选 (see SKILL.md).
-
-**Ambiguous request:** menu before running long ingest.
+```
+cp ~/zhuomo/templates/AGENTS.md → <vault>/AGENTS.md
 ```
 
-On **Bootstrap**, also copy `templates/wiki/help.md` → `wiki/help.md` and link from `wiki/overview.md`.
+Replace placeholders only:
 
-Co-evolve this schema as you learn what works for your domain.
+| Placeholder | Example |
+|-------------|---------|
+| `{{RAW_PATH}}` | `~/zhuomo-data/raw/` |
+| `{{VAULT_PATH}}` | `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen/` |
+| `{{BOOTSTRAP_DATE}}` | `2026-06-01` |
+
+**Canonical template:** [templates/AGENTS.md](templates/AGENTS.md) — ingest depth, concept contract, six verbs, lint scripts, UX rules.
+
+Also copy `templates/wiki/help.md` → `wiki/help.md` and link from `wiki/overview.md`.
+
+When repo conventions change, diff vault `AGENTS.md` against the template and merge. Co-evolve vault-specific rules (domain notes) in AGENTS.md; propose upstream changes to the repo template when they apply to all vaults.
 
 ## Operations
 

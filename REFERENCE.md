@@ -51,7 +51,7 @@ Multi-device: phone saves to `raw/inbox/` (iCloud/Dropbox); laptop ingests and m
 
 ### Review & Explain-back
 
-Per-concept teach-back on `wiki/concepts/*.md` under `## Explain-back`. Details: [REVIEW.md](REVIEW.md).
+Per-concept teach-back on `wiki/concepts/*.md` using `## Explain-back` prompts. **Default:** interactive — one question per turn, brief feedback, frontmatter at end. Spec: [REVIEW.md § Interactive explain-back](REVIEW.md#interactive-explain-back-default).
 
 ## Readwise & highlights pipeline
 
@@ -231,6 +231,17 @@ python3 scripts/epub-to-wiki-md.py raw/books/my-book.epub \
 ```
 
 Requires: `pip install ebooklib beautifulsoup4`
+
+**PDF (`.pdf`) — chapter presets:**
+
+```bash
+python3 scripts/pdf-to-wiki-md.py raw/books/HDN.pdf \
+  --preset hdn \
+  --out ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/Dylan\ Chen/wiki/sources/hardware-defined-networking/md \
+  --slug hardware-defined-networking
+```
+
+Requires: `pdftotext` (poppler); optional `pdfimages` for PNG extraction. Add page-range presets in `scripts/pdf-to-wiki-md.py` for new books.
 
 **Alternative extraction options:**
 

@@ -107,6 +107,32 @@ ISOVALENT_K8S_ACI_NXOS_DESIGN_CHAPTERS: list[tuple[str, int, int]] = [
     ("Closing Remarks", 38, 38),
 ]
 
+# Booth, Colomb, Williams — The Craft of Research, 3rd ed. (2008). PDF page = printed page.
+CRAFT_OF_RESEARCH_CHAPTERS: list[tuple[str, int, int]] = [
+    ("Front Matter", 1, 26),
+    ("Part I Prologue and Ch1 Thinking in Print", 27, 34),
+    ("Ch2 Connecting with Your Reader", 35, 47),
+    ("Part II Prologue Planning Overview", 48, 53),
+    ("Ch3 From Topics to Questions", 54, 69),
+    ("Ch4 From Questions to a Problem", 70, 86),
+    ("Ch5 From Problems to Sources", 87, 103),
+    ("Ch6 Engaging Sources", 104, 121),
+    ("Part III Prologue Assembling an Argument", 122, 126),
+    ("Ch7 Making Good Arguments Overview", 127, 138),
+    ("Ch8 Making Claims", 139, 148),
+    ("Ch9 Assembling Reasons and Evidence", 149, 158),
+    ("Ch10 Acknowledgments and Responses", 159, 171),
+    ("Ch11 Warrants", 172, 189),
+    ("Part IV Prologue Planning Again", 190, 195),
+    ("Ch12 Planning", 196, 205),
+    ("Ch13 Drafting Your Report", 206, 222),
+    ("Ch14 Revising Organization and Argument", 223, 231),
+    ("Ch15 Communicating Evidence Visually", 232, 250),
+    ("Ch16 Introductions and Conclusions", 251, 267),
+    ("Ch17 Revising Style", 268, 291),
+    ("Ethics Appendix and Index", 292, 337),
+]
+
 PRESETS: dict[str, list[tuple[str, int, int]]] = {
     "hdn": HDN_CHAPTERS,
     "k8s-up-and-running": K8S_UP_AND_RUNNING_CHAPTERS,
@@ -120,6 +146,9 @@ PRESETS: dict[str, list[tuple[str, int, int]]] = {
     "ciscocampuslanwlan": CISCO_CAMPUS_LAN_WLAN_CHAPTERS,
     "isovalent-k8s-aci-nxos-design": ISOVALENT_K8S_ACI_NXOS_DESIGN_CHAPTERS,
     "isovalentk8sacinxosdesign": ISOVALENT_K8S_ACI_NXOS_DESIGN_CHAPTERS,
+    "craft-of-research": CRAFT_OF_RESEARCH_CHAPTERS,
+    "craftofresearch": CRAFT_OF_RESEARCH_CHAPTERS,
+    "the-craft-of-research": CRAFT_OF_RESEARCH_CHAPTERS,
 }
 
 

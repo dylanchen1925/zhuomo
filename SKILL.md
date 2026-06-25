@@ -25,7 +25,7 @@ Scan the user message **top to bottom**. First matching row wins. If two verbs a
 | `Revise`, `修正`, user reports wiki error | **Revise** | § Revise |
 | `Review [[`, `Explain-back`, `explain-back`, `Promote [[`, `Review queue` | **Study** | § Study |
 | `Lint`, `Weekly`, `doctor`, health check | **Lint** (+ Weekly if said) | Run scripts § Scripts |
-| `Learn fable`, `Framework`, `Connect` | **Learn** (subset) | [LEARNING.md](LEARNING.md) |
+| `Learn fable`, `Framework`, `Connect` | **Learn** (subset) | [LEARNING.md](LEARNING.md); Framework → `sync-domain-study-paths.py` |
 | `Extract skill`, `RED`, skill from concept | **Skill extract** | § Skill extraction |
 | "怎么用", "有哪些功能" | **Help** | Link vault `[[help]]` + `SIMPLE.md`; do not dump full spec |
 | Ambiguous + large book/EPUB, no `overview only` / `lite` | **Confirm** | § Confirm menu — **stop** until user replies |
@@ -452,6 +452,7 @@ Update `SOURCES.md` + `log.md`: `## [date] skill | <name> | from [[concept]]`
 | `lint-figure-visuals.py` | Find missing figure embeds |
 | `lint-review-queue.py` | `updated > reviewed`, missing Explain-back |
 | `add-evidence-sections.py` | Backfill Evidence blocks |
+| `sync-domain-study-paths.py` | Refresh domain overview/guide study paths |
 | `simplify-vault.py` | One-shot vault migration (archive) |
 
 All under `~/zhuomo/scripts/`. Pass `<vault>/wiki` as argument unless script docs say otherwise.

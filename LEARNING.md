@@ -51,7 +51,7 @@ Explain-back [[aci-border-leaf-l3out]]
 
 Progress: Obsidian Dataview on concept frontmatter — see [REVIEW.md](REVIEW.md#progress-in-obsidian-dataview).
 
-**Study path:** numbered list with `[[concept-slug]]` wikilinks on `overview.md` (and short mirror on `guide.md`). Ingest updates paths when new concepts land.
+**Study path:** numbered list with `[[concept-slug]]` wikilinks on `overview.md` (and short mirror on `guide.md`). After ingest with new concepts, run `python3 ~/zhuomo/scripts/sync-domain-study-paths.py <vault>/wiki` or say `Framework: <domain>` to refresh paths.
 
 ### After ingest checklist (agent)
 
@@ -59,3 +59,4 @@ Progress: Obsidian Dataview on concept frontmatter — see [REVIEW.md](REVIEW.md
 - [ ] Frontmatter: `domain`, `mastery`, `explain_back`, `updated` on deepen/revise
 - [ ] Domain `overview.md` pillars + gaps (no hand-maintained progress table)
 - [ ] Optional slim `guide.md` index
+- [ ] **Study path:** if new concepts or new domain → run `python3 ~/zhuomo/scripts/sync-domain-study-paths.py <vault>/wiki` or edit paths in script + run

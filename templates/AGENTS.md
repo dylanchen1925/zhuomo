@@ -41,7 +41,7 @@ explain_back: not_started      # not_started | attempted | passed
 updated: YYYY-MM-DD            # last agent or study edit
 ```
 
-Body order: **`## Claim`** → **`## Explain-back`** → **`## Evidence`** → **`## Sources`**
+Body order: **`## Claim`** → optional **`## My take`** (`epistemic: personal`) → **`## Explain-back`** → **`## Evidence`** → **`## Sources`**
 
 | Rule | Detail |
 |------|--------|
@@ -112,7 +112,9 @@ wiki/overview.md → domain-map.md → domains/<slug>/overview.md (+ guide.md)
 | Mode | Output |
 |------|--------|
 | `Query search:` | Ranked `[[pages]]` + one-line relevance |
-| `Query think:` (default) | `## Answer` + `## Sources` + `## Gaps` |
+| `Query think:` (default) | `## Answer` + `## Sources` + `## Gaps` + `## Next step` (够用 / Study / File — see SKILL.md table) |
+
+**Model layer:** L0 overview 心智模型 · L1 `wiki/synthesis/` · L2 concept `## My take`. Template: `templates/wiki/synthesis.md`.
 
 File durable synthesis to `wiki/synthesis/` or extend concepts; append `log.md` if substantial.
 
@@ -127,13 +129,15 @@ python3 ~/zhuomo/scripts/lint-review-queue.py {{VAULT_PATH}}wiki
 python3 ~/zhuomo/scripts/lint-figure-visuals.py {{VAULT_PATH}}wiki
 ```
 
-Fix: broken wikilinks, orphans, missing Evidence / Explain-back, figure embeds, contradictions, duplicates. Auto-stub missing pillar links. Append `## [date] lint | …` to `log.md`.
+Fix: broken wikilinks, orphans, missing Evidence / Explain-back, figure embeds, contradictions, duplicates. Lint buckets: `SOLID_CANDIDATE`, `READ_UNTESTED`, `STALE`, … — see SKILL.md § Lint.
 
 ---
 
 ## Revise
 
-When wrong, stale, contradicted, or duplicated: revision card → edit / supersede / merge / retract → **propagate** to all citing pages → `updated:` today → `log.md`: `## [date] revise | [[page]] | reason`. Never silent delete.
+When wrong, stale, contradicted, or duplicated: revision card → edit / supersede / merge / retract → **propagate** → `updated:` → log.
+
+**User idea:** `Revise [[x]] — 我的想法：…` → `## My take` (not Evidence). **Connect** → `wiki/synthesis/` from template.
 
 ---
 
@@ -142,6 +146,8 @@ When wrong, stale, contradicted, or duplicated: revision card → edit / superse
 - `Review [[concept]]` → set `reviewed: <today>`
 - `Explain-back [[concept]]` → **one** `## Explain-back` prompt per turn; grade ✅/⚠️/❌; update frontmatter **after last prompt only**
 - `Promote [[concept]] to solid` → only if `explain_back: passed`
+- Domain **Tier A/B** on `overview.md` §掌握度分层 — sync via `sync-domain-study-paths.py`
+- Overview Dataview: **Solid 候选** · **读过未测** (see REVIEW.md)
 
 Batch mode only if user says `batch` or `一次出题`.
 

@@ -163,9 +163,10 @@ Domain `overview.md` **does not** duplicate a 100-row progress table. Progress l
 
 **How to use:**
 
-1. Open `domains/<学科>/overview.md` → scroll to **学习进度** — table auto-lists concepts for that domain.
-2. Filter yourself: in any note, paste the query block below and change `domain`.
-3. **Review queue in Dataview** — concepts where agent edited after you read:
+1. Open `domains/<学科>/overview.md` → **学习进度** + **掌握度分层（Tier A/B）**.
+2. **Solid 候选** — `explain_back: passed` 且未 Promote（overview 内嵌 Dataview）.
+3. **读过未测** — 有 `reviewed` 但 `explain_back != passed`.
+4. **Review queue** — `updated > reviewed`:
 
 ```dataview
 TABLE mastery, reviewed, explain_back, updated
@@ -174,7 +175,25 @@ WHERE domain = "cisco-aci" AND (reviewed = null OR updated > reviewed)
 SORT updated DESC
 ```
 
-4. **Solid concepts:**
+5. **Solid 候选:**
+
+```dataview
+TABLE mastery, reviewed, explain_back, updated
+FROM "wiki/concepts"
+WHERE domain = "cisco-aci" AND explain_back = "passed" AND mastery != "solid"
+SORT file.name ASC
+```
+
+6. **读过未测:**
+
+```dataview
+TABLE mastery, reviewed, explain_back, updated
+FROM "wiki/concepts"
+WHERE domain = "cisco-aci" AND reviewed != null AND explain_back != "passed"
+SORT updated DESC
+```
+
+7. **Solid 已达成:**
 
 ```dataview
 LIST
@@ -182,7 +201,7 @@ FROM "wiki/concepts"
 WHERE domain = "cisco-aci" AND mastery = "solid"
 ```
 
-5. After **Explain-back** or **Revise**, refresh is automatic (Dataview reads frontmatter). No sync script.
+8. After **Explain-back** or **Revise**, refresh is automatic. Run `Promote [[slug]] to solid` when passed.
 
 | mastery | Meaning |
 |---------|---------|
@@ -197,12 +216,15 @@ WHERE domain = "cisco-aci" AND mastery = "solid"
 python3 scripts/lint-review-queue.py <vault>/wiki
 ```
 
-Or say `Lint` / optional `Weekly`:
+Or say `Lint` / optional `Weekly` — script prints buckets:
 
-- `updated > reviewed` → re-read
-- No `reviewed` + has Evidence → never reviewed
-- `reviewed` but `explain_back` not `passed` → read but not tested
-- Missing `## Explain-back`
+| Bucket | Meaning | Action |
+|--------|---------|--------|
+| `SOLID_CANDIDATE` | passed, not solid | `Promote [[slug]] to solid` |
+| `READ_UNTESTED` | reviewed, not passed | `Explain-back [[slug]]` |
+| `STALE` | updated > reviewed | Re-read |
+| `NEVER_REVIEWED` | has Evidence, no reviewed | Review |
+| `MISSING_EXPLAIN_BACK_SECTION` | deepened, no section | Add prompts |
 
 ---
 

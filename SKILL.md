@@ -25,7 +25,7 @@ Scan the user message **top to bottom**. First matching row wins. If two verbs a
 | `Revise`, `修正`, user reports wiki error | **Revise** | § Revise |
 | `Review [[`, `Explain-back`, `explain-back`, `Promote [[`, `Review queue` | **Study** | § Study |
 | `Lint`, `Weekly`, `doctor`, health check | **Lint** (+ Weekly if said) | Run scripts § Scripts |
-| `Learn fable`, `Framework`, `Connect` | **Learn** (subset) | [LEARNING.md](LEARNING.md); Framework → `sync-domain-study-paths.py` |
+| `Learn fable`, `Framework`, `Connect` | **Learn** (subset) | [LEARNING.md](LEARNING.md); `Framework` → `sync-domain-study-paths.py` (`--tiers-only` = 只更新分层) |
 | `Extract skill`, `RED`, skill from concept | **Skill extract** | § Skill extraction |
 | "怎么用", "有哪些功能" | **Help** | Link vault `[[help]]` + `SIMPLE.md`; do not dump full spec |
 | Ambiguous + large book/EPUB, no `overview only` / `lite` | **Confirm** | § Confirm menu — **stop** until user replies |
@@ -120,7 +120,12 @@ One paragraph — current trusted statement.
 
 ## Sources
 - **Raw:** `~/zhuomo-data/raw/…`
+
+## My take
+> Optional. `epistemic: personal` — **your** judgment only; never replace Evidence. User adds via `Revise [[x]] — 我的想法：…`
 ```
+
+**Optional frontmatter:** `epistemic: personal` on concept or synthesis when content is user-authored (not book Evidence).
 
 **Frontmatter rules:**
 
@@ -186,6 +191,8 @@ One paragraph — current trusted statement.
    b. Add/update wikilinks in domain overview pillars + slim guide.md
    c. Embed figures per § Figure rule
 6. Update wiki/index.md; domain overview gaps if needed
+6b. **Synthesis gate** — if ingest touches domain mental model or user may have opinions, add to closing block:
+    `⚙ 是否更新 synthesis / 域心智模型？回复 domain + 要点` (do not auto-write synthesis)
 7. log.md: ## [date] ingest | <title> | N concepts deepened
 8. Optional: run lint-figure-visuals.py, lint-review-queue.py
 9. Closing block
@@ -252,6 +259,20 @@ Output: numbered list — `[[page]] — one line why relevant`. No synthesis ess
 | stub / no Evidence / stale / contradiction | … | deepen X / Revise Y / new source |
 ```
 
+**Required — `## Next step` (deterministic; pick exactly one primary line):**
+
+| Condition | Primary line |
+|-----------|--------------|
+| One-off fact; no Tier A concept in Answer | `**够用** — 无需 Study；下次同类问题可再 Query` |
+| Answer used Tier A concept with `explain_back` not `passed` | `**Study** — \`Explain-back [[slug]]\`` (pick highest-signal Tier A slug from domain overview) |
+| User stated personal model / checklist / cross-domain comparison | `**File** — \`Connect: … — 记入 synthesis\` 或 \`Revise [[x]] — 我的想法：…\`` |
+| Gaps table non-empty with stub/contradiction | `**Revise/deepen** — 见 Gaps 首行` |
+
+```markdown
+## Next step
+**Study** — `Explain-back [[cilium-network-policy-identity]]`（Tier A，尚未 passed）
+```
+
 **Network/IT domains:** Answer leads with business constraint → design lever → technical object.
 
 **File back when:** comparison, cross-concept synthesis, or durable Q&A → `wiki/synthesis/<slug>.md` or extend concept; append `log.md` if substantial.
@@ -266,18 +287,33 @@ Output: numbered list — `[[page]] — one line why relevant`. No synthesis ess
 1. Locate: target page, backlinks (grep wiki), related skills
 2. Fill revision card (mental or chat):
    - Old claim | New claim | Evidence | Pages to propagate
-3. Choose action:
+3. **User idea** (`Revise [[x]] — 我的想法：…`):
+   - Add or update `## My take` on concept; set `epistemic: personal` in frontmatter if not already
+   - If cross-concept → create/update `wiki/synthesis/<slug>.md` from `templates/wiki/synthesis.md`
+   - Never overwrite `## Evidence` rows; if contradicts Claim → `epistemic: contested` + note both views
+4. Choose action:
    - Edit in place (minor)
    - Supersede (old wrong → status: superseded + forward link)
    - Merge (duplicates → one canonical)
    - Retract (archive + why)
-4. Propagate: fix every page citing old claim
-5. Set updated: today on all touched concept pages
-6. log.md: ## [date] revise | [[page]] | reason
-7. Closing block
+5. Propagate: fix every page citing old claim
+6. Set updated: today on all touched concept pages
+7. log.md: ## [date] revise | [[page]] | reason
+8. Closing block
 ```
 
-**Never:** delete history silently; leave contradictory claims on two pages as both true.
+**Connect → wiki (model layer L1):**
+
+```
+User: Connect: <cross-concept insight> — 记入 synthesis
+```
+
+1. Copy `templates/wiki/synthesis.md` → `wiki/synthesis/<kebab-slug>.md`
+2. Fill `## Model`, `## My take`, link `[[concepts]]`
+3. Link from domain `overview.md` 心智模型 or relevant concept `## My take`
+4. log.md: `## [date] connect | synthesis/<slug>`
+
+**Never:** paste user model into `## Claim` without `## My take` separation.
 
 ---
 
@@ -343,8 +379,19 @@ Run (replace `<vault>`):
 
 ```bash
 python3 ~/zhuomo/scripts/lint-review-queue.py <vault>/wiki
+python3 ~/zhuomo/scripts/lint-review-queue.py <vault>/wiki --domain kubernetes-cilium
 python3 ~/zhuomo/scripts/lint-figure-visuals.py <vault>/wiki
 ```
+
+**Review queue buckets (script output — act in order):**
+
+| Bucket | Action |
+|--------|--------|
+| `SOLID_CANDIDATE` | `Promote [[slug]] to solid` |
+| `READ_UNTESTED` | `Explain-back [[slug]]` — reviewed but not passed |
+| `STALE` | Re-read + Review |
+| `NEVER_REVIEWED` | Review or deepen |
+| `MISSING_EXPLAIN_BACK_SECTION` | Add `## Explain-back` |
 
 | Check | If failed |
 |-------|-----------|
@@ -415,7 +462,7 @@ Update `SOURCES.md` + `log.md`: `## [date] skill | <name> | from [[concept]]`
 ```markdown
 **✓ 完成：** [操作] — [1 句结果，如 12 concepts + Evidence]
 **→ 下一步：** [1–2 个具体建议，链到 [[wikilinks]] 或指令]
-**⚙ 可选：** `overview only` · `Learn fable [[stub]]` · `Weekly` · `Lint`
+**⚙ 可选：** `overview only` · `Learn fable [[stub]]` · `Weekly` · `Lint` · `更新 synthesis？`
 ```
 
 ### log.md lines
@@ -452,10 +499,22 @@ Update `SOURCES.md` + `log.md`: `## [date] skill | <name> | from [[concept]]`
 | `lint-figure-visuals.py` | Find missing figure embeds |
 | `lint-review-queue.py` | `updated > reviewed`, missing Explain-back |
 | `add-evidence-sections.py` | Backfill Evidence blocks |
-| `sync-domain-study-paths.py` | Refresh domain overview/guide study paths |
+| `sync-domain-study-paths.py` | Study paths + Tier A/B/C/D + Dataview queues on overviews |
 | `simplify-vault.py` | One-shot vault migration (archive) |
 
 All under `~/zhuomo/scripts/`. Pass `<vault>/wiki` as argument unless script docs say otherwise.
+
+**Framework:**
+
+```bash
+# Full: paths + tiers + solid/read Dataview blocks
+python3 ~/zhuomo/scripts/sync-domain-study-paths.py <vault>/wiki
+
+# Tiers + queues only (after ingest, no path rewrite)
+python3 ~/zhuomo/scripts/sync-domain-study-paths.py <vault>/wiki --tiers-only
+```
+
+Tier definitions: `scripts/domain_study_tiers.py` — edit then re-run sync.
 
 ---
 
@@ -469,12 +528,14 @@ All under `~/zhuomo/scripts/`. Pass `<vault>/wiki` as argument unless script doc
 - [ ] `index.md` updated; `log.md` appended
 - [ ] No dangling `[[wikilinks]]` on touched pages
 - [ ] Closing block posted
+- [ ] If domain mental model may change: offer synthesis update in `⚙ 可选`
 
 ### Query (think)
 
 - [ ] Brain-first read order followed
-- [ ] Output has `## Answer`, `## Sources`, `## Gaps`
+- [ ] Output has `## Answer`, `## Sources`, `## Gaps`, `## Next step`
 - [ ] Gaps table non-empty if any stub/contradiction exists
+- [ ] Next step follows deterministic table (够用 / Study / File / Revise)
 
 ### Explain-back
 

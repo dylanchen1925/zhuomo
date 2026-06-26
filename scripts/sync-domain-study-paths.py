@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
-"""Sync domain overview.md + guide.md study paths from repo templates."""
+"""Sync domain overview.md + guide.md study paths and mastery tiers from repo templates."""
 
 from __future__ import annotations
 
 import argparse
 import re
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from domain_study_tiers import TIERS, format_study_progress_block, format_tiers_block  # noqa: E402
 
 # overview: full numbered path; guide: condensed (may link to overview)
 PATHS: dict[str, dict[str, str]] = {
@@ -364,6 +368,9 @@ INSERT_BEFORE = [
     r"---\s*\n\n## 术语",
 ]
 
+TIERS_HEADING = r"## 掌握度分层"
+PROGRESS_HEADING = r"## 学习进度"
+
 
 def replace_or_insert(text: str, headings: list[str], new_block: str) -> str:
     new_block = new_block.strip() + "\n"
@@ -384,37 +391,75 @@ def bump_updated(text: str, date: str) -> str:
     return text
 
 
+def replace_section(text: str, heading_pattern: str, new_block: str) -> str:
+    new_block = new_block.strip() + "\n"
+    pat = re.compile(rf"({heading_pattern}\n).*?(?=\n## |\n---\n\n## |\Z)", re.S)
+    if pat.search(text):
+        return pat.sub(new_block + "\n", text, count=1)
+    return text
+
+
+def sync_overview_extras(text: str, slug: str) -> str:
+    """Inject 学习进度 (with queues) + 掌握度分层."""
+    if slug in TIERS:
+        text = replace_section(text, PROGRESS_HEADING, format_study_progress_block(slug))
+        text = replace_section(text, TIERS_HEADING, format_tiers_block(slug, TIERS[slug]))
+        if TIERS_HEADING not in text:
+            ins = re.search(r"\n(## 建议学习顺序|## Study path)", text)
+            if ins:
+                block = format_tiers_block(slug, TIERS[slug])
+                text = text[: ins.start()] + "\n\n" + block + text[ins.start() :]
+    return text
+
+
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("vault_wiki", type=Path, help="Path to vault wiki/ directory")
     p.add_argument("--date", default="2026-06-01", help="Frontmatter updated date")
+    p.add_argument(
+        "--tiers-only",
+        action="store_true",
+        help="Update 学习进度 queues + 掌握度分层 only; skip study paths",
+    )
+    p.add_argument("--paths-only", action="store_true", help="Update study paths only; skip tiers")
     p.add_argument("--dry-run", action="store_true")
     args = p.parse_args()
+    if args.tiers_only and args.paths_only:
+        p.error("use at most one of --tiers-only and --paths-only")
     wiki = args.vault_wiki.resolve()
     domains_dir = wiki / "domains"
+    do_paths = not args.tiers_only
+    do_tiers = not args.paths_only
     n = 0
-    for slug, blocks in PATHS.items():
+    slugs = set(PATHS) | set(TIERS)
+    for slug in sorted(slugs):
         dom = domains_dir / slug
         ov = dom / "overview.md"
-        gd = dom / "guide.md"
-        if ov.is_file() and "overview" in blocks:
-            text = ov.read_text(encoding="utf-8")
-            new_text = replace_or_insert(text, OVERVIEW_HEADINGS, blocks["overview"])
-            new_text = bump_updated(new_text, args.date)
-            if new_text != text:
-                n += 1
-                print(f"overview: {ov}")
-                if not args.dry_run:
-                    ov.write_text(new_text, encoding="utf-8")
-        if gd.is_file() and "guide" in blocks:
-            text = gd.read_text(encoding="utf-8")
-            new_text = replace_or_insert(text, GUIDE_HEADINGS, blocks["guide"])
-            new_text = bump_updated(new_text, args.date)
-            if new_text != text:
-                n += 1
-                print(f"guide: {gd}")
-                if not args.dry_run:
-                    gd.write_text(new_text, encoding="utf-8")
+        if not ov.is_file():
+            continue
+        text = ov.read_text(encoding="utf-8")
+        new_text = text
+        if do_paths and slug in PATHS and "overview" in PATHS[slug]:
+            new_text = replace_or_insert(new_text, OVERVIEW_HEADINGS, PATHS[slug]["overview"])
+        if do_tiers:
+            new_text = sync_overview_extras(new_text, slug)
+        new_text = bump_updated(new_text, args.date)
+        if new_text != text:
+            n += 1
+            print(f"overview: {ov}")
+            if not args.dry_run:
+                ov.write_text(new_text, encoding="utf-8")
+        if do_paths and slug in PATHS and "guide" in PATHS[slug]:
+            gd = dom / "guide.md"
+            if gd.is_file():
+                gtext = gd.read_text(encoding="utf-8")
+                gnew = replace_or_insert(gtext, GUIDE_HEADINGS, PATHS[slug]["guide"])
+                gnew = bump_updated(gnew, args.date)
+                if gnew != gtext:
+                    n += 1
+                    print(f"guide: {gd}")
+                    if not args.dry_run:
+                        gd.write_text(gnew, encoding="utf-8")
     print(f"updated {n} files")
     return 0
 

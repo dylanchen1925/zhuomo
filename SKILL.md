@@ -74,6 +74,7 @@ Scan the user message **top to bottom**. First matching row wins. If two verbs a
 | Page | Path | Holds |
 |------|------|-------|
 | Vault hub | `wiki/overview.md` | Domain table + ingest rules — **no domain prose** |
+| Domain map | `wiki/domain-map.md` | All domains — table links **without** `\|alias` in cells |
 | Domain entry | `wiki/domains/<slug>/overview.md` | Why learn, pillars, **Dataview progress**, glossary, gaps |
 | Domain guide | `wiki/domains/<slug>/guide.md` | Concept index + mental model only (concept-first) |
 | Concepts | `wiki/concepts/*.md` | Claim, `## Explain-back`, `## Evidence` |
@@ -205,7 +206,8 @@ One paragraph — current trusted statement.
 1. Create raw/ tree: inbox/, web/, video/, books/, assets/, processed/
 2. Create wiki skeleton:
    index.md, log.md, overview.md, help.md (copy ~/zhuomo/templates/wiki/help.md),
-   domain-map.md, learn/fables/ only
+   domain-map.md (copy ~/zhuomo/templates/wiki/domain-map.md),
+   learn/fables/ only
 3. Copy AGENTS.md template — do NOT write from scratch:
    cp ~/zhuomo/templates/AGENTS.md → <vault>/AGENTS.md
    Replace placeholders only:
@@ -637,7 +639,7 @@ Tier definitions: `scripts/domain_study_tiers.py` — edit then re-run sync.
 | Web search before reading wiki | overview → concepts → then web |
 | Skill file full of BGP facts | Domain skill + wiki backend; Revise wiki when facts change |
 | "See Figure 5" with no image | Inline `![Figure 5](…)` + source link |
-| Query answer with no Gaps section | Gaps table flags stubs and contradictions |
+| `[[path|alias]]` inside markdown table cell | `[[path]]` only — pipe splits table columns |
 | `mastery: solid` after Review only | solid only after `explain_back: passed` |
 
 ---

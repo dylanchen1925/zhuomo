@@ -14,7 +14,7 @@ updated: 2026-06-01
 | 动词 | 说 | 产出 |
 |------|-----|------|
 | **Bootstrap** | `Bootstrap + ingest: 书.epub` | 建库 + 第一本书 |
-| **Ingest** | `Ingest: …` | concepts + Evidence + Explain-back |
+| **Ingest** | `Ingest: …` | 按书类型选深度 — 见下表 |
 | **Query** | `Query: …` | 答案 + Gaps + **Next step** |
 | **Revise** | `Revise [[页]] — …` | 改 wiki；`我的想法` → `## My take` |
 | **Study** | 见下表 | 掌握度 |
@@ -23,6 +23,20 @@ updated: 2026-06-01
 **Weekly（可选）：** `Lint` + 建议一次 Explain-back。
 
 **Framework：** `sync-domain-study-paths.py` 更新学习路径与 Tier A/B/C/D。
+
+---
+
+## Ingest 按书类型（SKILL § Source types）
+
+| 类型 | 例子 | 默认 |
+|------|------|------|
+| **IT / 工程** | 认证书、RFC | reference depth（全概念 + Evidence） |
+| **政经史 / 社科** | 通史、政论、周期论 | reference depth 或 **selective deepen** |
+| **写作技法** | 叙事、编剧 | reference depth |
+| **小说 / 诗歌欣赏** | 消遣精读 | **overview only** 或 **archive only**；精读 → synthesis |
+| **查阅型** | 年鉴、辞典 | **archive only** |
+
+覆盖关键词：`继续` / `overview only` / `archive only` / `selective deepen` / `精读`
 
 ---
 

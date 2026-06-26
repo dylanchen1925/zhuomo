@@ -9,9 +9,9 @@ Bootstrapped: {{BOOTSTRAP_DATE}}
 
 ## Ingest depth (default)
 
-**Default:** `reference depth` — topic map → EPUB/PDF md corpus → **deepen all** topic-map concepts with `## Explain-back` + `## Evidence` → domain `overview.md` (+ optional slim `guide.md`).
+**Default:** `reference depth` for **Study-type** books (technical, analytic, craft) — see `~/zhuomo/SKILL.md` § Source types.
 
-**Opt-out:** User says `overview only`, `lite`, or `bootstrap lite` → stub-only pass; deepen later on demand.
+**Opt-out / literary:** `overview only`, `lite`, `archive only`, `selective deepen`, `精读` — fiction/poetry appreciation defaults to overview/archive unless user says 精读.
 
 **Archive only:** Ingest source + concept stubs only; skip Explain-back / fable unless asked.
 

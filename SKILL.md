@@ -86,7 +86,63 @@ Scan the user message **top to bottom**. First matching row wins. If two verbs a
 
 **New domain:** Add row to `wiki/overview.md` + `domain-map.md`; create `domains/<slug>/overview.md`.
 
-**Reference depth (default):** Deepen **all** topic-map concepts with full pages + Evidence + Explain-back. Opt-out keywords: `overview only`, `lite`, `archive only`, `bootstrap lite`.
+**Reference depth (default for Study-type books only):** Deepen **all** topic-map concepts with full pages + Evidence + Explain-back. See § Source types — do **not** apply reference depth to literary appreciation or lookup-only sources unless user opts in.
+
+---
+
+## Source types & ingest depth
+
+**Before deepening**, classify the source. User override beats inference. If class is ambiguous (especially fiction/poetry), use § Confirm menu and **stop**.
+
+### Classes
+
+| Class | Typical sources | Default depth | Topic-map grain | Explain-back / Promote |
+|-------|-----------------|---------------|-----------------|------------------------|
+| **study-technical** | IT, cert guides, RFCs, engineering, ops | **reference depth** | mechanism, object model, procedure, design tradeoff | Yes — mechanism traps; Tier A → solid |
+| **study-analytic** | 政经史, 社科, 方法论, 投资框架专著 | **reference depth** (or **selective deepen** if huge) | reusable **解释单元**（机制、学派争论、时期框架）— **not** one concept per chapter/year | Yes — compare schools, causal chain; use `epistemic: contested` |
+| **craft-narrative** | 写作技法, 叙事/编剧, 文学批评方法 | **reference depth** | technique, structure, principle | Yes — apply method to novel situation |
+| **literary-appreciation** | 小说、诗歌、散文（欣赏/消遣，非 craft） | **overview only** or **archive only** | book-level themes only if user says **精读** / **selective deepen** | **Skip** unless user asks; **no** Promote pressure |
+| **reference-lookup** | 年鉴, 辞典, 手册查阅型 | **archive only** | index rows in topic map; deepen on demand via Query | Skip |
+
+### User keywords (override class default)
+
+| Keyword | Effect |
+|---------|--------|
+| `reference depth` / `study depth` / `继续` | Full deepen all topic-map rows |
+| `selective deepen` / `精读` / `只 deepen [[x]]` | Deepen named themes only + optional `wiki/synthesis/<book>.md` |
+| `overview only` / `lite` | Topic map + stubs; no full Evidence pass |
+| `archive only` | Source page + md corpus; no concept deepen |
+| `literary` | Treat as **literary-appreciation** unless title is clearly craft (→ **craft-narrative**) |
+
+### Classifier (agent — step 1 of Ingest)
+
+```
+1. If user message names a keyword row above → use that depth
+2. Else if domain is IT/network/k8s/security/performance → study-technical
+3. Else if domain is macro-cycle-investing, research-methods, technical-analysis → study-analytic or craft per title
+4. Else if EPUB fiction/poetry collection OR user says 小说/诗歌/读一读 → literary-appreciation
+5. Else if 通史/政论/经济史/传记论点型 → study-analytic
+6. Else if 写作/叙事/批评理论 → craft-narrative
+7. Else ambiguous large book → Confirm menu with recommended class + depth
+```
+
+### Outputs by class
+
+| Class | Primary wiki artifacts |
+|-------|------------------------|
+| study-technical / craft-narrative | `concepts/*` + domain overview pillars |
+| study-analytic | `concepts/*` + **`wiki/synthesis/`** for cross-book models; contested claims in Evidence |
+| literary-appreciation | `sources/<slug>.md` + md corpus; optional **one** `wiki/synthesis/<book>.md`; **avoid** concept sprawl |
+| reference-lookup | `sources/<slug>.md` + md corpus + topic index table |
+
+### Query answer framing (by domain class)
+
+| Class | Answer shape |
+|-------|----------------|
+| study-technical | business constraint → design lever → technical object |
+| study-analytic | question → mechanism / school debate → Evidence anchor → testable implication |
+| craft-narrative | principle → example from source → application to new scene |
+| literary-appreciation | close reading + `## My take`; **Next step** usually **够用** or **File** — rarely push Explain-back |
 
 ---
 
@@ -173,25 +229,35 @@ One paragraph — current trusted statement.
 
 | Condition | Action |
 |-----------|--------|
-| Book/large EPUB AND user did NOT say `overview only`/`lite` AND not already confirmed | Post § Confirm menu; **stop** |
-| User said `Ingest: path` (explicit) for article/small source | Proceed |
+| Book/large EPUB AND user did NOT name depth keyword AND not already confirmed | Post § Confirm menu (include **source class** + recommended depth); **stop** |
+| User said `overview only` / `lite` / `archive only` / `selective deepen` / `精读` | Proceed with § Source types keyword |
+| User said `Ingest: path` (explicit) for article/small source | Classify § Source types; proceed |
 | `raw/inbox/` non-empty | Process inbox files first |
+| Class = **literary-appreciation** AND user did not say `精读` / `selective deepen` | Default **overview only** or **archive only** — do not reference-depth |
 
 ### Procedure (numbered — complete in order)
 
 ```
+0. Classify source § Source types; record class + depth in source page frontmatter comment or Topics line
 1. Read source structure: TOC, headings, timestamps (video), intro/conclusion
 2. Search existing wiki for related [[concepts]] before creating duplicates
 3. Write topic map on wiki/sources/<slug>.md (table: Topic | Evidence location | Existing page? | Action)
 4. EPUB/PDF → convert full md corpus:
    python3 ~/zhuomo/scripts/epub-to-wiki-md.py <epub> <vault>/wiki/sources/<slug>/md/
    (or pdf-to-wiki-md.py / pdf-ocr-to-wiki-md.py per REFERENCE.md)
-5. For each topic-map row (unless overview only):
+5. Deepen per class + depth (§ Source types):
+   - reference depth → every topic-map row → full concept pages
+   - selective deepen → only listed rows + optional wiki/synthesis/<book>.md
+   - overview only → stubs or pillar links only; no full Evidence pass
+   - archive only → skip step 5 concept writes
+   For each deepened row:
    a. Create/update wiki/concepts/<slug>.md per § Concept page contract
-   b. Add/update wikilinks in domain overview pillars + slim guide.md
-   c. Embed figures per § Figure rule
+   b. study-analytic: prefer `epistemic: contested` when sources disagree
+   c. literary-appreciation + 精读: prefer synthesis over per-chapter concepts
+   d. Add/update wikilinks in domain overview pillars + slim guide.md
+   e. Embed figures per § Figure rule (study-technical / craft only when figures exist)
 6. Update wiki/index.md; domain overview gaps if needed
-6b. **Synthesis gate** — if ingest touches domain mental model or user may have opinions, add to closing block:
+6b. **Synthesis gate** — required offer for study-analytic & literary 精读; optional for study-technical:
     `⚙ 是否更新 synthesis / 域心智模型？回复 domain + 要点` (do not auto-write synthesis)
 7. log.md: ## [date] ingest | <title> | N concepts deepened
 8. Optional: run lint-figure-visuals.py, lint-review-queue.py
@@ -273,7 +339,7 @@ Output: numbered list — `[[page]] — one line why relevant`. No synthesis ess
 **Study** — `Explain-back [[cilium-network-policy-identity]]`（Tier A，尚未 passed）
 ```
 
-**Network/IT domains:** Answer leads with business constraint → design lever → technical object.
+**Answer framing:** See § Source types → Query answer framing (by domain class). Default for IT/network domains: business constraint → design lever → technical object.
 
 **File back when:** comparison, cross-concept synthesis, or durable Q&A → `wiki/synthesis/<slug>.md` or extend concept; append `log.md` if substantial.
 
@@ -453,8 +519,10 @@ Update `SOURCES.md` + `log.md`: `## [date] skill | <name> | from [[concept]]`
 ### Confirm menu (ambiguous large ingest)
 
 ```markdown
-**Ingest 计划：** [书名] → topic map → md 全文 → deepen **约 N 个概念** + Evidence。
-继续默认 reference depth？回复 **继续** / **overview only** / **只 deepen [[某主题]]**
+**类型判断：** [study-technical | study-analytic | craft-narrative | literary-appreciation | reference-lookup]
+**推荐档位：** [reference depth | selective deepen | overview only | archive only] — [1 句理由]
+**Ingest 计划：** [书名] → topic map → md 全文 → [deepen 约 N 概念 | 仅 synthesis | 仅语料]
+回复 **继续**（reference depth）/ **overview only** / **archive only** / **selective deepen [[主题]]** / **精读**
 ```
 
 ### Closing block (required after major ops)
@@ -522,9 +590,10 @@ Tier definitions: `scripts/domain_study_tiers.py` — edit then re-run sync.
 
 ### Ingest
 
+- [ ] Source class + depth chosen per § Source types (record on source page)
 - [ ] Topic map on source page
 - [ ] EPUB/PDF has md corpus under `sources/<slug>/md/` (unless overview only)
-- [ ] Every deepened concept has Claim, Explain-back (3+), Evidence table
+- [ ] Every deepened concept has Claim, Explain-back (3+), Evidence table (skip if archive/overview only per class)
 - [ ] `index.md` updated; `log.md` appended
 - [ ] No dangling `[[wikilinks]]` on touched pages
 - [ ] Closing block posted
@@ -560,6 +629,9 @@ Tier definitions: `scripts/domain_study_tiers.py` — edit then re-run sync.
 | Bad | Good |
 |-----|------|
 | Chapter summary pasted as concept Claim | One-sentence Claim + Evidence row per fact |
+| Novel/poem → 50 chapter concepts + Explain-back | overview only or 精读 → synthesis + few theme concepts |
+| History book → one concept per year | study-analytic units: mechanism, school, period framework |
+| Reference depth on 诗歌消遣读 | archive only; Query + My take when needed |
 | All Explain-back Q&A in one message | One prompt → wait → grade → next |
 | Progress table edited by hand in overview | Dataview reads concept frontmatter |
 | Web search before reading wiki | overview → concepts → then web |
@@ -577,7 +649,8 @@ Tier definitions: `scripts/domain_study_tiers.py` — edit then re-run sync.
 | RAG-only, no wiki | Ingest compiles once; wiki stays current |
 | User must name topic | Infer from TOC; user topic = priority lens only |
 | One concept per whole book | Topic map → many concept pages |
-| Skip confirm on ambiguous huge ingest | § Confirm menu |
+| Skip confirm on ambiguous huge ingest | § Confirm menu + § Source types class |
+| IT defaults applied to fiction | Classify literary-appreciation; overview/archive default |
 | Fix only in chat | Revise wiki + log.md |
 | New source contradicts old | Revise affected pages; don't keep both as true |
 | `framework.md` / mega-overview | `overview.md` + optional `guide.md` only |

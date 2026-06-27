@@ -2,7 +2,75 @@
 
 **Study** = read a concept, teach it back, promote mastery. One human doc for learning + retention.
 
-**Related:** [LEARNING.md](LEARNING.md) (fable only) · [SKILL.md](SKILL.md) (agent ops)
+**Related:** [LEARNING.md](LEARNING.md) (fable only) · [SKILL.md](SKILL.md) (agent ops) · vault `[[help]]` (daily cheatsheet)
+
+---
+
+## Where to start (study order + consolidate)
+
+**Open:** `domains/<domain>/overview.md` — blocks appear **near the top** in this order:
+
+| Block | Purpose |
+|-------|---------|
+| **建议学习顺序** | Ordered path — start here for a new domain |
+| **待巩固** | Dataview queues: Solid 候选 → 读过未测 → 待复习 |
+| **掌握度分层** | Tier A/B = target solid; C/D = Query-only |
+
+Vault index: `wiki/overview.md` · `wiki/domain-map.md`
+
+### Consolidate priority (do in order)
+
+| Priority | Queue | You do |
+|----------|-------|--------|
+| 1 | **Solid 候选** | `Promote [[slug]] to solid` |
+| 2 | **读过未测** | `Explain-back [[slug]]` |
+| 3 | **待复习** | Re-read concept → `Review [[slug]]` |
+| 4 | **Tier A** not solid | Next slug on **建议学习顺序** |
+
+Same buckets from `lint-review-queue.py` or `Review queue: <domain>`.
+
+Full concept table lives in **学习进度** at the **bottom** of overview — for lookup, not daily triage.
+
+---
+
+## How to read a concept page
+
+A concept page is a **compiled map**, not the textbook. Explain-back often tests **application** (connect sections, traps, prerequisites) — not a single bullet labeled “exam answer”.
+
+### First learn (Tier A / new material)
+
+1. Read **`## Explain-back`** first — use as self-test outline  
+2. Read **Claim**, body, **`## Prerequisites`** chain  
+3. Try to answer Explain-back bullets closed-book  
+4. On miss → open **one** matching **Evidence** row (`sources/.../md/`)  
+5. `Review [[slug]]` → `Explain-back [[slug]]` → `Promote` if passed  
+
+### Review (already studied)
+
+- **Claim + body** usually enough  
+- Re-open Evidence only if Explain-back fails  
+
+### Query-only (no study)
+
+- `Query: …` — brain-first; follow **Next step: 够用** when appropriate  
+- Do not force Explain-back for one-off facts  
+
+### When answers seem “not on the page”
+
+| Case | Action |
+|------|--------|
+| Answer requires linking 2+ sections on the concept | Normal — Explain-back tests synthesis |
+| Answer only in Evidence source text | Click Evidence anchor |
+| Neither concept nor Evidence supports the prompt | **Revise** — fix prompt or add Claim/Evidence |
+
+**Do not** re-read raw EPUB for routine study. **Do not** solid every concept — Tier A on overview is enough.
+
+### 15-minute block
+
+1. Pick one row from overview **待巩固**  
+2. Explain-back bullets → Claim/body (5–8 min)  
+3. Closed-book attempt → one Evidence row if stuck  
+4. `Explain-back [[slug]]` or `Review` first  
 
 ---
 
@@ -157,16 +225,18 @@ If user says `Explain-back [[concept]] batch` or `一次出题`, may publish all
 
 ## Progress in Obsidian (Dataview)
 
-Domain `overview.md` **does not** duplicate a 100-row progress table. Progress lives on concept pages; overview embeds a Dataview query.
+Domain `overview.md` embeds Dataview — **daily use §待巩固**; **§学习进度** = full inventory at page bottom.
 
 **Requires:** Obsidian [Dataview](https://github.com/blacksmithgu/obsidian-dataview) plugin.
 
 **How to use:**
 
-1. Open `domains/<学科>/overview.md` → **学习进度** + **掌握度分层（Tier A/B）**.
-2. **Solid 候选** — `explain_back: passed` 且未 Promote（overview 内嵌 Dataview）.
-3. **读过未测** — 有 `reviewed` 但 `explain_back != passed`.
-4. **Review queue** — `updated > reviewed`:
+1. Open `domains/<学科>/overview.md` → **建议学习顺序** → **待巩固** → **掌握度分层**.
+2. **Solid 候选** / **读过未测** / **待复习** — in **待巩固** (auto-updated).
+3. Scroll to **学习进度** only when you need the full concept list.
+4. After **Explain-back** or **Revise**, refresh is automatic. Run `Promote [[slug]] to solid` when passed.
+
+Example **待复习** query (also embedded on overview):
 
 ```dataview
 TABLE mastery, reviewed, explain_back, updated
@@ -175,33 +245,13 @@ WHERE domain = "cisco-aci" AND (reviewed = null OR updated > reviewed)
 SORT updated DESC
 ```
 
-5. **Solid 候选:**
-
-```dataview
-TABLE mastery, reviewed, explain_back, updated
-FROM "wiki/concepts"
-WHERE domain = "cisco-aci" AND explain_back = "passed" AND mastery != "solid"
-SORT file.name ASC
-```
-
-6. **读过未测:**
-
-```dataview
-TABLE mastery, reviewed, explain_back, updated
-FROM "wiki/concepts"
-WHERE domain = "cisco-aci" AND reviewed != null AND explain_back != "passed"
-SORT updated DESC
-```
-
-7. **Solid 已达成:**
+**Solid 已达成:**
 
 ```dataview
 LIST
 FROM "wiki/concepts"
 WHERE domain = "cisco-aci" AND mastery = "solid"
 ```
-
-8. After **Explain-back** or **Revise**, refresh is automatic. Run `Promote [[slug]] to solid` when passed.
 
 | mastery | Meaning |
 |---------|---------|

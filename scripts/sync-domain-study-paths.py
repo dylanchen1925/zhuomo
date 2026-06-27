@@ -9,7 +9,12 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from domain_study_tiers import TIERS, format_study_progress_block, format_tiers_block  # noqa: E402
+from domain_study_tiers import (  # noqa: E402
+    TIERS,
+    format_consolidate_block,
+    format_study_progress_block,
+    format_tiers_block,
+)
 
 # overview: full numbered path; guide: condensed (may link to overview)
 PATHS: dict[str, dict[str, str]] = {
@@ -370,6 +375,19 @@ INSERT_BEFORE = [
 
 TIERS_HEADING = r"## 掌握度分层"
 PROGRESS_HEADING = r"## 学习进度"
+CONSOLIDATE_HEADING = r"## 待巩固"
+
+STUDY_PATH_HEADINGS = frozenset({"## 建议学习顺序", "## Study path"})
+STUDY_TOP_HEADINGS = STUDY_PATH_HEADINGS | frozenset({"## 待巩固", "## 掌握度分层"})
+STUDY_END_HEADINGS = frozenset({"## 学习进度"})
+
+
+def is_defer_heading(h: str) -> bool:
+    if h in {"## Gaps", "## 尚未覆盖", "## 缺口", "## 术语", "## 术语表"}:
+        return True
+    return h.startswith(("## Gaps", "## 尚未覆盖", "## 缺口", "## 术语"))
+
+SECTION_SPLIT = re.compile(r"^(## .+)$", re.M)
 
 
 def replace_or_insert(text: str, headings: list[str], new_block: str) -> str:
@@ -399,17 +417,68 @@ def replace_section(text: str, heading_pattern: str, new_block: str) -> str:
     return text
 
 
-def sync_overview_extras(text: str, slug: str) -> str:
-    """Inject 学习进度 (with queues) + 掌握度分层."""
-    if slug in TIERS:
-        text = replace_section(text, PROGRESS_HEADING, format_study_progress_block(slug))
-        text = replace_section(text, TIERS_HEADING, format_tiers_block(slug, TIERS[slug]))
-        if TIERS_HEADING not in text:
-            ins = re.search(r"\n(## 建议学习顺序|## Study path)", text)
-            if ins:
-                block = format_tiers_block(slug, TIERS[slug])
-                text = text[: ins.start()] + "\n\n" + block + text[ins.start() :]
+def split_h2_sections(text: str) -> tuple[str, list[tuple[str, str]]]:
+    parts = SECTION_SPLIT.split(text)
+    if len(parts) < 3:
+        return text, []
+    preamble = parts[0]
+    sections: list[tuple[str, str]] = []
+    for i in range(1, len(parts), 2):
+        heading = parts[i].strip()
+        body = parts[i + 1] if i + 1 < len(parts) else ""
+        sections.append((heading, f"{heading}\n{body}".rstrip() + "\n"))
+    return preamble, sections
+
+
+def reorder_overview_study_sections(text: str) -> str:
+    """Study path → 待巩固 → Tier → rest → 学习进度 (full table) → Gaps/术语."""
+    preamble, sections = split_h2_sections(text)
+    if not sections:
+        return text
+    by_head = {h: block for h, block in sections}
+    order = [h for h, _ in sections]
+
+    def pick(headings: frozenset[str]) -> list[str]:
+        return [by_head[h] for h in order if h in headings]
+
+    first = pick(STUDY_PATH_HEADINGS) + pick(frozenset({"## 待巩固"})) + pick(frozenset({"## 掌握度分层"}))
+    taken = STUDY_TOP_HEADINGS | STUDY_END_HEADINGS
+    middle = [by_head[h] for h in order if h not in taken and not is_defer_heading(h)]
+    tail = pick(STUDY_END_HEADINGS) + [by_head[h] for h in order if is_defer_heading(h)]
+
+    blocks = [b.rstrip() for b in first + middle + tail if b.strip()]
+    if not blocks:
+        return text
+    return preamble.rstrip() + "\n\n" + "\n\n".join(blocks) + "\n"
+
+
+def ensure_consolidate_section(text: str, slug: str) -> str:
+    if "## 待巩固" in text:
+        return text
+    block = format_consolidate_block(slug).strip()
+    for h in ("## 建议学习顺序", "## Study path"):
+        pat = re.compile(rf"({re.escape(h)}\n.*?(?=\n## |\Z))", re.S)
+        m = pat.search(text)
+        if m:
+            insert_at = m.end()
+            return text[:insert_at] + "\n\n" + block + "\n" + text[insert_at:]
     return text
+
+
+def sync_overview_extras(text: str, slug: str) -> str:
+    """Inject 待巩固 + 学习进度 + 掌握度分层; reorder study blocks to top."""
+    if slug not in TIERS:
+        return text
+    text = replace_section(text, CONSOLIDATE_HEADING, format_consolidate_block(slug))
+    text = ensure_consolidate_section(text, slug)
+    text = replace_section(text, PROGRESS_HEADING, format_study_progress_block(slug))
+    text = replace_section(text, TIERS_HEADING, format_tiers_block(slug, TIERS[slug]))
+    if TIERS_HEADING not in text:
+        ins = re.search(r"\n(## 建议学习顺序|## Study path|## 待巩固)", text)
+        if ins:
+            block = format_tiers_block(slug, TIERS[slug])
+            text = text[: ins.start()] + "\n\n" + block + text[ins.start() :]
+    return reorder_overview_study_sections(text)
 
 
 def main() -> int:

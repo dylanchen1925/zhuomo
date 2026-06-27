@@ -1,11 +1,70 @@
 ---
 type: help
-updated: 2026-06-01
+updated: 2026-06-27
 ---
 
 # Zhuomo 怎么用
 
-**日常只看这一页。** 仓库：`SIMPLE.md`、`REVIEW.md`（Study + Dataview 进度）。
+**日常只看这一页。** 仓库：`SIMPLE.md`、`REVIEW.md`（Study 详规 + Dataview）。
+
+---
+
+## 今日 Study：顺序 + 待巩固
+
+### 1. 打开学科 overview（列表在这里）
+
+`domains/<学科>/overview` — **页面上方**（按此顺序）：
+
+| 区块 | 作用 |
+|------|------|
+| **建议学习顺序** | 按路径学 Tier A；新学科从这里开始 |
+| **待巩固** | Dataview：**Solid 候选** · **读过未测** · **待复习** |
+| **掌握度分层** | Tier A/B = 建议 solid；C/D = Query 即可 |
+
+Vault 总表：[[domain-map]] · [[overview]]
+
+### 2. 待巩固（consolidate）— 按优先级做
+
+| 优先级 | 列表在哪 | 你做什么 |
+|--------|----------|----------|
+| 1 | overview **Solid 候选** | `Promote [[概念]] to solid` |
+| 2 | **读过未测** | `Explain-back [[概念]]`（读过 concept 但没 passed） |
+| 3 | **待复习** | 重读 concept → `Review [[概念]]`（wiki 更新后） |
+| 4 | **Tier A** 仍未 solid | 按 **建议学习顺序** 学下一个 |
+
+Lint 脚本同样分桶：`SOLID_CANDIDATE` / `READ_UNTESTED` / `STALE` — 说 `Lint` 或 `Review queue: <domain>`。
+
+### 3. 怎么读 concept 页（Explain-back 考点从哪来）
+
+concept 页 = **地图 + 结论**，不是全书。Explain-back 常考「连起来用」，不一定有单独一行答案。
+
+**第一次学（Tier A / 新 ingest）：**
+
+1. 先读 **Explain-back** 三题（当自测大纲）
+2. **Claim** + 正文 + **Prerequisites** 链
+3. 闭卷答不上 → 只点开对应 **Evidence** 一行（进 `sources/.../md/`）
+4. `Review [[概念]]` → `Explain-back [[概念]]` → passed 再 `Promote`
+
+**复习（已学过）：** 多数时候 **Claim + 正文** 够用；卡壳再开 Evidence。
+
+**只查事实：** `Query: …` — 不必通读 concept；Next step 写 **够用** 即可。
+
+| 情况 | 怎么办 |
+|------|--------|
+| 答案在正文，要自己推导 | 正常；Explain-back 就在测这个 |
+| 答案在 Evidence 原文 | 点 Evidence 读对应段 |
+| 页内 + Evidence 都没有 | wiki 质量问题 → `Revise [[概念]] — Explain-back 第 N 题缺依据` |
+
+**不必**为学习回读 Raw EPUB；**不必**全库 solid — Tier A 即可。
+
+### 4. 15 分钟一块（习惯）
+
+1. overview **待巩固** 里选 1 个概念  
+2. 读 Explain-back → Claim/正文（5–8 分钟）  
+3. 闭卷答 → 卡壳开 1 条 Evidence  
+4. `Explain-back [[概念]]` 或先 `Review`  
+
+详规：`~/zhuomo/REVIEW.md` § How to read a concept page
 
 ---
 
@@ -16,13 +75,13 @@ updated: 2026-06-01
 | **Bootstrap** | `Bootstrap + ingest: 书.epub` | 建库 + 第一本书 |
 | **Ingest** | `Ingest: …` | 按书类型选深度 — 见下表 |
 | **Query** | `Query: …` | 答案 + Gaps + **Next step** |
-| **Revise** | `Revise [[页]] — …` | 改 wiki；`我的想法` → `## My take` |
-| **Study** | 见下表 | 掌握度 |
-| **Lint** | `Lint` | 健康问题 + Solid 候选 + 读过未测 |
+| **Revise** | `Revise [[页]] — …` | 改 corpus；`我的想法` → `notes/on-concept/` |
+| **Study** | `Review` / `Explain-back` / `Promote` | 掌握度 — 见上 §今日 Study |
+| **Lint** | `Lint` | 健康问题 + 待巩固分桶 |
 
 **Weekly（可选）：** `Lint` + 建议一次 Explain-back。
 
-**Framework：** `sync-domain-study-paths.py` 更新学习路径与 Tier A/B/C/D。
+**Framework：** `sync-domain-study-paths.py` 更新学习路径、待巩固区块、Tier。
 
 ---
 
@@ -40,29 +99,17 @@ updated: 2026-06-01
 
 ---
 
-## Study（按 concept 学习）
+## Study 指令速查
 
 | 我想… | 说 |
 |-------|-----|
 | 标记读过了 | `Review [[概念]]` |
 | 讲回来测掌握 | `Explain-back [[概念]]` |
-| 待复习列表 | `Review queue: cisco-aci` 或看 overview **待复习** Dataview |
+| 待巩固列表 | 看 overview **待巩固** 或 `Review queue: <domain>` |
 | 升掌握度 | `Promote [[概念]] to solid`（须 `explain_back: passed`） |
-| 我的想法写入 wiki | `Revise [[概念]] — 我的想法：…` 或 `Connect: … — 记入 synthesis` |
+| 我的想法 | `Revise [[概念]] — 我的想法：…` → `notes/on-concept/` |
 
-**Tier A**（overview §掌握度分层）= 建议 solid；不必全库 solid。
-
-**Explain-back：** 每次 1 题 → 反馈 → 下一题。规范：`~/zhuomo/REVIEW.md`。
-
----
-
-## Obsidian 进度（Dataview）
-
-`domains/<学科>/overview` → **学习进度**：
-
-- 全表 · **待复习** · **Solid 候选** · **读过未测** · **掌握度分层**
-
-Lint 脚本也会打印：`SOLID_CANDIDATE` / `READ_UNTESTED` / …
+**Explain-back：** 每次 1 题 → 反馈 → 下一题。
 
 ---
 
@@ -73,8 +120,7 @@ Ingest: ~/zhuomo-data/raw/inbox/book.epub
 Query think: Multi-Pod vs Multi-Site?
 Explain-back [[cilium-network-policy-identity]]
 Promote [[k8s-network-visibility-gap]] to solid
-Connect: Cilium 设计检查清单 — 记入 synthesis
-Revise [[aci-tenant-epg-contract]] — 我的想法：…
+Review queue: kubernetes-cilium
 Lint
 Framework: kubernetes-cilium — tiers only
 ```
@@ -85,10 +131,12 @@ Framework: kubernetes-cilium — tiers only
 
 | 问题 | 打开 |
 |------|------|
-| 学科列表 | [[overview]] |
-| 进度 + Tier + 路径 | `domains/<学科>/overview` |
-| 跨概念模型 | `wiki/synthesis/` |
-| 概念 + My take | `concepts/` |
+| 学科列表 | [[overview]] · [[domain-map]] |
+| **学习顺序 + 待巩固 + Tier** | `domains/<学科>/overview`（靠上） |
+| 全库 concept 清单 | 同学科 overview 底部 **学习进度** |
+| 编译：跨书主题 | `wiki/synthesis/` |
+| 编译：概念 + Evidence | `concepts/` |
+| 个人笔记 | `notes/` |
 | 日志 | [[log]] |
 
 ---

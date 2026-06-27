@@ -350,26 +350,12 @@ def format_tiers_block(slug: str, spec: TierSpec) -> str:
     return "\n".join(lines).rstrip() + "\n"
 
 
-def format_study_progress_block(domain: str) -> str:
-    return f"""## 学习进度
+def format_consolidate_block(domain: str) -> str:
+    return f"""## 待巩固
 
-> 需要 Obsidian **Dataview** 插件。进度来自 `wiki/concepts/` frontmatter（`mastery` · `reviewed` · `explain_back` · `updated`），勿手改下表。
+> **Consolidate** = 把「测过 / 读过 / 版本变了」的概念收成掌握。下列 Dataview **按优先级** 自动更新；日常 Study 从这里开始，不必扫全库。
 
-```dataview
-TABLE WITHOUT ID file.link AS "概念", mastery AS "掌握度", reviewed AS "Review", explain_back AS "Explain-back", updated AS "更新"
-FROM "wiki/concepts"
-WHERE domain = "{domain}"
-SORT file.name ASC
-```
-
-**待复习**（`updated` 晚于 `reviewed` 或未读）：
-
-```dataview
-TABLE WITHOUT ID file.link AS "概念", reviewed, updated, explain_back
-FROM "wiki/concepts"
-WHERE domain = "{domain}" AND (reviewed = null OR (updated != null AND reviewed != null AND updated > reviewed))
-SORT updated DESC
-```
+**处理顺序：** ① Solid 候选 → Promote · ② 读过未测 → Explain-back · ③ 待复习 → 重读 + Review
 
 **Solid 候选**（`explain_back: passed` 且未 Promote）：
 
@@ -387,5 +373,30 @@ TABLE WITHOUT ID file.link AS "概念", mastery, reviewed, explain_back, updated
 FROM "wiki/concepts"
 WHERE domain = "{domain}" AND reviewed != null AND explain_back != "passed"
 SORT updated DESC
+```
+
+**待复习**（`updated` 晚于 `reviewed` 或未读）：
+
+```dataview
+TABLE WITHOUT ID file.link AS "概念", reviewed, updated, explain_back
+FROM "wiki/concepts"
+WHERE domain = "{domain}" AND (reviewed = null OR (updated != null AND reviewed != null AND updated > reviewed))
+SORT updated DESC
+```
+
+**新学顺序：** 见上方 **建议学习顺序** + **掌握度分层** Tier A。
+"""
+
+
+def format_study_progress_block(domain: str) -> str:
+    return f"""## 学习进度
+
+> 需要 Obsidian **Dataview** 插件。全库 concept 清单（查阅用）；**日常从 §待巩固 开始**。
+
+```dataview
+TABLE WITHOUT ID file.link AS "概念", mastery AS "掌握度", reviewed AS "Review", explain_back AS "Explain-back", updated AS "更新"
+FROM "wiki/concepts"
+WHERE domain = "{domain}"
+SORT file.name ASC
 ```
 """

@@ -35,16 +35,18 @@ Frontmatter (keep minimal):
 
 ```yaml
 domain: <slug>
+origin: zhuomo
 mastery: learning              # learning | solid
 reviewed:                      # YYYY-MM-DD — user read this version
 explain_back: not_started      # not_started | attempted | passed
 updated: YYYY-MM-DD            # last agent or study edit
 ```
 
-Body order: **`## Claim`** → optional **`## My take`** (`epistemic: personal`) → **`## Explain-back`** → **`## Evidence`** → **`## Sources`**
+Body order: **`## Claim`** → optional **`## Personal notes`** (link to `notes/on-concept/<slug>.md` only) → **`## Explain-back`** → **`## Evidence`** → **`## Sources`**
 
 | Rule | Detail |
 |------|--------|
+| **Personal prose** | `wiki/notes/` only — not long text in `## Claim` / `## Evidence` |
 | Re-read | `updated > reviewed` → user should Review again |
 | **solid** | Only after `explain_back: passed` (Promote or passed Explain-back session) |
 | Progress tables | **Dataview on concepts** in domain `overview.md` — never hand-maintain 100-row tables |
@@ -65,6 +67,7 @@ Repo: `~/zhuomo/REVIEW.md` (Study), `~/zhuomo/REFERENCE.md` (figures, EPUB, revi
 | Synthesis | `wiki/synthesis/*.md` |
 | Sources | `wiki/sources/<slug>.md` + `md/` corpus |
 | Log | `wiki/log.md` — append-only |
+| **Personal notes** | `wiki/notes/` — user-authored; see `templates/wiki/notes-README.md` |
 | Fables (optional) | `wiki/learn/fables/` |
 
 **New domain:** Add row to `wiki/overview.md` + `wiki/domain-map.md`; create `domains/<slug>/overview.md`.
@@ -80,7 +83,7 @@ Repo: `~/zhuomo/REVIEW.md` (Study), `~/zhuomo/REFERENCE.md` (figures, EPUB, revi
 | Layer | Path |
 |-------|------|
 | **Raw** (read-only, never edit) | `{{RAW_PATH}}` |
-| **Wiki** (all agent output) | `{{VAULT_PATH}}wiki/` |
+| **Wiki** (corpus + personal) | `{{VAULT_PATH}}wiki/` |
 | **Scripts** | `~/zhuomo/scripts/` |
 
 **Multi-device:** Phone → `raw/inbox/` only. Laptop processes inbox first; move to `processed/` or typed folder after ingest. **Laptop owns wiki edits.**
@@ -106,7 +109,7 @@ Repo: `~/zhuomo/REVIEW.md` (Study), `~/zhuomo/REFERENCE.md` (figures, EPUB, revi
 
 ```
 wiki/overview.md → domain-map.md → domains/<slug>/overview.md (+ guide.md)
-→ index.md → concepts/ + sources/ → only then raw or web
+→ index.md → concepts/ + sources/ + synthesis/ (corpus) → notes/ if needed → only then raw or web
 ```
 
 | Mode | Output |
@@ -114,7 +117,7 @@ wiki/overview.md → domain-map.md → domains/<slug>/overview.md (+ guide.md)
 | `Query search:` | Ranked `[[pages]]` + one-line relevance |
 | `Query think:` (default) | `## Answer` + `## Sources` + `## Gaps` + `## Next step` (够用 / Study / File — see SKILL.md table) |
 
-**Model layer:** L0 overview 心智模型 · L1 `wiki/synthesis/` · L2 concept `## My take`. Template: `templates/wiki/synthesis.md`.
+**Model layer:** L0 overview 心智模型 · L1 compiled `wiki/synthesis/` (`origin: zhuomo`) · L1 personal `wiki/notes/synthesis/` · L2 `wiki/notes/on-concept/`. Template: `templates/wiki/synthesis.md`.
 
 File durable synthesis to `wiki/synthesis/` or extend concepts; append `log.md` if substantial.
 
@@ -137,7 +140,7 @@ Fix: broken wikilinks, orphans, missing Evidence / Explain-back, figure embeds, 
 
 When wrong, stale, contradicted, or duplicated: revision card → edit / supersede / merge / retract → **propagate** → `updated:` → log.
 
-**User idea:** `Revise [[x]] — 我的想法：…` → `## My take` (not Evidence). **Connect** → `wiki/synthesis/` from template.
+**User idea:** `Revise [[x]] — 我的想法：…` → `wiki/notes/on-concept/<slug>.md`. **Connect** (personal) → `wiki/notes/synthesis/`; compiled cross-book → `wiki/synthesis/`.
 
 ---
 
@@ -146,7 +149,7 @@ When wrong, stale, contradicted, or duplicated: revision card → edit / superse
 - `Review [[concept]]` → set `reviewed: <today>`
 - `Explain-back [[concept]]` → **one** `## Explain-back` prompt per turn; grade ✅/⚠️/❌; update frontmatter **after last prompt only**
 - `Promote [[concept]] to solid` → only if `explain_back: passed`
-- Domain **Tier A/B** on `overview.md` §掌握度分层 — sync via `sync-domain-study-paths.py`
+- Domain **Tier A/B** marked **A** / **B** in `overview.md` §建议学习顺序 — sync via `sync-domain-study-paths.py`
 - Overview Dataview: **Solid 候选** · **读过未测** (see REVIEW.md)
 
 Batch mode only if user says `batch` or `一次出题`.

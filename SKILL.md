@@ -42,7 +42,7 @@ Scan the user message **top to bottom**. First matching row wins. If two verbs a
 
 ## Hard rules (every model, every turn)
 
-1. **Brain-first:** Read wiki (`overview` → `domain-map` → domain `overview`/`guide` → `index` → `concepts/`) **before** web search or re-reading raw EPUB.
+1. **Brain-first:** Read wiki (`overview` → `domain-map` → domain `overview`/`guide` → `index` → `concepts/` + `sources/`) **before** `notes/` or web/raw EPUB.
 2. **Never silent overwrite:** Revise in place or supersede with link; append `log.md`; set `updated:` on changed concept pages.
 3. **No hand-maintained progress tables:** Domain progress = Dataview on concept frontmatter only.
 4. **No default digests:** Do not create `learn/digests/` unless user explicitly asks.
@@ -51,6 +51,7 @@ Scan the user message **top to bottom**. First matching row wins. If two verbs a
 7. **Closing block:** After Bootstrap / Ingest / Revise / Lint / major Query file-back — use exact 3-line shape in § Output templates.
 8. **Promote to `solid`:** Only when `explain_back: passed` (never on Review alone).
 9. **Skills ≠ wiki:** Wiki holds facts/synthesis; skills hold triggers + workflows. Do not paste BGP facts into SKILL.md — use domain skill + WIKI-SCOPE ([WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md)).
+10. **Corpus vs personal:** Skill writes **corpus** only (`concepts/`, `sources/`, ingest `synthesis/`). User personal notes live under **`wiki/notes/`** — never Ingest into `notes/`; never paste user judgment into corpus `## Claim` / `## Evidence`.
 
 ---
 
@@ -82,8 +83,39 @@ Scan the user message **top to bottom**. First matching row wins. If two verbs a
 | Sources | `wiki/sources/<slug>.md` + `md/` | Topic map, raw path, md corpus |
 | Log | `wiki/log.md` | Append-only audit |
 | Help | `wiki/help.md` | Human cheatsheet (from `templates/wiki/help.md`) |
+| **Personal notes** | `wiki/notes/` | User-authored; skill touches only on explicit Revise/Note |
 
 **Do not create:** `framework.md`, `mega-overview.md`, `learn/digests/`, `learn/reviews/`, `learn/applied/` (unless user explicitly requests).
+
+### Corpus vs personal notes (two zones)
+
+| Zone | Paths | Written by | Content |
+|------|-------|------------|---------|
+| **Corpus（琢磨编译）** | `concepts/`, `sources/`, `domains/`, ingest `synthesis/`, `log.md`, `index.md` | Zhuomo skill (Ingest / fact Revise) | Claim + Evidence + Explain-back; book-derived |
+| **Personal（个人笔记）** | `notes/` | **You** (Obsidian); agent only when asked | 想法、听课、实验、清单；链到 corpus `[[wikilinks]]` |
+
+```
+wiki/notes/
+  README.md              # 入口与约定
+  inbox/                 # 随手记（手机 / 快捕）
+  synthesis/             # 对话总结、跨概念个人模型（主路径）
+  by-domain/<slug>/      # 按学科整理（可选）
+  on-concept/<slug>.md   # 单概念短评
+```
+
+| Rule | Detail |
+|------|--------|
+| **对话总结** | 聊完让 Agent 整理 → `notes/synthesis/<kebab>.md`，`kind: chat-summary`；例：[[notes/synthesis/cisco-sdn-policy-abstraction-by-scope]] |
+| **Ingest** | 只写 corpus；**禁止**在 `notes/` 下建概念页或 Evidence |
+| **我的想法** | `Revise [[concept]] — 我的想法：…` → 写/更新 `notes/on-concept/<slug>.md`（`origin: personal`）；corpus 概念页最多留一行 `## Personal notes` → 链到该文件 |
+| **Connect（个人）** | `Connect: … — 记入 synthesis` 或「聊完总结成笔记」→ `notes/synthesis/<kebab>.md`（`origin: personal`, `kind: chat-summary`） |
+| **Connect（编译）** | Ingest / Query 产出的跨书主题 → `wiki/synthesis/` + `origin: zhuomo` |
+| **Overwrite** | Agent **不得**静默改 `notes/`；用户改 corpus 用 `Revise`；用户改个人笔记直接在 Obsidian 编辑 |
+| **Lint** | `notes/` 不参与 Explain-back / Promote / Dataview 掌握度（除非页面前置 `study: true` 且用户明确要求） |
+
+**Frontmatter `origin`:** corpus 页 `origin: zhuomo`；`notes/` 页 `origin: personal`。旧页无 `origin` 视为 corpus。
+
+**Legacy:** concept 内 `## My take` 仍有效，但**新内容优先** `notes/on-concept/`；迁移时把 My take 剪切到 `notes/on-concept/<slug>.md` 并在 concept 留链接。
 
 **New domain:** Add row to `wiki/overview.md` + `domain-map.md`; create `domains/<slug>/overview.md`.
 
@@ -154,6 +186,7 @@ Every deepened concept **must** include these sections **in order**:
 ```markdown
 ---
 domain: <slug>
+origin: zhuomo
 mastery: learning
 reviewed:
 explain_back: not_started
@@ -164,6 +197,9 @@ updated: YYYY-MM-DD
 
 ## Claim
 One paragraph — current trusted statement.
+
+## Personal notes
+> Optional one-liner + link only, e.g. [[notes/on-concept/<slug>]] — **do not** paste long personal prose here.
 
 ## Explain-back
 1. *"Open question testing mechanism…"*
@@ -178,17 +214,53 @@ One paragraph — current trusted statement.
 ## Sources
 - **Raw:** `~/zhuomo-data/raw/…`
 
-## My take
-> Optional. `epistemic: personal` — **your** judgment only; never replace Evidence. User adds via `Revise [[x]] — 我的想法：…`
 ```
 
-**Optional frontmatter:** `epistemic: personal` on concept or synthesis when content is user-authored (not book Evidence).
+**Optional frontmatter:** `epistemic: contested` when sources disagree. **Do not** use `epistemic: personal` on corpus pages — personal content belongs in `notes/`.
+
+**Personal note page** (`wiki/notes/on-concept/<slug>.md` or `notes/inbox/…`):
+
+```markdown
+---
+origin: personal
+domain: <slug>          # optional — for grouping
+related: "[[concept-slug]]"
+updated: YYYY-MM-DD
+---
+
+# My take — <title>
+
+（自由书写；可链 [[concepts]]、[[notes/synthesis/…]]）
+```
+
+**Chat summary** (`wiki/notes/synthesis/<kebab>.md`) — 对话后整理的跨概念笔记：
+
+```markdown
+---
+origin: personal
+type: personal-synthesis
+kind: chat-summary
+domain: <slug>
+updated: YYYY-MM-DD
+---
+
+# <title>
+
+> 个人笔记（对话总结）。链到 [[concepts]] / [[sources]]；事实以 corpus Evidence 为准。
+
+## Model
+…
+
+## My take
+…
+```
 
 **Frontmatter rules:**
 
 | Field | Who sets | Values |
 |-------|----------|--------|
 | `domain` | Agent on create | slug matching `domains/<slug>/` |
+| `origin` | Agent on corpus create | `zhuomo` (corpus only) |
 | `mastery` | Promote or passed explain-back | `learning` \| `solid` |
 | `reviewed` | Review / Explain-back end | `YYYY-MM-DD` or empty |
 | `explain_back` | Explain-back session | `not_started` \| `attempted` \| `passed` |
@@ -207,7 +279,9 @@ One paragraph — current trusted statement.
 2. Create wiki skeleton:
    index.md, log.md, overview.md, help.md (copy ~/zhuomo/templates/wiki/help.md),
    domain-map.md (copy ~/zhuomo/templates/wiki/domain-map.md),
-   learn/fables/ only
+   learn/fables/ only,
+   notes/ tree (copy ~/zhuomo/templates/wiki/notes-README.md → notes/README.md;
+     mkdir notes/inbox notes/by-domain notes/on-concept notes/synthesis)
 3. Copy AGENTS.md template — do NOT write from scratch:
    cp ~/zhuomo/templates/AGENTS.md → <vault>/AGENTS.md
    Replace placeholders only:
@@ -298,7 +372,8 @@ wiki/overview.md
 → wiki/domain-map.md
 → wiki/domains/<domain>/overview.md (+ guide.md if exists)
 → wiki/index.md
-→ wiki/concepts/*.md + wiki/sources/*.md relevant to question
+→ wiki/concepts/*.md + wiki/sources/*.md + wiki/synthesis/*.md (origin zhuomo)
+→ wiki/notes/ (personal — if query needs user model or 我的想法)
 → only if insufficient: raw/ or external search
 ```
 
@@ -356,9 +431,9 @@ Output: numbered list — `[[page]] — one line why relevant`. No synthesis ess
 2. Fill revision card (mental or chat):
    - Old claim | New claim | Evidence | Pages to propagate
 3. **User idea** (`Revise [[x]] — 我的想法：…`):
-   - Add or update `## My take` on concept; set `epistemic: personal` in frontmatter if not already
-   - If cross-concept → create/update `wiki/synthesis/<slug>.md` from `templates/wiki/synthesis.md`
-   - Never overwrite `## Evidence` rows; if contradicts Claim → `epistemic: contested` + note both views
+   - Create or update `wiki/notes/on-concept/<slug>.md` (`origin: personal`); on corpus concept add/update `## Personal notes` → link only
+   - If cross-concept personal model → `wiki/notes/synthesis/<slug>.md` from `templates/wiki/synthesis.md` with `origin: personal`
+   - Never overwrite corpus `## Claim` or `## Evidence`; if user disagrees with book → note in personal file + optional `epistemic: contested` on corpus Claim footnote via Revise card
 4. Choose action:
    - Edit in place (minor)
    - Supersede (old wrong → status: superseded + forward link)
@@ -376,12 +451,12 @@ Output: numbered list — `[[page]] — one line why relevant`. No synthesis ess
 User: Connect: <cross-concept insight> — 记入 synthesis
 ```
 
-1. Copy `templates/wiki/synthesis.md` → `wiki/synthesis/<kebab-slug>.md`
-2. Fill `## Model`, `## My take`, link `[[concepts]]`
-3. Link from domain `overview.md` 心智模型 or relevant concept `## My take`
-4. log.md: `## [date] connect | synthesis/<slug>`
+1. **Personal model** (default for Connect): copy `templates/wiki/synthesis.md` → `wiki/notes/synthesis/<kebab-slug>.md`, set `origin: personal`, fill `## My take`, link `[[concepts]]`
+2. **Compiled model** (only if user says「记入 corpus synthesis」或 ingest 主题): → `wiki/synthesis/<kebab-slug>.md` with `origin: zhuomo`
+3. Link from domain `overview.md` 心智模型 or corpus concept `## Personal notes`
+4. log.md: `## [date] connect | notes/synthesis/<slug>` or `synthesis/<slug>`
 
-**Never:** paste user model into `## Claim` without `## My take` separation.
+**Never:** paste user model into corpus `## Claim` without separation in `notes/`.
 
 ---
 
@@ -569,7 +644,7 @@ Update `SOURCES.md` + `log.md`: `## [date] skill | <name> | from [[concept]]`
 | `lint-figure-visuals.py` | Find missing figure embeds |
 | `lint-review-queue.py` | `updated > reviewed`, missing Explain-back |
 | `add-evidence-sections.py` | Backfill Evidence blocks |
-| `sync-domain-study-paths.py` | Study paths + Tier A/B/C/D + Dataview queues on overviews |
+| `sync-domain-study-paths.py` | Study paths + inline **A**/**B** tiers + Dataview queues on overviews |
 | `simplify-vault.py` | One-shot vault migration (archive) |
 
 All under `~/zhuomo/scripts/`. Pass `<vault>/wiki` as argument unless script docs say otherwise.
@@ -633,7 +708,9 @@ Tier definitions: `scripts/domain_study_tiers.py` — edit then re-run sync.
 | Chapter summary pasted as concept Claim | One-sentence Claim + Evidence row per fact |
 | Novel/poem → 50 chapter concepts + Explain-back | overview only or 精读 → synthesis + few theme concepts |
 | History book → one concept per year | study-analytic units: mechanism, school, period framework |
-| Reference depth on 诗歌消遣读 | archive only; Query + My take when needed |
+| Mix personal essay into concept Claim | Personal → `notes/on-concept/`; corpus keeps Claim + Evidence |
+| Ingest writes into `notes/` | Ingest → corpus only |
+| Reference depth on 诗歌消遣读 | archive only; Query + personal notes when needed |
 | All Explain-back Q&A in one message | One prompt → wait → grade → next |
 | Progress table edited by hand in overview | Dataview reads concept frontmatter |
 | Web search before reading wiki | overview → concepts → then web |

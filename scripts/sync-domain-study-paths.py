@@ -13,7 +13,8 @@ from domain_study_tiers import (  # noqa: E402
     TIERS,
     format_consolidate_block,
     format_study_progress_block,
-    format_tiers_block,
+    format_unified_study_order,
+    strip_study_heading,
 )
 
 # overview: full numbered path; guide: condensed (may link to overview)
@@ -378,7 +379,7 @@ PROGRESS_HEADING = r"## 学习进度"
 CONSOLIDATE_HEADING = r"## 待巩固"
 
 STUDY_PATH_HEADINGS = frozenset({"## 建议学习顺序", "## Study path"})
-STUDY_TOP_HEADINGS = STUDY_PATH_HEADINGS | frozenset({"## 待巩固", "## 掌握度分层"})
+STUDY_TOP_HEADINGS = STUDY_PATH_HEADINGS | frozenset({"## 待巩固"})
 STUDY_END_HEADINGS = frozenset({"## 学习进度"})
 
 
@@ -431,7 +432,7 @@ def split_h2_sections(text: str) -> tuple[str, list[tuple[str, str]]]:
 
 
 def reorder_overview_study_sections(text: str) -> str:
-    """Study path → 待巩固 → Tier → rest → 学习进度 (full table) → Gaps/术语."""
+    """Study path (with tier markers) → 待巩固 → rest → 学习进度 → Gaps/术语."""
     preamble, sections = split_h2_sections(text)
     if not sections:
         return text
@@ -441,7 +442,7 @@ def reorder_overview_study_sections(text: str) -> str:
     def pick(headings: frozenset[str]) -> list[str]:
         return [by_head[h] for h in order if h in headings]
 
-    first = pick(STUDY_PATH_HEADINGS) + pick(frozenset({"## 待巩固"})) + pick(frozenset({"## 掌握度分层"}))
+    first = pick(STUDY_PATH_HEADINGS) + pick(frozenset({"## 待巩固"}))
     taken = STUDY_TOP_HEADINGS | STUDY_END_HEADINGS
     middle = [by_head[h] for h in order if h not in taken and not is_defer_heading(h)]
     tail = pick(STUDY_END_HEADINGS) + [by_head[h] for h in order if is_defer_heading(h)]
@@ -465,19 +466,26 @@ def ensure_consolidate_section(text: str, slug: str) -> str:
     return text
 
 
+def remove_tiers_section(text: str) -> str:
+    pat = re.compile(r"\n## 掌握度分层\n.*?(?=\n## |\Z)", re.S)
+    return pat.sub("\n", text)
+
+
+def apply_study_path(text: str, slug: str, path_md: str) -> str:
+    block = path_md
+    if slug in TIERS:
+        block = format_unified_study_order(strip_study_heading(path_md), TIERS[slug])
+    return replace_or_insert(text, OVERVIEW_HEADINGS, block)
+
+
 def sync_overview_extras(text: str, slug: str) -> str:
-    """Inject 待巩固 + 学习进度 + 掌握度分层; reorder study blocks to top."""
+    """Inject 待巩固 + 学习进度; drop legacy §掌握度分层; reorder study blocks."""
+    text = remove_tiers_section(text)
     if slug not in TIERS:
-        return text
+        return reorder_overview_study_sections(text)
     text = replace_section(text, CONSOLIDATE_HEADING, format_consolidate_block(slug))
     text = ensure_consolidate_section(text, slug)
     text = replace_section(text, PROGRESS_HEADING, format_study_progress_block(slug))
-    text = replace_section(text, TIERS_HEADING, format_tiers_block(slug, TIERS[slug]))
-    if TIERS_HEADING not in text:
-        ins = re.search(r"\n(## 建议学习顺序|## Study path|## 待巩固)", text)
-        if ins:
-            block = format_tiers_block(slug, TIERS[slug])
-            text = text[: ins.start()] + "\n\n" + block + text[ins.start() :]
     return reorder_overview_study_sections(text)
 
 
@@ -488,7 +496,7 @@ def main() -> int:
     p.add_argument(
         "--tiers-only",
         action="store_true",
-        help="Update 学习进度 queues + 掌握度分层 only; skip study paths",
+        help="Update 待巩固 + tier markers in 建议学习顺序 + 学习进度; skip path text rewrite from PATHS",
     )
     p.add_argument("--paths-only", action="store_true", help="Update study paths only; skip tiers")
     p.add_argument("--dry-run", action="store_true")
@@ -508,8 +516,8 @@ def main() -> int:
             continue
         text = ov.read_text(encoding="utf-8")
         new_text = text
-        if do_paths and slug in PATHS and "overview" in PATHS[slug]:
-            new_text = replace_or_insert(new_text, OVERVIEW_HEADINGS, PATHS[slug]["overview"])
+        if (do_paths or do_tiers) and slug in PATHS and "overview" in PATHS[slug]:
+            new_text = apply_study_path(new_text, slug, PATHS[slug]["overview"])
         if do_tiers:
             new_text = sync_overview_extras(new_text, slug)
         new_text = bump_updated(new_text, args.date)

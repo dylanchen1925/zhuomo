@@ -17,23 +17,25 @@ Runs **during ingest** (Explain-back prompts on concepts) or **on demand** (fabl
 | **Explain-back prompts** | `wiki/concepts/*.md` `## Explain-back` | Every deepen (default) |
 | **Concept fable** | `wiki/learn/fables/[domain]/` | User asks; hard abstract concept |
 | **Gap list** | `domains/<slug>/overview.md` §尚未覆盖 | After ingest |
-| **Synthesis (model L1)** | `wiki/synthesis/*.md` | `Connect: … — 记入 synthesis` |
-| **Personal take (model L2)** | concept `## My take` | `Revise [[x]] — 我的想法：…` |
+| **Synthesis (compiled L1)** | `wiki/synthesis/*.md` | Ingest / Query file-back (`origin: zhuomo`) |
+| **Personal take (L2)** | `wiki/notes/on-concept/<slug>.md` | `Revise [[x]] — 我的想法：…` |
+| **Personal synthesis (L1)** | `wiki/notes/synthesis/*.md` | `Connect: … — 记入 synthesis` |
 
 ### Model layers (where your thinking lives)
 
 | Layer | Location | Content |
 |-------|----------|---------|
-| **L0** | `domains/<slug>/overview.md` 心智模型 | One domain map — agent/user Revise |
-| **L1** | `wiki/synthesis/` | Cross-concept models — template `templates/wiki/synthesis.md` |
-| **L2** | concept `## My take` | Your judgment on one concept — not `## Evidence` |
+| **L0** | `domains/<slug>/overview.md` 心智模型 | One domain map — agent/user Revise on corpus |
+| **L1 compiled** | `wiki/synthesis/` | Cross-book themes from ingest (`origin: zhuomo`) |
+| **L1 personal** | `wiki/notes/synthesis/` | Your cross-concept models (`origin: personal`) |
+| **L2 personal** | `wiki/notes/on-concept/` | Your judgment on one concept — not `## Evidence` |
 
 ### Learn modes
 
 | Mode | When | What agent does |
 |------|------|-----------------|
 | **Fable** | User says "I don't get [[concept]]" | Askell-style story → `wiki/learn/fables/` |
-| **Connect** | Cross-domain or personal model | Chat + **file** to `wiki/synthesis/` if user says 记入 synthesis |
+| **Connect** | Cross-domain or personal model | Chat + **file** to `wiki/notes/synthesis/` if user says 记入 synthesis |
 
 ### Fable mode (Amanda Askell)
 
@@ -63,7 +65,7 @@ Progress: Obsidian Dataview on concept frontmatter — see [REVIEW.md](REVIEW.md
 
 **Study path:** numbered list with `[[concept-slug]]` wikilinks on `overview.md` (and short mirror on `guide.md`).
 
-**Mastery tiers (A/B/C/D):** on each domain `overview.md` §掌握度分层 — synced from `scripts/domain_study_tiers.py`.
+**Mastery tiers (A/B/C/D):** inline on **建议学习顺序** (**A** / **B** markers); synced from `scripts/domain_study_tiers.py`.
 
 ```bash
 # Paths + tiers + Dataview solid/read queues

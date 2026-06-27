@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import TypedDict
 
 
@@ -314,6 +315,85 @@ def wikilinks(slugs: list[str]) -> str:
     return " · ".join(f"[[{s}]]" for s in slugs)
 
 
+def wikilinks_tier(slugs: list[str], tier: str) -> str:
+    return " · ".join(f"[[{s}]] **{tier}**" for s in slugs)
+
+
+WIKILINK_RE = re.compile(r"\[\[([^\]|]+)(?:\|[^\]]*)?\]\]")
+
+
+def strip_study_heading(md: str) -> str:
+    md = md.strip()
+    for prefix in ("## 建议学习顺序", "## Study path"):
+        if md.startswith(prefix):
+            return md[len(prefix) :].lstrip("\n")
+    return md
+
+
+def slug_from_wikilink(target: str) -> str:
+    return target.split("/")[-1].strip()
+
+
+def slugs_in_path(body: str) -> set[str]:
+    return {slug_from_wikilink(m.group(1)) for m in WIKILINK_RE.finditer(body)}
+
+
+def annotate_tiers_in_path(body: str, spec: TierSpec) -> str:
+    a = set(spec.get("a") or [])
+    b = set(spec.get("b") or [])
+
+    def repl(m: re.Match[str]) -> str:
+        slug = slug_from_wikilink(m.group(1))
+        link = m.group(0)
+        if slug in a:
+            return f"{link} **A**"
+        if slug in b:
+            return f"{link} **B**"
+        return link
+
+    return WIKILINK_RE.sub(repl, body)
+
+
+def format_unified_study_order(path_body: str, spec: TierSpec) -> str:
+    """Study path with inline **A** / **B** mastery markers; replaces separate §掌握度分层."""
+    body = strip_study_heading(path_body).strip()
+    a_label = spec.get("a_label") or "建议 solid"
+    b_label = spec.get("b_label") or "场景 solid"
+    lines = [
+        "## 建议学习顺序",
+        "",
+        f"> 行内标记：**A** = Tier A（{a_label}）· **B** = Tier B（{b_label}）· 无标记 = Tier C/D（learning / Query）",
+        "",
+        annotate_tiers_in_path(body, spec),
+        "",
+    ]
+    path_slugs = slugs_in_path(body)
+    a = spec.get("a") or []
+    gaps_a = [s for s in a if s not in path_slugs]
+    if gaps_a:
+        lines.append("### Tier A 补充（路径外，同样建议 solid）")
+        lines.append("")
+        lines.append(wikilinks_tier(gaps_a, "A"))
+        lines.append("")
+    b = spec.get("b") or []
+    gaps_b = [s for s in b if s not in path_slugs]
+    if gaps_b:
+        bl = spec.get("b_label") or "场景 solid"
+        lines.append(f"### Tier B 补充（{bl}）")
+        lines.append("")
+        lines.append(wikilinks_tier(gaps_b, "B"))
+        lines.append("")
+    c = spec.get("c_note")
+    if c and c != "—":
+        lines.append(f"**Tier C：** {c}")
+        lines.append("")
+    d = spec.get("d_note")
+    if d and d != "—":
+        lines.append(f"**Tier D：** {d}")
+        lines.append("")
+    return "\n".join(lines).rstrip() + "\n"
+
+
 def format_tiers_block(slug: str, spec: TierSpec) -> str:
     lines = [
         "## 掌握度分层",
@@ -384,7 +464,7 @@ WHERE domain = "{domain}" AND (reviewed = null OR (updated != null AND reviewed 
 SORT updated DESC
 ```
 
-**新学顺序：** 见上方 **建议学习顺序** + **掌握度分层** Tier A。
+**新学顺序：** 见上方 **建议学习顺序**（**A** / **B** 行内标记）。
 """
 
 

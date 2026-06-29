@@ -405,6 +405,14 @@ def replace_or_insert(text: str, headings: list[str], new_block: str) -> str:
 
 
 def bump_updated(text: str, date: str) -> str:
+    # Repair merged closing delimiter (breaks Obsidian frontmatter → red render)
+    text = re.sub(
+        r"^updated:\s*(\d{4}-\d{2}-\d{2})---\s*$",
+        r"updated: \1\n---",
+        text,
+        count=1,
+        flags=re.M,
+    )
     if re.search(r"^updated:\s*", text, re.M):
         return re.sub(r"^updated:\s*.*$", f"updated: {date}", text, count=1, flags=re.M)
     return text

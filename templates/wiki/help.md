@@ -11,14 +11,16 @@ updated: 2026-06-27
 
 ## 今日 Study：顺序 + 待巩固
 
-### 1. 打开学科 overview（列表在这里）
+### 1. 打开学科 **study** 页（进度 + 待巩固）
 
-`domains/<学科>/overview` — **页面上方**（按此顺序）：
+`domains/<学科>/study` — **按 Tier A / B / 其余分表**：
 
 | 区块 | 作用 |
 |------|------|
-| **建议学习顺序** | 按路径学；行内 **A** / **B** = 建议掌握度（A 建议 solid） |
-| **待巩固** | Dataview：**Solid 候选** · **读过未测** · **待复习** |
+| **待巩固** | 每 Tier：Solid 候选 · 读过未测 · 待复习 |
+| **学习进度** | 每 Tier 全表（掌握度 / Review / Explain-back） |
+
+`domains/<学科>/overview` — **建议学习顺序**（行内 **A** / **B** 标记）
 
 Vault 总表：[[domain-map]] · [[overview]]
 
@@ -29,7 +31,7 @@ Vault 总表：[[domain-map]] · [[overview]]
 | 1 | overview **Solid 候选** | `Promote [[概念]] to solid` |
 | 2 | **读过未测** | `Explain-back [[概念]]`（读过 concept 但没 passed） |
 | 3 | **待复习** | 重读 concept → `Review [[概念]]`（wiki 更新后） |
-| 4 | 路径中下一个 **A** 仍未 solid | 按 **建议学习顺序** 继续 |
+| 4 | 路径中下一个 **A** 仍未 solid | overview **建议学习顺序** → `study` 页对照 |
 
 Lint 脚本同样分桶：`SOLID_CANDIDATE` / `READ_UNTESTED` / `STALE` — 说 `Lint` 或 `Review queue: <domain>`。
 
@@ -131,8 +133,8 @@ Framework: kubernetes-cilium — tiers only
 | 问题 | 打开 |
 |------|------|
 | 学科列表 | [[overview]] · [[domain-map]] |
-| **学习顺序 + 待巩固** | `domains/<学科>/overview`（靠上；**A**/**B** 在学习顺序里） |
-| 全库 concept 清单 | 同学科 overview 底部 **学习进度** |
+| **学习顺序** | `domains/<学科>/overview` |
+| **进度 + 待巩固（Tier 分表）** | `domains/<学科>/study` |
 | 编译：跨书主题 | `wiki/synthesis/` |
 | 编译：概念 + Evidence | `concepts/` |
 | 个人笔记 | `notes/` |

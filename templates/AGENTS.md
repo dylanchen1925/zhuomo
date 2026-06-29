@@ -149,7 +149,7 @@ When wrong, stale, contradicted, or duplicated: revision card → edit / superse
 - `Review [[concept]]` → set `reviewed: <today>`
 - `Explain-back [[concept]]` → **one** `## Explain-back` prompt per turn; grade ✅/⚠️/❌; update frontmatter **after last prompt only**
 - `Promote [[concept]] to solid` → only if `explain_back: passed`
-- Domain **Tier A/B** marked **A** / **B** in `overview.md` §建议学习顺序 — sync via `sync-domain-study-paths.py`
+- Domain **Tier A/B** in `overview.md` §建议学习顺序; progress in `domains/<slug>/study.md` — sync via `sync-domain-study-paths.py`
 - Overview Dataview: **Solid 候选** · **读过未测** (see REVIEW.md)
 
 Batch mode only if user says `batch` or `一次出题`.

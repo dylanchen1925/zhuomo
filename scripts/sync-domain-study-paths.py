@@ -11,8 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from domain_study_tiers import (  # noqa: E402
     TIERS,
-    format_consolidate_block,
-    format_study_progress_block,
+    format_study_page,
     format_unified_study_order,
     strip_study_heading,
 )
@@ -379,8 +378,9 @@ PROGRESS_HEADING = r"## 学习进度"
 CONSOLIDATE_HEADING = r"## 待巩固"
 
 STUDY_PATH_HEADINGS = frozenset({"## 建议学习顺序", "## Study path"})
-STUDY_TOP_HEADINGS = STUDY_PATH_HEADINGS | frozenset({"## 待巩固"})
-STUDY_END_HEADINGS = frozenset({"## 学习进度"})
+STUDY_TOP_HEADINGS = STUDY_PATH_HEADINGS
+STUDY_END_HEADINGS: frozenset[str] = frozenset()
+REMOVED_FROM_OVERVIEW = frozenset({"## 待巩固", "## 学习进度", "## 掌握度分层"})
 
 
 def is_defer_heading(h: str) -> bool:
@@ -440,7 +440,7 @@ def split_h2_sections(text: str) -> tuple[str, list[tuple[str, str]]]:
 
 
 def reorder_overview_study_sections(text: str) -> str:
-    """Study path (with tier markers) → 待巩固 → rest → 学习进度 → Gaps/术语."""
+    """建议学习顺序 first; then body; Gaps/术语 last."""
     preamble, sections = split_h2_sections(text)
     if not sections:
         return text
@@ -450,8 +450,8 @@ def reorder_overview_study_sections(text: str) -> str:
     def pick(headings: frozenset[str]) -> list[str]:
         return [by_head[h] for h in order if h in headings]
 
-    first = pick(STUDY_PATH_HEADINGS) + pick(frozenset({"## 待巩固"}))
-    taken = STUDY_TOP_HEADINGS | STUDY_END_HEADINGS
+    first = pick(STUDY_PATH_HEADINGS)
+    taken = STUDY_TOP_HEADINGS | STUDY_END_HEADINGS | REMOVED_FROM_OVERVIEW
     middle = [by_head[h] for h in order if h not in taken and not is_defer_heading(h)]
     tail = pick(STUDY_END_HEADINGS) + [by_head[h] for h in order if is_defer_heading(h)]
 
@@ -461,22 +461,43 @@ def reorder_overview_study_sections(text: str) -> str:
     return preamble.rstrip() + "\n\n" + "\n\n".join(blocks) + "\n"
 
 
-def ensure_consolidate_section(text: str, slug: str) -> str:
-    if "## 待巩固" in text:
-        return text
-    block = format_consolidate_block(slug).strip()
-    for h in ("## 建议学习顺序", "## Study path"):
-        pat = re.compile(rf"({re.escape(h)}\n.*?(?=\n## |\Z))", re.S)
-        m = pat.search(text)
-        if m:
-            insert_at = m.end()
-            return text[:insert_at] + "\n\n" + block + "\n" + text[insert_at:]
+def remove_section_by_heading(text: str, heading: str) -> str:
+    pat = re.compile(rf"\n{re.escape(heading)}\n.*?(?=\n## |\Z)", re.S)
+    return pat.sub("\n", text)
+
+
+def strip_progress_sections(text: str) -> str:
+    for h in REMOVED_FROM_OVERVIEW:
+        text = remove_section_by_heading(text, h)
     return text
 
 
+def domain_title_from_overview(text: str, slug: str) -> str:
+    m = re.search(r"^# (.+?) —", text, re.M)
+    if m:
+        return m.group(1).strip()
+    return slug.replace("-", " ").title()
+
+
+def inject_study_link(text: str, slug: str) -> str:
+    link = f"[[domains/{slug}/study]]"
+    if link in text:
+        text = text.replace("见下方进度表", f"见 {link}")
+        return text
+    line = (
+        f"\n> **学习进度与待巩固：** {link}"
+        f"（按 Tier 分表：Solid 候选 / 读过未测 / 待复习 + 掌握度）\n"
+    )
+    m = re.search(r"\n---\n\n## (建议学习顺序|Study path)", text)
+    if m:
+        text = text[: m.start()] + line + text[m.start() :]
+    else:
+        text = text.rstrip() + line + "\n"
+    return text.replace("见下方进度表", f"见 {link}")
+
+
 def remove_tiers_section(text: str) -> str:
-    pat = re.compile(r"\n## 掌握度分层\n.*?(?=\n## |\Z)", re.S)
-    return pat.sub("\n", text)
+    return remove_section_by_heading(text, "## 掌握度分层")
 
 
 def apply_study_path(text: str, slug: str, path_md: str) -> str:
@@ -487,14 +508,17 @@ def apply_study_path(text: str, slug: str, path_md: str) -> str:
 
 
 def sync_overview_extras(text: str, slug: str) -> str:
-    """Inject 待巩固 + 学习进度; drop legacy §掌握度分层; reorder study blocks."""
+    """Strip embedded progress blocks; link to domains/<slug>/study.md."""
+    text = strip_progress_sections(text)
     text = remove_tiers_section(text)
-    if slug not in TIERS:
-        return reorder_overview_study_sections(text)
-    text = replace_section(text, CONSOLIDATE_HEADING, format_consolidate_block(slug))
-    text = ensure_consolidate_section(text, slug)
-    text = replace_section(text, PROGRESS_HEADING, format_study_progress_block(slug))
+    text = inject_study_link(text, slug)
     return reorder_overview_study_sections(text)
+
+
+def write_study_page(dom_dir: Path, slug: str, overview_text: str, updated: str) -> str:
+    title = domain_title_from_overview(overview_text, slug)
+    spec = TIERS.get(slug)
+    return format_study_page(slug, title, spec, updated)
 
 
 def main() -> int:
@@ -504,7 +528,7 @@ def main() -> int:
     p.add_argument(
         "--tiers-only",
         action="store_true",
-        help="Update 待巩固 + tier markers in 建议学习顺序 + 学习进度; skip path text rewrite from PATHS",
+        help="Update study.md + overview study link; re-annotate 建议学习顺序; skip PATHS text",
     )
     p.add_argument("--paths-only", action="store_true", help="Update study paths only; skip tiers")
     p.add_argument("--dry-run", action="store_true")
@@ -516,9 +540,10 @@ def main() -> int:
     do_paths = not args.tiers_only
     do_tiers = not args.paths_only
     n = 0
-    slugs = set(PATHS) | set(TIERS)
-    for slug in sorted(slugs):
-        dom = domains_dir / slug
+    for dom in sorted(domains_dir.iterdir()):
+        if not dom.is_dir():
+            continue
+        slug = dom.name
         ov = dom / "overview.md"
         if not ov.is_file():
             continue
@@ -528,6 +553,14 @@ def main() -> int:
             new_text = apply_study_path(new_text, slug, PATHS[slug]["overview"])
         if do_tiers:
             new_text = sync_overview_extras(new_text, slug)
+            study_md = dom / "study.md"
+            study_content = write_study_page(dom, slug, new_text, args.date)
+            old_study = study_md.read_text(encoding="utf-8") if study_md.is_file() else ""
+            if study_content != old_study and not args.dry_run:
+                study_md.write_text(study_content, encoding="utf-8")
+            if study_content != old_study:
+                n += 1
+                print(f"study: {study_md}")
         new_text = bump_updated(new_text, args.date)
         if new_text != text:
             n += 1

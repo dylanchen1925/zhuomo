@@ -6,31 +6,31 @@
 
 ---
 
-## Where to start (study order + consolidate)
+## Where to start (study order + progress)
 
-**Open:** `domains/<domain>/study.md` — progress + consolidate **split by Tier A / B / rest**.
+**Open:** `domains/<domain>/study.md` — **学习进度** per Tier A / B / rest.
 
 `domains/<domain>/overview.md` — **建议学习顺序** only (inline **A** / **B** markers).
 
-| Block | Purpose |
-|-------|---------|
-| **待巩固** | Per tier: Solid 候选 → 读过未测 → 待复习 |
-| **学习进度** | Per tier: full mastery table |
+| Column | Purpose |
+|--------|---------|
+| **下一步** | `① Promote` → `② Explain-back` → `③ Review` → `—` |
+| mastery / reviewed / explain_back | Status at a glance |
+
+Rows sort by **下一步** priority — no separate consolidate section.
 
 Vault index: `wiki/overview.md` · `wiki/domain-map.md`
 
-### Consolidate priority (do in order)
+### Action priority (read **下一步** column)
 
-| Priority | Queue | You do |
-|----------|-------|--------|
-| 1 | **Solid 候选** | `Promote [[slug]] to solid` |
-| 2 | **读过未测** | `Explain-back [[slug]]` |
-| 3 | **待复习** | Re-read concept → `Review [[slug]]` |
-| 4 | Next **A** in path not solid | Continue **建议学习顺序** |
+| Mark | You do |
+|------|--------|
+| `① Promote` | `Promote [[slug]] to solid` |
+| `② Explain-back` | `Explain-back [[slug]]` |
+| `③ Review` | Re-read concept → `Review [[slug]]` |
+| `—` | No action; continue **建议学习顺序** for next **A** |
 
 Same buckets from `lint-review-queue.py` or `Review queue: <domain>`.
-
-Full concept table lives in **学习进度** at the **bottom** of overview — for lookup, not daily triage.
 
 ---
 
@@ -68,7 +68,7 @@ A concept page is a **compiled map**, not the textbook. Explain-back often tests
 
 ### 15-minute block
 
-1. Pick one row from overview **待巩固**  
+1. Pick one row with **下一步** `①`/`②`/`③` on `study.md`  
 2. Explain-back bullets → Claim/body (5–8 min)  
 3. Closed-book attempt → one Evidence row if stuck  
 4. `Explain-back [[slug]]` or `Review` first  
@@ -226,18 +226,19 @@ If user says `Explain-back [[concept]] batch` or `一次出题`, may publish all
 
 ## Progress in Obsidian (Dataview)
 
-Domain `overview.md` embeds Dataview — **daily use §待巩固**; **§学习进度** = full inventory at page bottom.
+Open `domains/<学科>/study.md` — **学习进度** per Tier; **下一步** column marks Promote / Explain-back / Review priority (sorted).
+
+`domains/<学科>/overview.md` — **建议学习顺序** only.
 
 **Requires:** Obsidian [Dataview](https://github.com/blacksmithgu/obsidian-dataview) plugin.
 
 **How to use:**
 
-1. Open `domains/<学科>/study.md` for queues + tier tables; `overview.md` for **建议学习顺序**.
-2. **Solid 候选** / **读过未测** / **待复习** — in **待巩固** (auto-updated).
-3. Scroll to **学习进度** only when you need the full concept list.
-4. After **Explain-back** or **Revise**, refresh is automatic. Run `Promote [[slug]] to solid` when passed.
+1. Open `study.md`; pick rows where **下一步** is `①` / `②` / `③`.
+2. For new material, follow **建议学习顺序** on `overview.md` (Tier **A** / **B**).
+3. After **Explain-back** or **Revise**, tables refresh automatically. Run `Promote [[slug]] to solid` when passed.
 
-Example **待复习** query (also embedded on overview):
+Example **待复习** condition (used in **下一步** `③`):
 
 ```dataview
 TABLE mastery, reviewed, explain_back, updated

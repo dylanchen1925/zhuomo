@@ -485,8 +485,8 @@ def inject_study_link(text: str, slug: str) -> str:
         text = text.replace("见下方进度表", f"见 {link}")
         return text
     line = (
-        f"\n> **学习进度与待巩固：** {link}"
-        f"（按 Tier 分表：Solid 候选 / 读过未测 / 待复习 + 掌握度）\n"
+        f"\n> **学习进度：** {link}"
+        f"（按 Tier 分表；**下一步** 列标 Promote / Explain-back / Review 优先级）\n"
     )
     m = re.search(r"\n---\n\n## (建议学习顺序|Study path)", text)
     if m:

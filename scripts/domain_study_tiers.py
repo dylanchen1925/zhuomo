@@ -442,16 +442,34 @@ def dv_file_not_in(slugs: list[str]) -> str:
     return "(" + " AND ".join(f'file.name != "{s}"' for s in slugs) + ")"
 
 
+STUDY_TABLE_COLS = (
+    'file.link AS "概念", '
+    'choice(explain_back = "passed" AND mastery != "solid", "① Promote", '
+    'choice(reviewed != null AND explain_back != "passed", "② Explain-back", '
+    'choice(reviewed = null OR (updated != null AND reviewed != null AND updated > reviewed), "③ Review", "—"))) AS "下一步", '
+    'mastery AS "掌握度", reviewed AS "Review", '
+    'explain_back AS "Explain-back", updated AS "更新"'
+)
+
+STUDY_TABLE_SORT = (
+    "choice(explain_back = \"passed\" AND mastery != \"solid\", 0, "
+    "choice(reviewed != null AND explain_back != \"passed\", 1, "
+    "choice(reviewed = null OR (updated != null AND reviewed != null AND updated > reviewed), 2, 3))) ASC, "
+    "file.name ASC"
+)
+
+
 def _dv_table(
     domain: str,
     extra_where: str,
     slug_filter: str,
     sort: str,
     *,
-    minimal: bool = False,
+    study: bool = False,
 ) -> str:
-    if minimal:
-        cols = 'file.link AS "概念", mastery, reviewed, explain_back, updated'
+    if study:
+        cols = STUDY_TABLE_COLS
+        sort = STUDY_TABLE_SORT
     else:
         cols = (
             'file.link AS "概念", mastery AS "掌握度", reviewed AS "Review", '
@@ -470,34 +488,8 @@ SORT {sort}
 ```"""
 
 
-def _consolidate_tier_section(
-    domain: str, heading: str, slug_filter: str
-) -> list[str]:
-    lines = [heading, ""]
-    queues = [
-        (
-            "Solid 候选",
-            'explain_back = "passed" AND mastery != "solid"',
-            "file.name ASC",
-        ),
-        (
-            "读过未测",
-            'reviewed != null AND explain_back != "passed"',
-            "updated DESC",
-        ),
-        (
-            "待复习",
-            "(reviewed = null OR (updated != null AND reviewed != null AND updated > reviewed))",
-            "updated DESC",
-        ),
-    ]
-    for title, cond, sort in queues:
-        lines.extend([f"#### {title}", "", _dv_table(domain, cond, slug_filter, sort, minimal=True), ""])
-    return lines
-
-
 def format_study_page(slug: str, title: str, spec: TierSpec | None, updated: str) -> str:
-    """Standalone domains/<slug>/study.md — 待巩固 + 学习进度, split by Tier."""
+    """Standalone domains/<slug>/study.md — 学习进度 only, split by Tier."""
     spec = spec or {}
     a = spec.get("a") or []
     b = spec.get("b") or []
@@ -506,6 +498,7 @@ def format_study_page(slug: str, title: str, spec: TierSpec | None, updated: str
     b_label = spec.get("b_label") or "场景 solid"
     c_note = spec.get("c_note") or ""
     d_note = spec.get("d_note") or ""
+    rest_label = "其余（Tier C/D）" if (a or b) else "全库"
 
     lines = [
         "---",
@@ -514,32 +507,33 @@ def format_study_page(slug: str, title: str, spec: TierSpec | None, updated: str
         f"updated: {updated}",
         "---",
         "",
-        f"# {title} — 学习进度与待巩固",
+        f"# {title} — 学习进度",
         "",
         f"← [[domains/{slug}/overview]] · 路径与 **A**/**B** 标记见 overview **建议学习顺序**",
         "",
-        "> 需要 Obsidian **Dataview** 插件。",
+        "> 需要 Obsidian **Dataview** 插件。日常 Study 从 **下一步** 列优先：`① Promote` → `② Explain-back` → `③ Review`；`—` 表示暂无需动作。",
         "",
-        "## 待巩固",
-        "",
-        "> **处理顺序：** Solid 候选 → Promote · 读过未测 → Explain-back · 待复习 → Review",
+        "## 学习进度",
         "",
     ]
-
     if a:
-        lines.extend(_consolidate_tier_section(slug, f"### Tier A — {a_label}", dv_file_in(a)))
+        lines.extend(
+            [
+                f"### Tier A — {a_label}",
+                "",
+                _dv_table(slug, "true", dv_file_in(a), STUDY_TABLE_SORT, study=True),
+                "",
+            ]
+        )
     if b:
-        lines.extend(_consolidate_tier_section(slug, f"### Tier B — {b_label}", dv_file_in(b)))
-    rest_label = "其余（Tier C/D）"
-    if not a and not b:
-        rest_label = "全库"
-    lines.extend(_consolidate_tier_section(slug, f"### {rest_label}", dv_file_not_in(ab)))
-
-    lines.extend(["## 学习进度", ""])
-    if a:
-        lines.extend([f"### Tier A — {a_label}", "", _dv_table(slug, "true", dv_file_in(a), "file.name ASC"), ""])
-    if b:
-        lines.extend([f"### Tier B — {b_label}", "", _dv_table(slug, "true", dv_file_in(b), "file.name ASC"), ""])
+        lines.extend(
+            [
+                f"### Tier B — {b_label}",
+                "",
+                _dv_table(slug, "true", dv_file_in(b), STUDY_TABLE_SORT, study=True),
+                "",
+            ]
+        )
     lines.extend([f"### {rest_label}", ""])
     if c_note and c_note != "—":
         lines.append(f"**Tier C：** {c_note}")
@@ -547,7 +541,7 @@ def format_study_page(slug: str, title: str, spec: TierSpec | None, updated: str
     if d_note and d_note != "—":
         lines.append(f"**Tier D：** {d_note}")
         lines.append("")
-    lines.extend([_dv_table(slug, "true", dv_file_not_in(ab), "file.name ASC"), ""])
+    lines.extend([_dv_table(slug, "true", dv_file_not_in(ab), STUDY_TABLE_SORT, study=True), ""])
     return "\n".join(lines).rstrip() + "\n"
 
 

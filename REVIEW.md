@@ -226,7 +226,7 @@ If user says `Explain-back [[concept]] batch` or `一次出题`, may publish all
 
 ## Progress in Obsidian (Dataview)
 
-Open `domains/<学科>/study.md` — **学习进度** per Tier; **下一步** column marks Promote / Explain-back / Review priority (sorted).
+Open `domains/<学科>/study.md` — **进度摘要** (fraction + **solid %** per tier) + **学习进度** tables.
 
 `domains/<学科>/overview.md` — **建议学习顺序** only.
 

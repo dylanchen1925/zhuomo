@@ -18,7 +18,7 @@ updated: 2026-06-27
 | 列 | 作用 |
 |------|------|
 | **下一步** | `① Promote` → `② Explain-back` → `③ Review` → `—`（暂无需动作） |
-| 掌握度 / Review / Explain-back | 状态一览 |
+| **进度摘要** | 每 Tier：`solid / 总数` · Review · Explain-back · **solid %** |
 
 表内已按 **下一步** 优先级排序；不必另开「待巩固」列表。
 

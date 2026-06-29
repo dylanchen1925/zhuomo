@@ -459,6 +459,37 @@ STUDY_TABLE_SORT = (
 )
 
 
+def dv_tier_group_expr(a: list[str], b: list[str]) -> str:
+    """Dataview GROUP BY expression: Tier A / B / 其余 (or 全库)."""
+    if not a and not b:
+        return '"全库"'
+    if a and b:
+        return f'choice({dv_file_in(a)}, "Tier A", choice({dv_file_in(b)}, "Tier B", "其余"))'
+    if a:
+        return f'choice({dv_file_in(a)}, "Tier A", "其余")'
+    return f'choice({dv_file_in(b)}, "Tier B", "其余")'
+
+
+def _dv_progress_summary(domain: str, a: list[str], b: list[str]) -> str:
+    tier_expr = dv_tier_group_expr(a, b)
+    return f"""```dataview
+TABLE WITHOUT ID
+  tier AS "层级",
+  length(filter(rows, (r) => r.mastery = "solid")) + " / " + length(rows) AS "solid",
+  length(filter(rows, (r) => r.reviewed != null)) + " / " + length(rows) AS "Review",
+  length(filter(rows, (r) => r.explain_back = "passed")) + " / " + length(rows) AS "Explain-back",
+  choice(
+    length(rows) > 0,
+    round(100 * length(filter(rows, (r) => r.mastery = "solid")) / length(rows)) + "%",
+    "—"
+  ) AS "solid %"
+FROM "wiki/concepts"
+WHERE domain = "{domain}"
+GROUP BY {tier_expr} AS tier
+SORT tier ASC
+```"""
+
+
 def _dv_table(
     domain: str,
     extra_where: str,
@@ -512,6 +543,12 @@ def format_study_page(slug: str, title: str, spec: TierSpec | None, updated: str
         f"← [[domains/{slug}/overview]] · 路径与 **A**/**B** 标记见 overview **建议学习顺序**",
         "",
         "> 需要 Obsidian **Dataview** 插件。日常 Study 从 **下一步** 列优先：`① Promote` → `② Explain-back` → `③ Review`；`—` 表示暂无需动作。",
+        "",
+        "## 进度摘要",
+        "",
+        "> **主目标** 看 **Tier A** 的 `solid` 分数；**solid %** = solid 数 ÷ 该层概念总数。",
+        "",
+        _dv_progress_summary(slug, a, b),
         "",
         "## 学习进度",
         "",

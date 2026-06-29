@@ -10,4 +10,4 @@ updated: YYYY-MM-DD
 
 > 由 `sync-domain-study-paths.py` 生成；勿手改 Dataview 块。
 
-**结构：** §学习进度（Tier A / B / 其余）；**下一步** 列标 Promote / Explain-back / Review 优先级。
+**结构：** §进度摘要（Tier 分数 + solid %）→ §学习进度（Tier 分表 + **下一步** 列）。

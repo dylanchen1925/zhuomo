@@ -20,6 +20,12 @@ def parse_args() -> argparse.Namespace:
         help=f"External corpus root (default: {DEFAULT_CORPUS_ROOT})",
     )
     p.add_argument("--dry-run", action="store_true")
+    p.add_argument(
+        "--slug",
+        action="append",
+        default=[],
+        help="Limit cleanup to corpus slug(s), e.g. cisco-sdwan-design-guide (repeatable)",
+    )
     return p.parse_args()
 
 
@@ -38,7 +44,12 @@ def main() -> int:
         print(f"No corpus dir at {corpus_dir}")
         return 0
 
-    for assets_dir in sorted(corpus_dir.glob("*/assets")):
+    slug_filter = set(args.slug)
+    asset_dirs = sorted(corpus_dir.glob("*/assets"))
+    if slug_filter:
+        asset_dirs = [d for d in asset_dirs if d.parent.name in slug_filter]
+
+    for assets_dir in asset_dirs:
         for img in sorted(assets_dir.iterdir()):
             if not img.is_file():
                 continue

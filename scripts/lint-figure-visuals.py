@@ -27,7 +27,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def norm_fig(fig: str) -> str:
-    return fig.strip().replace("_", "-")
+    return fig.strip().replace("_", "-").rstrip("-")
 
 
 def split_body_evidence(text: str) -> tuple[str, str]:

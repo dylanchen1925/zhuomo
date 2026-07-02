@@ -27,6 +27,12 @@ INLINE_MARKER = re.compile(
 MERMAID_MARKER = re.compile(r"^```mermaid\s*$")
 
 MERMAID_FALLBACK: dict[str, dict[str, str]] = {
+    "sdwan-use-cases": {
+        "2": """flowchart LR
+  A[Branch site VPN-A] -->|IPsec + VPN label| F[SD-WAN fabric]
+  F --> B[Remote site VPN-A]
+  A -.->|Contract / VPN isolation| C[Site VPN-B]""",
+    },
     "aci-vlan-pools-aaep": {
         "26": """flowchart TD
   SP[Switch profile] --> IP[Interface policy]
@@ -84,7 +90,7 @@ def load_corpus_index(wiki_dir: Path) -> dict[str, Path]:
 
 
 def norm_fig(fig: str) -> str:
-    return fig.strip().replace("_", "-")
+    return fig.strip().replace("_", "-").rstrip("-")
 
 
 def find_image_at_anchor(part_text: str, anchor: str) -> str | None:

@@ -354,7 +354,7 @@ updated: YYYY-MM-DD
 
 When prose cites **Figure N** or `#figure-*`:
 
-1. Insert `![Figure N](sources/<slug>/md/assets/…)` immediately after mentioning paragraph
+1. Insert `![Figure N](/corpus/<slug>/assets/…)` immediately after mentioning paragraph
 2. Next line: `→ [[sources/.../md/part-NNN#figure-n]]`
 3. No asset → mermaid schematic at same spot (topology/flow only)
 4. Never a consolidated `## Figures` appendix

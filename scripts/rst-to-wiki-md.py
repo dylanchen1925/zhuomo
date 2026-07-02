@@ -10,7 +10,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-ASSETS_DIR = "assets"
+from corpus_assets import DEFAULT_CORPUS_ROOT, asset_vault_path, corpus_root_from_arg, slug_assets_dir
 
 # Book reading order (index.rst toctree, excluding meta pages).
 CHAPTER_ROOTS = [
@@ -156,7 +156,7 @@ def add_heading_anchors(md: str) -> tuple[str, list[str]]:
     return md, headings
 
 
-def fix_image_paths(md: str, rst_path: Path, assets_dir: Path, book_root: Path) -> str:
+def fix_image_paths(md: str, rst_path: Path, assets_dir: Path, book_root: Path, slug: str) -> str:
     def copy_and_relink(match: re.Match[str]) -> str:
         alt = match.group(1)
         src = match.group(2)
@@ -171,7 +171,7 @@ def fix_image_paths(md: str, rst_path: Path, assets_dir: Path, book_root: Path) 
         if not dest.exists():
             dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(src_path, dest)
-        return f"![{alt}]({ASSETS_DIR}/{dest.name})"
+        return f"![{alt}]({asset_vault_path(slug, dest.name)})"
 
     return re.sub(r"!\[([^\]]*)\]\(([^)]+)\)", copy_and_relink, md)
 
@@ -181,6 +181,12 @@ def main() -> int:
     parser.add_argument("book_root", type=Path, help="Root of cloned RST book repo")
     parser.add_argument("--out", type=Path, required=True, help="Output dir, e.g. wiki/sources/foo/md")
     parser.add_argument("--slug", type=str, default="", help="Source slug for index")
+    parser.add_argument(
+        "--corpus-root",
+        type=Path,
+        default=DEFAULT_CORPUS_ROOT,
+        help=f"External corpus root (default: {DEFAULT_CORPUS_ROOT})",
+    )
     parser.add_argument(
         "--preset",
         type=str,
@@ -193,10 +199,11 @@ def main() -> int:
     book_root = args.book_root.resolve()
     out_dir = args.out
     out_dir.mkdir(parents=True, exist_ok=True)
-    assets_dir = out_dir / ASSETS_DIR
-    assets_dir.mkdir(parents=True, exist_ok=True)
 
     slug = args.slug or book_root.name
+    corpus_root = corpus_root_from_arg(args.corpus_root)
+    assets_dir = slug_assets_dir(corpus_root, slug)
+    assets_dir.mkdir(parents=True, exist_ok=True)
     chapter_roots = PRESETS[args.preset]
 
     rst_files = collect_rst_files_for_roots(book_root, chapter_roots)
@@ -223,7 +230,7 @@ def main() -> int:
         if len(md.strip()) < 60:
             continue
         md, headings = add_heading_anchors(md)
-        md = fix_image_paths(md, rst_path, assets_dir, book_root)
+        md = fix_image_paths(md, rst_path, assets_dir, book_root, slug)
         for m in re.finditer(rf"\]\({ASSETS_DIR}/([^)]+)\)", md):
             image_names.add(m.group(1))
 

@@ -216,7 +216,7 @@ EPUB works well — it's structured HTML in a ZIP, so chapter boundaries are usu
 **Workflow (required steps):**
 
 1. Copy the `.epub` to `raw/books/` (immutable source).
-2. **Convert full text to Markdown** under `wiki/sources/[slug]/md/` — one file per spine item/chapter, with heading anchors. **Images** are extracted to `md/assets/` and embedded as `![alt](assets/…)` in the part files (default; pass `--no-images` for text-only). This is the **provenance corpus**; concept pages link here, not only to the EPUB path.
+2. **Convert full text to Markdown** under `wiki/sources/[slug]/md/` — one file per spine item/chapter, with heading anchors. **Images** go to `~/zhuomo-data/corpus/<slug>/assets/` (not in the vault); embed as `![alt](/corpus/<slug>/assets/…)` in part files. Requires `wiki/corpus` → `~/zhuomo-data/corpus` symlink. Pass `--no-images` for text-only. This is the **provenance corpus**; concept pages link here, not only to the EPUB path.
 3. Write `wiki/sources/[slug].md` index (topic map + link to `md/index`).
 4. **Deepen all** topic-map concepts — full pages + **`## Evidence`** on each (default). Use stub-only pass only when user says `overview only`.
 5. On every deepened concept page: **`## Evidence`** table — each claim row links `[[sources/slug/md/part-NNN#heading-anchor]]`.
@@ -280,7 +280,7 @@ When ingest, deepen, or revise mentions **Figure N** (or `#figure-*` anchors), e
 
 **Priority (what to embed):**
 
-1. **Source asset** — `![Figure N](sources/<slug>/md/assets/…)` from EPUB MD corpus (same image as `part-NNN.md`).
+1. **Source asset** — `![Figure N](/corpus/<slug>/assets/…)` from EPUB MD corpus (same image as `part-NNN.md`; files live under `~/zhuomo-data/corpus/`).
 2. **Mermaid schematic** — when no asset exists or book figure is unreadable; topology/flow only; must match wiki claims.
 3. **Link only** — never alone; always pair `→ [[sources/.../md/part-NNN#figure-x-y]]` with (1) or (2).
 
@@ -289,9 +289,16 @@ When ingest, deepen, or revise mentions **Figure N** (or `#figure-*` anchors), e
 ```markdown
 Guide **Figure 91** = …
 
-![Figure 91](sources/…/assets/…)
+![Figure 91](/corpus/my-book/assets/…)
 
 → [[sources/…/md/part-NNN#figure-91]]
+```
+
+**Migrate existing vault assets (one-time):**
+
+```bash
+python3 ~/zhuomo/scripts/migrate-corpus-assets-out.py ~/path/to/vault/wiki --dry-run
+python3 ~/zhuomo/scripts/migrate-corpus-assets-out.py ~/path/to/vault/wiki
 ```
 
 **Backfill existing vault:**

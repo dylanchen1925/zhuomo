@@ -14,7 +14,7 @@ import ebooklib
 from bs4 import BeautifulSoup, NavigableString, Tag
 from ebooklib import epub
 
-ASSETS_DIR = "assets"
+from corpus_assets import DEFAULT_CORPUS_ROOT, asset_vault_path, corpus_root_from_arg, slug_assets_dir
 
 
 def slugify(text: str, max_len: int = 80) -> str:
@@ -29,8 +29,8 @@ def basename_from_href(href: str) -> str:
     return Path(path).name
 
 
-def extract_epub_images(book: epub.EpubBook, assets_dir: Path) -> dict[str, str]:
-    """Write EPUB images to assets_dir; return basename → md-relative path."""
+def extract_epub_images(book: epub.EpubBook, assets_dir: Path, slug: str) -> dict[str, str]:
+    """Write EPUB images to external corpus assets_dir; return basename → vault path."""
     assets_dir.mkdir(parents=True, exist_ok=True)
     lookup: dict[str, str] = {}
     for item in book.get_items_of_type(ebooklib.ITEM_IMAGE):
@@ -48,9 +48,10 @@ def extract_epub_images(book: epub.EpubBook, assets_dir: Path) -> dict[str, str]
                 n += 1
         if not dest.exists():
             dest.write_bytes(item.get_content())
-        lookup[base] = f"{ASSETS_DIR}/{dest.name}"
+        vault_ref = asset_vault_path(slug, dest.name)
+        lookup[base] = vault_ref
         # Also map full EPUB internal path when present.
-        lookup[basename_from_href(name)] = lookup[base]
+        lookup[basename_from_href(name)] = vault_ref
     return lookup
 
 
@@ -224,6 +225,12 @@ def main() -> int:
     )
     parser.add_argument("--slug", type=str, default="", help="Source slug for index")
     parser.add_argument(
+        "--corpus-root",
+        type=Path,
+        default=DEFAULT_CORPUS_ROOT,
+        help=f"External corpus root (images -> corpus/<slug>/assets/, default: {DEFAULT_CORPUS_ROOT})",
+    )
+    parser.add_argument(
         "--no-images",
         action="store_true",
         help="Skip image extraction (text-only corpus)",
@@ -234,13 +241,17 @@ def main() -> int:
     out_dir = args.out
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    slug = args.slug or args.epub.stem
+    corpus_root = corpus_root_from_arg(args.corpus_root)
+
     image_lookup: dict[str, str] = {}
     image_count = 0
     if not args.no_images:
-        image_lookup = extract_epub_images(book, out_dir / ASSETS_DIR)
+        image_lookup = extract_epub_images(
+            book, slug_assets_dir(corpus_root, slug), slug
+        )
         image_count = len({v for v in image_lookup.values()})
 
-    slug = args.slug or args.epub.stem
     index_lines = [
         "---",
         "type: source-md-corpus",
@@ -254,7 +265,9 @@ def main() -> int:
     ]
     if image_count:
         index_lines.append(
-            f"Images extracted to `md/{ASSETS_DIR}/` ({image_count} files) and embedded in part Markdown."
+            f"Images extracted to `/corpus/{slug}/assets/` ({image_count} files) "
+            f"on disk under `{corpus_root / 'corpus' / slug / 'assets'}`. "
+            f"Requires `wiki/corpus` symlink (see migrate-corpus-assets-out.py)."
         )
         index_lines.append("")
     index_lines.extend(

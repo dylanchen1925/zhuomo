@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Remove image files in wiki/sources/*/md/assets/ not referenced by any wiki markdown."""
+"""Remove corpus image files not referenced by any wiki markdown."""
 
 from __future__ import annotations
 
@@ -7,10 +7,18 @@ import argparse
 import sys
 from pathlib import Path
 
+from corpus_assets import DEFAULT_CORPUS_ROOT, corpus_root_from_arg
+
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("wiki_dir", type=Path, help="Path to vault wiki/ folder")
+    p.add_argument(
+        "--corpus-root",
+        type=Path,
+        default=DEFAULT_CORPUS_ROOT,
+        help=f"External corpus root (default: {DEFAULT_CORPUS_ROOT})",
+    )
     p.add_argument("--dry-run", action="store_true")
     return p.parse_args()
 
@@ -18,23 +26,33 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     wiki_dir = args.wiki_dir.resolve()
-    sources = wiki_dir / "sources"
+    corpus_root = corpus_root_from_arg(args.corpus_root)
+    corpus_dir = corpus_root / "corpus"
     combined = "\n".join(
         p.read_text(encoding="utf-8", errors="replace")
         for p in wiki_dir.rglob("*.md")
     )
 
     removed = 0
-    for assets_dir in sorted(sources.glob("*/md/assets")):
+    if not corpus_dir.is_dir():
+        print(f"No corpus dir at {corpus_dir}")
+        return 0
+
+    for assets_dir in sorted(corpus_dir.glob("*/assets")):
         for img in sorted(assets_dir.iterdir()):
             if not img.is_file():
                 continue
+            slug = assets_dir.parent.name
             name = img.name
-            if name in combined or f"assets/{name}" in combined:
+            if (
+                name in combined
+                or f"/corpus/{slug}/assets/{name}" in combined
+                or f"sources/{slug}/md/assets/{name}" in combined
+                or f"assets/{name}" in combined
+            ):
                 continue
             removed += 1
-            rel = img.relative_to(wiki_dir)
-            print(rel)
+            print(img)
             if not args.dry_run:
                 img.unlink()
 

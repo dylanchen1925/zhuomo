@@ -12,6 +12,8 @@ import re
 import sys
 from pathlib import Path
 
+from corpus_assets import DEFAULT_CORPUS_ROOT, asset_vault_path, corpus_root_from_arg, slug_assets_dir
+
 IMG_LINE = re.compile(r"!\[[^\]]*\]\(([^)]+)\)")
 EVIDENCE_LINK = re.compile(
     r"\[\[sources/([^/\]]+)/md/([^#\|\]]+)(?:#[^\|\]]+)?(?:\|[^\]]*)?\]\]"
@@ -58,6 +60,12 @@ def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("wiki_dir", type=Path, help="Path to vault wiki/ folder")
     p.add_argument(
+        "--corpus-root",
+        type=Path,
+        default=DEFAULT_CORPUS_ROOT,
+        help=f"External corpus root (default: {DEFAULT_CORPUS_ROOT})",
+    )
+    p.add_argument(
         "--concepts-glob",
         default="concepts/*.md",
         help="Glob under wiki_dir for concept pages",
@@ -92,15 +100,24 @@ def find_image_at_anchor(part_text: str, anchor: str) -> str | None:
     return post[0] if post else None
 
 
-def find_image_for_figure_num(corpus_md: Path, fig_num: str) -> tuple[str, str] | None:
-    candidates_img = [
-        f"assets/image{int(fig_num.split('-')[0]):03d}.jpg",
-        f"assets/image{fig_num.replace('.', '')}.jpg",
-    ]
+def _leading_digits(fig_num: str) -> int | None:
+    m = re.match(r"(\d+)", fig_num.strip())
+    return int(m.group(1)) if m else None
+
+
+def find_image_for_figure_num(
+    corpus_md: Path, fig_num: str, slug: str, corpus_root: Path
+) -> tuple[str, str] | None:
+    assets_on_disk = slug_assets_dir(corpus_root, slug)
+    candidates_img: list[str] = []
+    lead = _leading_digits(fig_num.split("-", 1)[0])
+    if lead is not None:
+        candidates_img.append(f"image{lead:03d}.jpg")
+    candidates_img.append(f"image{fig_num.replace('.', '').replace('-', '')}.jpg")
     if "-" in fig_num:
         a, b = fig_num.split("-", 1)
-        candidates_img.append(f"assets/{a.zfill(2)}fig{b.zfill(2)}.jpg")
-        candidates_img.append(f"assets/{a}fig{b}.jpg")
+        candidates_img.append(f"{a.zfill(2)}fig{b.zfill(2)}.jpg")
+        candidates_img.append(f"{a}fig{b}.jpg")
 
     for part in sorted(corpus_md.glob("part-*.md")):
         text = part.read_text(encoding="utf-8", errors="replace")
@@ -112,16 +129,15 @@ def find_image_for_figure_num(corpus_md: Path, fig_num: str) -> tuple[str, str] 
             return part.name, img
         idx = text.lower().find(f"figure {fig_num.lower()}")
         if idx >= 0:
-            before = text[:idx]
-            local = IMG_LINE.findall(before)
-            if local:
-                return part.name, local[-1]
-        for c in candidates_img:
-            if (corpus_md / c).exists():
-                return part.name, c
-        imgs = IMG_LINE.findall(text)
-        if imgs:
-            return part.name, imgs[0]
+            window = text[max(0, idx - 400) : idx + 400]
+            imgs = IMG_LINE.findall(window)
+            if imgs:
+                return part.name, imgs[-1]
+
+    for name in candidates_img:
+        if (assets_on_disk / name).is_file():
+            return "part-000.md", asset_vault_path(slug, name)
+
     return None
 
 
@@ -137,6 +153,7 @@ def resolve_visual(
     text: str,
     corpus: dict[str, Path],
     concept_slug: str,
+    corpus_root: Path,
 ) -> tuple[str, str] | None:
     """Return (block_md, kind) where kind is image|mermaid."""
     label = f"Figure {fig_num}"
@@ -145,11 +162,16 @@ def resolve_visual(
     for src_slug in search_slugs:
         if src_slug not in corpus:
             continue
-        hit = find_image_for_figure_num(corpus[src_slug], fig_num)
+        hit = find_image_for_figure_num(corpus[src_slug], fig_num, src_slug, corpus_root)
         if not hit:
             continue
         part_name, img = hit
-        vault_path = f"sources/{src_slug}/md/{img.lstrip('./')}"
+        if img.startswith("/corpus/"):
+            vault_path = img
+        elif img.startswith("assets/"):
+            vault_path = asset_vault_path(src_slug, Path(img).name)
+        else:
+            vault_path = f"sources/{src_slug}/md/{img.lstrip('./')}"
         part_base = part_name.replace(".md", "")
         link = f"[[sources/{src_slug}/md/{part_base}#figure-{fig_num.replace('.', '-')}]]"
         block = f"\n![{label}]({vault_path})\n\n→ {link}\n"
@@ -365,7 +387,9 @@ def figures_embedded(text: str) -> set[str]:
     return embedded
 
 
-def transform_concept(content: str, concept_slug: str, corpus: dict[str, Path]) -> str | None:
+def transform_concept(
+    content: str, concept_slug: str, corpus: dict[str, Path], corpus_root: Path
+) -> str | None:
     if not re.search(r"Figure\s+[\d\-]|#figure-", content, re.I):
         return None
 
@@ -376,7 +400,7 @@ def transform_concept(content: str, concept_slug: str, corpus: dict[str, Path]) 
     nums = collect_figure_nums(content)
     visuals: dict[str, tuple[str, str]] = {}
     for fig in nums:
-        v = resolve_visual(fig, content, corpus, concept_slug)
+        v = resolve_visual(fig, content, corpus, concept_slug, corpus_root)
         if v:
             visuals[fig] = v
 
@@ -399,12 +423,13 @@ def transform_concept(content: str, concept_slug: str, corpus: dict[str, Path]) 
 def main() -> int:
     args = parse_args()
     wiki_dir = args.wiki_dir.resolve()
+    corpus_root = corpus_root_from_arg(args.corpus_root)
     corpus = load_corpus_index(wiki_dir)
     updated = 0
 
     for path in sorted(wiki_dir.glob(args.concepts_glob)):
         old = path.read_text(encoding="utf-8", errors="replace")
-        new = transform_concept(old, path.stem, corpus)
+        new = transform_concept(old, path.stem, corpus, corpus_root)
         if new is None:
             continue
         updated += 1

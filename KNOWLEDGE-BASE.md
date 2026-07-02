@@ -27,22 +27,31 @@ AGENTS.md     → schema: structure, conventions, workflows (co-evolve with user
 
 ```
 ~/zhuomo-data/raw/              # local only — clips, EPUBs, transcripts
-├── inbox/                      # phone captures — laptop processes first
+├── inbox/
 ├── web/
 ├── video/
-├── books/                      # large — laptop-only or selective cloud sync
+├── books/
 ├── assets/
-└── processed/                  # optional — archived after ingest
+└── processed/
+
+~/zhuomo-data/corpus/           # source MD images (outside iCloud vault)
+└── <slug>/assets/              # EPUB/PDF figures; linked as /corpus/<slug>/assets/…
 
 ~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen/  # Obsidian vault (iCloud)
 ├── wiki/
+│   ├── corpus → ~/zhuomo-data/corpus   # symlink (Obsidian resolves /corpus/… paths)
 │   ├── domain-map.md
 │   ├── index.md
 │   ├── log.md
 │   ├── domains/
 │   ├── sources/                # synthesized source pages (not raw files)
-│   ├── concepts/
-│   ├── synthesis/
+│   ├── concepts/               # zhuomo compiled (origin: zhuomo)
+│   ├── synthesis/              # cross-book compiled themes
+│   ├── notes/                  # personal only (origin: personal)
+│   │   ├── inbox/
+│   │   ├── on-concept/
+│   │   ├── by-domain/
+│   │   └── synthesis/
 │   └── learn/
 └── AGENTS.md
 ```
@@ -63,7 +72,8 @@ Multi-device: phone → `raw/inbox/`; laptop processes inbox. See [Multi-device 
 | Location | Holds | You in Obsidian |
 |----------|-------|-----------------|
 | **Raw** | EPUB, PDF, clips, transcripts, O'Reilly notes | Optional — usually don't open |
-| **Wiki** | Concepts, frameworks, digests, synthesis | **Yes** — daily driver |
+| **Corpus assets** | `~/zhuomo-data/corpus/<slug>/assets/` | Via `/corpus/…` in Obsidian (Mac); not on phone iCloud |
+| **Wiki** | Concepts, frameworks, synthesis (compiled) + `notes/` (personal) | **Yes** — daily driver |
 
 Wiki `sources/` pages are **agent-written summaries** with links to `[[concepts]]` and a `raw:` path — not copies of raw files.
 

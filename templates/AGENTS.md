@@ -65,7 +65,7 @@ Repo: `~/zhuomo/REVIEW.md` (Study), `~/zhuomo/REFERENCE.md` (figures, EPUB, revi
 | Domain guide | `wiki/domains/<slug>/guide.md` — concept index only |
 | Concepts | `wiki/concepts/*.md` |
 | Synthesis | `wiki/synthesis/*.md` |
-| Sources | `wiki/sources/<slug>.md` + `md/` corpus |
+| Sources | `wiki/sources/<slug>.md` + `md/` text corpus; images in `~/zhuomo-data/corpus/<slug>/assets/` |
 | Log | `wiki/log.md` — append-only |
 | **Personal notes** | `wiki/notes/` — user-authored; see `templates/wiki/notes-README.md` |
 | Fables (optional) | `wiki/learn/fables/` |

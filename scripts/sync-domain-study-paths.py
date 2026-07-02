@@ -21,7 +21,7 @@ PATHS: dict[str, dict[str, str]] = {
     "cisco-aci": {
         "overview": """## 建议学习顺序
 
-1. **Why ACI + 拓扑** — [[aci-sdn-value-proposition]] → [[aci-spine-leaf-topology]] → [[aci-apic]]
+1. **Why ACI + 拓扑** — [[dc-spine-leaf-design-fork]] → [[aci-sdn-value-proposition]] → [[aci-spine-leaf-topology]] → [[aci-apic]]
 2. **Fabric init + Underlay** — [[aci-fabric-initialization]] → [[aci-fabric-underlay]] → [[aci-leaf-forwarding-profile]]
 3. **接入** — [[aci-vlan-pools-aaep]] → [[aci-vpc-design]] → [[aci-contract-subjects-filters]]
 4. **Tenant** — [[aci-tenant-epg-contract]]
@@ -67,15 +67,16 @@ PATHS: dict[str, dict[str, str]] = {
         "overview": """## 建议学习顺序
 
 1. **Workload / KPI** — [[ai-dc-workload-lifecycle]] → [[ai-training-parallelism]] → [[ai-jct-tail-latency]] → [[ai-training-vs-inference-dc]]
-2. **传输** — [[ai-rdma-rocev2]] → [[ai-infiniband-vs-ethernet]] → [[ai-rocev2-congestion]]
-3. **拓扑** — [[ai-rail-optimized-design]] → [[ai-rail-unified-design]] → [[ai-dc-fabric-topologies]] → [[ai-scheduled-fabric]]
-4. **物理层** — [[ai-dc-optics-cabling]] → [[ai-dc-thermal-cooling]]
-5. **Fabric 特性** — [[ai-fabric-load-balancing]] → [[nexus-intelligent-buffer-management]] → [[ai-fabric-ip-routing]]
-6. **存储 / NVMe** — [[ai-dc-storage-networks]] → [[nvme-protocol-fundamentals]] → [[nvmeof-transport-selection]] → [[nvme-roce-host-target-config]] → [[roce-storage-vxlan-multi-site]] → [[nxos-roce-qos-vxlan-fabric]] → [[nexus9300-rocev2-qos-baseline]]
-7. **可观测与验收** — [[ai-fabric-monitoring-ifa]] → [[ai-mlcommons-benchmarking]]
-8. **下一代** — [[ai-ultra-ethernet-consortium]] → [[ai-scale-up-systems]]
-9. **Cisco Nexus / MSDC / Hyperfabric** — [[cisco-ai-ml-network-challenges]] → [[cisco-nexus-ai-blueprint]] → [[cisco-nexus-ai-era-architecture]] → [[cisco-nexus-ai-spine-leaf-sizing]] → [[cisco-nexus-ai-clusters-design]] → [[cisco-nexus-ai-clusters-validation]] → [[cisco-msdc-fabric-topology]] → [[cisco-msdc-ai-rail-plane-fabric]] → [[cisco-hyperfabric-full-stack-ai]] → [[cisco-hyperfabric-hf6100-fabric]] → [[cisco-hyperfabric-controller]] → [[cisco-aiml-vxlan-evpn-gpuaas]]
-10. 每步：**Review** + **Explain-back**
+2. **Fabric 分叉（先读）** — [[dc-spine-leaf-design-fork]] → [[cisco-msdc-fabric-topology]] → [[cisco-msdc-ai-rail-plane-fabric]]
+3. **传输** — [[ai-rdma-rocev2]] → [[ai-infiniband-vs-ethernet]] → [[ai-rocev2-congestion]]
+4. **拓扑** — [[ai-rail-optimized-design]] → [[ai-rail-unified-design]] → [[ai-dc-fabric-topologies]] → [[ai-scheduled-fabric]]
+5. **物理层** — [[ai-dc-optics-cabling]] → [[ai-dc-thermal-cooling]]
+6. **Fabric 特性** — [[ai-fabric-load-balancing]] → [[nexus-intelligent-buffer-management]] → [[ai-fabric-ip-routing]]
+7. **存储 / NVMe** — [[ai-dc-storage-networks]] → [[nvme-protocol-fundamentals]] → [[nvmeof-transport-selection]] → [[nvme-roce-host-target-config]] → [[roce-storage-vxlan-multi-site]] → [[nxos-roce-qos-vxlan-fabric]] → [[nexus9300-rocev2-qos-baseline]]
+8. **可观测与验收** — [[ai-fabric-monitoring-ifa]] → [[ai-mlcommons-benchmarking]]
+9. **下一代** — [[ai-ultra-ethernet-consortium]] → [[ai-scale-up-systems]]
+10. **Cisco Nexus / MSDC / Hyperfabric** — [[cisco-ai-ml-network-challenges]] → [[cisco-nexus-ai-blueprint]] → [[cisco-nexus-ai-era-architecture]] → [[cisco-nexus-ai-spine-leaf-sizing]] → [[cisco-nexus-ai-clusters-design]] → [[cisco-nexus-ai-clusters-validation]] → [[cisco-hyperfabric-full-stack-ai]] → [[cisco-hyperfabric-hf6100-fabric]] → [[cisco-hyperfabric-controller]] → [[cisco-aiml-vxlan-evpn-gpuaas]]
+11. 每步：**Review** + **Explain-back**
 """,
         "guide": """## 建议学习顺序
 
@@ -235,43 +236,67 @@ PATHS: dict[str, dict[str, str]] = {
     "network-architecture": {
         "overview": """## 建议学习顺序
 
-**Track A — 架构师角色（所有人先走）：**
+**Track A — 架构师核心（Tier A，建议 solid）：**
 
-1. [[network-architect-role]] → [[network-architect-in-organization]] → [[network-design-principles]] → [[network-architect-career-roadmap]]
+1. [[network-architect-role]] → [[network-architect-in-organization]] → [[network-design-principles]] → [[dc-spine-leaf-design-fork]] → [[network-architect-career-roadmap]]
 
-**Track B — 基础与园区：**
+**Track B — Multi-Domain 集成（Tier B，场景 solid）：**
 
-2. [[network-architecture-routing-switching]] → [[switch-fundamentals-review]] → [[campus-network-design]] → [[campus-vlan-trunking]] → [[spanning-tree-protocol]] → [[first-hop-redundancy-protocols]]
+2. [[mdn-multi-domain-fundamentals]] → [[mdn-aci-datacenter-integration]] → [[mdn-sdwan-wan-integration]] → [[mdn-sda-campus-integration]] → [[mdn-cross-domain-security]] → [[mdn-cloud-hybrid]]
 
-**Track C — CCDE 设计：**
+**Track C — CCDE 设计（Tier C，按需）：**
 
 3. [[ccde-design-requirements-process]] → [[ccde-network-design-tradeoffs]] → [[ccde-enterprise-wan-architecture]] → [[ccde-evpn-vxlan-transport-design]] → [[ccde-practical-exam-methodology]]
 
-**Track D — ENCOR / ENSLD 企业设计：**
+**Track D — 园区 / ENSLD / SD-Access（Tier C，按需）：**
 
-4. [[encor-packet-forwarding-cef]] → [[encor-enterprise-architecture-fabric]] → [[ensld-ipv4-design]] → [[ensld-enterprise-lan-design]] → [[ensld-enterprise-wan-design]] → [[ensld-sd-access-design]] → [[ensld-sdwan-design]]
+4. [[network-architecture-routing-switching]] → [[campus-network-design]] → [[encor-enterprise-architecture-fabric]] → [[ensld-enterprise-lan-design]] → [[sda-campus-fabric-fundamentals]]
 
-**Track E — 无线：**
+**Track E — 无线（→ 独立入口）：**
 
-5. [[campus-wlan-fundamentals]] → [[enwl-design-requirements]] → [[enwl-site-survey]] → [[cwdp-requirements-planning]] → [[cwdp-wlan-security-design]]
+5. **[[domains/campus-wireless/overview|Campus Wireless 虚拟域]]** — CWNA → ENWL → CWDP；本域 Track E 已迁出。
 
-**Track F — SDN / SD-Access / 自动化：**
+**Track F — 自动化 / 云（Tier C，按需）：**
 
-6. [[sdn-use-cases]] → [[sdn-software-stack]] → [[sda-campus-fabric-fundamentals]] → [[network-automation-architecture]] → [[ansible-network-automation]] → [[yang-netconf-restconf]]
+6. [[network-automation-architecture]] → [[ansible-network-automation]] → [[cloud-computing-for-network-architects]]
 
-**Track G — 专著 / 深度（按需）：**
+**Track G — 专著 / MSDC（Tier C，按需）：**
 
-7. [[pina-foundations-network-architecture]] → [[ana-business-driven-design]] → [[nnc-speed-state-surface]] → [[icns-enterprise-pin-architecture]] → [[cisco-msdc-fabric-topology]] → [[vxlan-evpn-multisite-vpc-bgw-dci]]
+7. [[pina-foundations-network-architecture]] → [[nnc-speed-state-surface]] → [[cisco-msdc-fabric-topology]] → [[vxlan-evpn-multisite-vpc-bgw-dci]]
 
 8. 每步：**Review** + **Explain-back** · 证书/书表细节 → [[domains/network-architecture/guide]]
 """,
         "guide": """## 建议学习顺序
 
-与 [[domains/network-architecture/overview#建议学习顺序]] 同步（Track A–G）。
+与 [[domains/network-architecture/overview#建议学习顺序]] 同步。
 
-**按目标选轨：** 职业/原则 → A；园区 L2/L3 → B；CCDE → C；ENCOR/ENSLD → D；无线 CWDP/ENWL → E；SD-Access/自动化 → F；PINA/ANA/NNC/MSDC → G。
+**Solid 优先级：** Track A（架构师）→ Track B（`mdn-*` 集成）→ 各产品域 Tier A（ACI / SD-WAN / AI DC / **Campus Wireless**）。
+
+**按目标选轨：** 职业/原则 → A；跨 Campus/DC/WAN → B；CCDE → C；园区/ENSLD/SDA → D；无线 → [[domains/campus-wireless/overview]]；自动化 → F；专著/MSDC → G。
 
 各书概念索引见本页下方 ENCOR / ENSLD / CWDP / CCDE / SD-Access 等表格。
+""",
+    },
+    "campus-wireless": {
+        "overview": """## 建议学习顺序
+
+> **虚拟域：** concept 的 `domain:` 多为 `network-architecture`；本页按 **cwna-* / cwdp-* / enwl-* …** 聚合学习与进度。
+
+1. **CWNA 基础** — [[cwna-wireless-standards-fundamentals]] → [[cwna-rf-fundamentals]] → [[cwna-ieee-80211-standards]] → [[cwna-wlan-architecture]] → [[cwna-80211-security-architecture]]
+2. **Cisco 园区 WLAN** — [[campus-wlan-fundamentals]] → [[enwl-design-requirements]] → [[enwl-site-survey]] → [[enwl-radio-management]] → [[enwl-wireless-security]]
+3. **CWDP 设计** — [[cwdp-requirements-planning]] → [[cwdp-site-survey-rf-design]] → [[cwdp-wlan-security-design]] → [[cwdp-design-documentation]] → [[cwdp-validation-troubleshooting]]
+4. **架构师 / ENCOR 交叉** — [[ccde-wireless-enterprise-design]] · [[encor-enterprise-wireless]]
+5. 每步：**Review** + **Explain-back**
+
+**相关域：** 园区集成 [[mdn-sda-campus-integration]] · 安全 [[domains/network-security/overview]] · 架构师入口 [[domains/network-architecture/overview]]
+""",
+        "guide": """## 建议学习顺序
+
+与 [[domains/campus-wireless/overview#建议学习顺序]] 同步：CWNA → ENWL → CWDP → CCDE/ENCOR 交叉。
+
+**概念索引（前缀）：** `cwna-*` · `cwdp-*` · `enwl-*` · `campus-wlan-*` · `wng802-*` · [[mrki-mr-wireless-design]]
+
+**主题 synthesis：** [[synthesis/cwna-wlan-fundamentals-themes]]
 """,
     },
     "network-security": {
@@ -381,6 +406,21 @@ STUDY_PATH_HEADINGS = frozenset({"## 建议学习顺序", "## Study path"})
 STUDY_TOP_HEADINGS = STUDY_PATH_HEADINGS
 STUDY_END_HEADINGS: frozenset[str] = frozenset()
 REMOVED_FROM_OVERVIEW = frozenset({"## 待巩固", "## 学习进度", "## 掌握度分层"})
+
+FENCE_BLOCK_RE = re.compile(r"^```.*?^```", re.M | re.S)
+EXCESS_BLANK_RE = re.compile(r"\n{3,}")
+
+
+def normalize_markdown_blank_lines(text: str) -> str:
+    """Collapse 3+ consecutive newlines to one blank line (preserve fenced code blocks)."""
+    chunks: list[str] = []
+    pos = 0
+    for m in FENCE_BLOCK_RE.finditer(text):
+        chunks.append(EXCESS_BLANK_RE.sub("\n\n", text[pos : m.start()]))
+        chunks.append(m.group())
+        pos = m.end()
+    chunks.append(EXCESS_BLANK_RE.sub("\n\n", text[pos:]))
+    return "".join(chunks)
 
 
 def is_defer_heading(h: str) -> bool:
@@ -512,13 +552,27 @@ def sync_overview_extras(text: str, slug: str) -> str:
     text = strip_progress_sections(text)
     text = remove_tiers_section(text)
     text = inject_study_link(text, slug)
-    return reorder_overview_study_sections(text)
+    text = reorder_overview_study_sections(text)
+    return normalize_markdown_blank_lines(text)
 
 
 def write_study_page(dom_dir: Path, slug: str, overview_text: str, updated: str) -> str:
     title = domain_title_from_overview(overview_text, slug)
     spec = TIERS.get(slug)
     return format_study_page(slug, title, spec, updated)
+
+
+def normalize_domain_markdown_files(domains_dir: Path, *, dry_run: bool = False) -> int:
+    n = 0
+    for md in sorted(domains_dir.rglob("*.md")):
+        text = md.read_text(encoding="utf-8")
+        normalized = normalize_markdown_blank_lines(text)
+        if normalized != text:
+            n += 1
+            print(f"normalize: {md}")
+            if not dry_run:
+                md.write_text(normalized, encoding="utf-8")
+    return n
 
 
 def main() -> int:
@@ -531,12 +585,23 @@ def main() -> int:
         help="Update study.md + overview study link; re-annotate 建议学习顺序; skip PATHS text",
     )
     p.add_argument("--paths-only", action="store_true", help="Update study paths only; skip tiers")
+    p.add_argument(
+        "--normalize-only",
+        action="store_true",
+        help="Collapse excessive blank lines in domains/**/*.md; skip path/tier sync",
+    )
     p.add_argument("--dry-run", action="store_true")
     args = p.parse_args()
     if args.tiers_only and args.paths_only:
         p.error("use at most one of --tiers-only and --paths-only")
+    if args.normalize_only and (args.tiers_only or args.paths_only):
+        p.error("--normalize-only cannot combine with --tiers-only or --paths-only")
     wiki = args.vault_wiki.resolve()
     domains_dir = wiki / "domains"
+    if args.normalize_only:
+        n = normalize_domain_markdown_files(domains_dir, dry_run=args.dry_run)
+        print(f"normalized {n} files")
+        return 0
     do_paths = not args.tiers_only
     do_tiers = not args.paths_only
     n = 0
@@ -555,6 +620,7 @@ def main() -> int:
             new_text = sync_overview_extras(new_text, slug)
             study_md = dom / "study.md"
             study_content = write_study_page(dom, slug, new_text, args.date)
+            study_content = normalize_markdown_blank_lines(study_content)
             old_study = study_md.read_text(encoding="utf-8") if study_md.is_file() else ""
             if study_content != old_study and not args.dry_run:
                 study_md.write_text(study_content, encoding="utf-8")
@@ -562,6 +628,7 @@ def main() -> int:
                 n += 1
                 print(f"study: {study_md}")
         new_text = bump_updated(new_text, args.date)
+        new_text = normalize_markdown_blank_lines(new_text)
         if new_text != text:
             n += 1
             print(f"overview: {ov}")
@@ -573,6 +640,7 @@ def main() -> int:
                 gtext = gd.read_text(encoding="utf-8")
                 gnew = replace_or_insert(gtext, GUIDE_HEADINGS, PATHS[slug]["guide"])
                 gnew = bump_updated(gnew, args.date)
+                gnew = normalize_markdown_blank_lines(gnew)
                 if gnew != gtext:
                     n += 1
                     print(f"guide: {gd}")

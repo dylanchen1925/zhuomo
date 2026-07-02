@@ -15,6 +15,24 @@ class TierSpec(TypedDict, total=False):
     d_note: str
 
 
+# Virtual domains: study/Dataview scope by concept filename (frontmatter domain: unchanged).
+VIRTUAL_DOMAIN_SCOPE: dict[str, str] = {
+    "campus-wireless": (
+        '(startswith(file.name, "cwna-") OR startswith(file.name, "cwdp-") OR '
+        'startswith(file.name, "enwl-") OR startswith(file.name, "cwsp-") OR '
+        'startswith(file.name, "wng802-") OR startswith(file.name, "campus-wlan") OR '
+        'file.name = "mrki-mr-wireless-design" OR file.name = "ccde-wireless-enterprise-design" OR '
+        'file.name = "encor-enterprise-wireless")'
+    ),
+}
+
+
+def concept_scope(domain: str) -> str:
+    if domain in VIRTUAL_DOMAIN_SCOPE:
+        return VIRTUAL_DOMAIN_SCOPE[domain]
+    return f'domain = "{domain}"'
+
+
 TIERS: dict[str, TierSpec] = {
     "kubernetes-cilium": {
         "a_label": "核心脊骨（建议 solid）",
@@ -220,25 +238,50 @@ TIERS: dict[str, TierSpec] = {
         "c_note": "组播 `cipm*`、Stevens `tcpip-illustrated-*`、TCP CC `tcpcc-*`、CENG — **learning + Query**",
         "d_note": "—",
     },
+    "campus-wireless": {
+        "a_label": "核心脊骨（建议 solid）",
+        "a": [
+            "cwna-wireless-standards-fundamentals",
+            "cwna-rf-fundamentals",
+            "cwna-ieee-80211-standards",
+            "campus-wlan-fundamentals",
+            "enwl-design-requirements",
+            "enwl-site-survey",
+            "cwdp-requirements-planning",
+            "cwdp-site-survey-rf-design",
+            "cwdp-wlan-security-design",
+        ],
+        "b_label": "CWNA / Cisco 设计深化（场景 solid）",
+        "b": [
+            "cwna-wlan-architecture",
+            "cwna-80211-security-architecture",
+            "enwl-radio-management",
+            "enwl-wireless-security",
+            "ccde-wireless-enterprise-design",
+        ],
+        "c_note": "其余 cwna-* / cwdp-* / enwl-* / wng802-* — **learning + Query**",
+        "d_note": "—",
+    },
     "network-architecture": {
-        "a_label": "Track A–B 核心（建议 solid）",
+        "a_label": "架构师核心（建议 solid）",
         "a": [
             "network-architect-role",
             "network-design-principles",
-            "network-architecture-routing-switching",
-            "campus-network-design",
+            "dc-spine-leaf-design-fork",
             "ccde-design-requirements-process",
             "ccde-enterprise-wan-architecture",
         ],
-        "b_label": "Track C–F 按证书目标",
+        "b_label": "Multi-Domain 集成（场景 solid）",
         "b": [
+            "mdn-multi-domain-fundamentals",
+            "mdn-aci-datacenter-integration",
+            "mdn-sdwan-wan-integration",
+            "mdn-sda-campus-integration",
+            "mdn-cross-domain-security",
+            "mdn-cloud-hybrid",
             "ccde-practical-exam-methodology",
-            "encor-enterprise-architecture-fabric",
-            "ensld-enterprise-lan-design",
-            "sda-campus-fabric-fundamentals",
-            "network-automation-architecture",
         ],
-        "c_note": "无线 CWDP/ENWL、ANA/NNC/PINA、ICNS、MSDC — **learning + Query**",
+        "c_note": "园区/ENS/SDA/自动化/专著 — 见 overview **Track 分流**；无线 → [[domains/campus-wireless/overview]] — **learning + Query**",
         "d_note": "单书边角 concept — 索引",
     },
     "network-security": {
@@ -292,6 +335,37 @@ TIERS: dict[str, TierSpec] = {
         "b": ["cor-research-ethics", "cor-visual-evidence", "cor-reader-writer-roles"],
         "b_label": "伦理 / 呈现",
         "c_note": "来源检索与写作风格章 — learning + Query",
+        "d_note": "—",
+    },
+    "model-thinking": {
+        "a_label": "框架与高频模型（建议 solid）",
+        "a": [
+            "mt-multi-model-thinker",
+            "mt-seven-uses-of-models",
+            "mt-multi-model-thinking",
+            "mt-modeling-human-agents",
+            "mt-normal-distribution",
+            "mt-power-law-distribution",
+            "mt-nonlinear-models",
+            "mt-network-models",
+            "mt-broadcast-diffusion-contagion",
+            "mt-random-walk",
+            "mt-markov-models",
+            "mt-system-dynamics",
+            "mt-threshold-models",
+            "mt-game-theory-models",
+            "mt-cooperation-models",
+            "mt-collective-action",
+            "mt-multi-armed-bandit",
+            "mt-practical-multi-model",
+        ],
+        "b": [
+            "mt-value-and-power-models",
+            "mt-mechanism-design",
+            "mt-rugged-landscape",
+        ],
+        "b_label": "权力 / 机制 / 创新搜索",
+        "c_note": "其余 Part 2 工具章 — learning + Query",
         "d_note": "—",
     },
     "hardware-defined-networking": {
@@ -472,6 +546,7 @@ def dv_tier_group_expr(a: list[str], b: list[str]) -> str:
 
 def _dv_progress_summary(domain: str, a: list[str], b: list[str]) -> str:
     tier_expr = dv_tier_group_expr(a, b)
+    scope = concept_scope(domain)
     return f"""```dataview
 TABLE WITHOUT ID
   tier AS "层级",
@@ -484,7 +559,7 @@ TABLE WITHOUT ID
     "—"
   ) AS "solid %"
 FROM "wiki/concepts"
-WHERE domain = "{domain}"
+WHERE {scope}
 GROUP BY {tier_expr} AS tier
 SORT tier ASC
 ```"""
@@ -506,7 +581,8 @@ def _dv_table(
             'file.link AS "概念", mastery AS "掌握度", reviewed AS "Review", '
             'explain_back AS "Explain-back", updated AS "更新"'
         )
-    where = f'domain = "{domain}" AND {extra_where}'
+    scope = concept_scope(domain)
+    where = f"{scope} AND {extra_where}"
     if slug_filter not in ("true", "false"):
         where += f" AND {slug_filter}"
     elif slug_filter == "false":
@@ -531,6 +607,19 @@ def format_study_page(slug: str, title: str, spec: TierSpec | None, updated: str
     d_note = spec.get("d_note") or ""
     rest_label = "其余（Tier C/D）" if (a or b) else "全库"
 
+    intro: list[str] = [
+        f"← [[domains/{slug}/overview]] · 路径与 **A**/**B** 标记见 overview **建议学习顺序**",
+    ]
+    if slug in VIRTUAL_DOMAIN_SCOPE:
+        intro.append(
+            "> **虚拟域：** concept 的 `domain:` 仍写在原归属（如 `network-architecture`）；"
+            "本页按 **文件名前缀** 聚合进度。"
+        )
+    intro.append(
+        "> 需要 Obsidian **Dataview** 插件。日常 Study 从 **下一步** 列优先："
+        "`① Promote` → `② Explain-back` → `③ Review`；`—` 表示暂无需动作。"
+    )
+
     lines = [
         "---",
         f"domain: {slug}",
@@ -540,9 +629,7 @@ def format_study_page(slug: str, title: str, spec: TierSpec | None, updated: str
         "",
         f"# {title} — 学习进度",
         "",
-        f"← [[domains/{slug}/overview]] · 路径与 **A**/**B** 标记见 overview **建议学习顺序**",
-        "",
-        "> 需要 Obsidian **Dataview** 插件。日常 Study 从 **下一步** 列优先：`① Promote` → `② Explain-back` → `③ Review`；`—` 表示暂无需动作。",
+        *intro,
         "",
         "## 进度摘要",
         "",

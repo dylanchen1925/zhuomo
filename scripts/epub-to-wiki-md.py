@@ -267,7 +267,7 @@ def main() -> int:
         index_lines.append(
             f"Images extracted to `/corpus/{slug}/assets/` ({image_count} files) "
             f"on disk under `{corpus_root / 'corpus' / slug / 'assets'}`. "
-            f"Requires `wiki/corpus` symlink (see migrate-corpus-assets-out.py)."
+            f"Requires `{{vault_root}}/corpus` symlink (see migrate-corpus-assets-out.py)."
         )
         index_lines.append("")
     index_lines.extend(

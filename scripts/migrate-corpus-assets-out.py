@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Move wiki/sources/*/md/assets/ to ~/zhuomo-data/corpus/<slug>/assets/ and rewrite links.
 
-Creates wiki/corpus symlink -> {corpus_root}/corpus so Obsidian resolves /corpus/... paths.
+Creates {vault_root}/corpus symlink -> {corpus_root}/corpus so Obsidian resolves /corpus/... paths.
+(Vault root is parent of wiki/ when .obsidian lives there.)
 """
 
 from __future__ import annotations
@@ -13,11 +14,13 @@ from pathlib import Path
 
 from corpus_assets import (
     DEFAULT_CORPUS_ROOT,
+    WIKI_CORPUS_LINK,
     asset_vault_path,
     corpus_root_from_arg,
     ensure_wiki_corpus_link,
     rewrite_legacy_asset_refs,
     slug_assets_dir,
+    vault_root_from_wiki,
 )
 
 
@@ -127,7 +130,8 @@ def main() -> int:
 
     if not args.skip_symlink and not args.dry_run:
         link = ensure_wiki_corpus_link(wiki_dir, corpus_root)
-        print(f"symlink: {link} -> {link.resolve()}")
+        vault_root = vault_root_from_wiki(wiki_dir)
+        print(f"symlink: {vault_root / WIKI_CORPUS_LINK} -> {link.resolve()}")
 
     action = "Would" if args.dry_run else "Done"
     print(

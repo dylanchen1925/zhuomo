@@ -34,16 +34,24 @@ def slug_assets_dir(corpus_root: Path, slug: str) -> Path:
     return corpus_root / CORPUS_DIR_NAME / slug / "assets"
 
 
+def vault_root_from_wiki(wiki_dir: Path) -> Path:
+    """Obsidian vault root (parent of wiki/ when layout is vault/wiki/…)."""
+    wiki_dir = wiki_dir.resolve()
+    if wiki_dir.name == "wiki" and (wiki_dir.parent / ".obsidian").is_dir():
+        return wiki_dir.parent
+    return wiki_dir
+
+
 def asset_vault_path(slug: str, filename: str) -> str:
-    """Obsidian vault-root path; requires wiki/corpus symlink to corpus_root/corpus."""
+    """Obsidian vault-root path; requires {vault}/corpus symlink to corpus_root/corpus."""
     name = Path(filename).name
     return f"/corpus/{slug}/assets/{name}"
 
 
-def ensure_wiki_corpus_link(wiki_dir: Path, corpus_root: Path) -> Path:
-    """Create wiki/corpus -> {corpus_root}/corpus symlink if missing."""
-    wiki_dir = wiki_dir.resolve()
-    link = wiki_dir / WIKI_CORPUS_LINK
+def ensure_vault_corpus_link(wiki_dir: Path, corpus_root: Path) -> Path:
+    """Create {vault_root}/corpus -> {corpus_root}/corpus (Obsidian /corpus/… paths)."""
+    vault_root = vault_root_from_wiki(wiki_dir)
+    link = vault_root / WIKI_CORPUS_LINK
     target = (corpus_root / CORPUS_DIR_NAME).resolve()
     target.mkdir(parents=True, exist_ok=True)
     if link.is_symlink():
@@ -54,6 +62,22 @@ def ensure_wiki_corpus_link(wiki_dir: Path, corpus_root: Path) -> Path:
         raise RuntimeError(f"{link} exists and is not a symlink — move aside manually")
     link.symlink_to(target, target_is_directory=True)
     return link
+
+
+def ensure_wiki_corpus_link(wiki_dir: Path, corpus_root: Path) -> Path:
+    """Ensure vault-root corpus link; also wiki/corpus when wiki is a subfolder."""
+    primary = ensure_vault_corpus_link(wiki_dir, corpus_root)
+    wiki_dir = wiki_dir.resolve()
+    vault_root = vault_root_from_wiki(wiki_dir)
+    if vault_root == wiki_dir:
+        return primary
+    target = (corpus_root / CORPUS_DIR_NAME).resolve()
+    wiki_link = wiki_dir / WIKI_CORPUS_LINK
+    if wiki_link.is_symlink() and wiki_link.resolve() == target:
+        return primary
+    if not wiki_link.exists():
+        wiki_link.symlink_to(target, target_is_directory=True)
+    return primary
 
 
 def rewrite_legacy_asset_refs(text: str, *, slug: str | None = None) -> str:

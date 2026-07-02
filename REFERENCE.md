@@ -216,7 +216,7 @@ EPUB works well — it's structured HTML in a ZIP, so chapter boundaries are usu
 **Workflow (required steps):**
 
 1. Copy the `.epub` to `raw/books/` (immutable source).
-2. **Convert full text to Markdown** under `wiki/sources/[slug]/md/` — one file per spine item/chapter, with heading anchors. **Images** go to `~/zhuomo-data/corpus/<slug>/assets/` (not in the vault); embed as `![alt](/corpus/<slug>/assets/…)` in part files. Requires `wiki/corpus` → `~/zhuomo-data/corpus` symlink. Pass `--no-images` for text-only. This is the **provenance corpus**; concept pages link here, not only to the EPUB path.
+2. **Convert full text to Markdown** under `wiki/sources/[slug]/md/` — one file per spine item/chapter, with heading anchors. **Images** go to `~/zhuomo-data/corpus/<slug>/assets/` (not in the vault); embed as `![alt](/corpus/<slug>/assets/…)` in part files. Requires **`{vault_root}/corpus`** → `~/zhuomo-data/corpus` symlink (Obsidian `/corpus/…` is vault root, not `wiki/`). This is the **provenance corpus**; concept pages link here, not only to the EPUB path.
 3. Write `wiki/sources/[slug].md` index (topic map + link to `md/index`).
 4. **Deepen all** topic-map concepts — full pages + **`## Evidence`** on each (default). Use stub-only pass only when user says `overview only`.
 5. On every deepened concept page: **`## Evidence`** table — each claim row links `[[sources/slug/md/part-NNN#heading-anchor]]`.

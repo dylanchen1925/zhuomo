@@ -37,9 +37,9 @@ AGENTS.md     → schema: structure, conventions, workflows (co-evolve with user
 ~/zhuomo-data/corpus/           # source MD images (outside iCloud vault)
 └── <slug>/assets/              # EPUB/PDF figures; linked as /corpus/<slug>/assets/…
 
-~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen/  # Obsidian vault (iCloud)
+~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen/  # Obsidian vault root
+├── corpus → ~/zhuomo-data/corpus   # /corpus/… image paths resolve here
 ├── wiki/
-│   ├── corpus → ~/zhuomo-data/corpus   # symlink (Obsidian resolves /corpus/… paths)
 │   ├── domain-map.md
 │   ├── index.md
 │   ├── log.md

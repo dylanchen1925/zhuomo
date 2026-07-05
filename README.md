@@ -112,18 +112,40 @@ Progress: `domains/<domain>/study.md` (Dataview **下一步**: `① Promote` →
 | [SKILL.md](SKILL.md) | Agent entry point (intent router, protocols) |
 | [templates/AGENTS.md](templates/AGENTS.md) | Vault conventions template |
 | [templates/wiki/help.md](templates/wiki/help.md) | Human daily reference → copied to vault |
-| [scripts/](scripts/) | Ingest (`epub-to-wiki-md.py`), lint, domain study-path sync |
+| [scripts/](scripts/) | Generic converters + vault maintenance (see below) |
 | `~/zhuomo-data/raw/` | Your sources (outside repo) |
 | Obsidian `wiki/` | Your knowledge base (outside repo) |
 
-**Useful scripts:**
+### Scripts in this repo
+
+Only **generic** tools are tracked here. One-off ingest helpers for a specific book, site, or corpus (e.g. zartbot, Cisco EOT HTML) stay **local** outside the repo.
+
+| Category | Script | Purpose |
+|----------|--------|---------|
+| **Ingest** | `epub-to-wiki-md.py` | EPUB → `wiki/sources/<slug>/md/` |
+| | `pdf-to-wiki-md.py` | Text PDF → per-chapter md (chapter map in script) |
+| | `pdf-ocr-to-wiki-md.py` | Scanned PDF → OCR md |
+| | `rst-to-wiki-md.py` | Sphinx/RST book repo → md |
+| **Study & lint** | `lint-review-queue.py` | Review queue: `SOLID_CANDIDATE` · `RETEST` · `READ_UNTESTED` · `STALE` · … |
+| | `sync-domain-study-paths.py` | Sync `domains/*/overview.md` study paths + tiers |
+| | `domain_study_tiers.py` | Tier data (imported by sync script) |
+| | `lint-figure-visuals.py` | Flag concepts missing inline Figure images |
+| **Assets** | `corpus_assets.py` | Shared paths for corpus images outside vault |
+| | `embed-figure-visuals.py` | Inline Figure N images in concept pages |
+| | `clean-orphan-assets.py` | Remove unreferenced corpus images |
+| | `migrate-corpus-assets-out.py` | Move `sources/*/md/assets/` → `~/zhuomo-data/corpus/` |
+| **Wiki repair** | `fix-table-wikilink-pipes.py` | Fix `[[wikilink\|alias]]` inside table cells |
+| | `recover-table-wikilink-damage.py` | Undo over-aggressive table wikilink fixes |
+| **One-shot migration** | `simplify-vault.py` | Legacy vault layout → current conventions |
+| | `add-evidence-sections.py` | Batch-add `## Evidence` tables (migration helper) |
+
+**Common commands:**
 
 ```bash
 python3 ~/zhuomo/scripts/lint-review-queue.py <vault>/wiki
 python3 ~/zhuomo/scripts/sync-domain-study-paths.py <vault>/wiki
+python3 ~/zhuomo/scripts/epub-to-wiki-md.py <book.epub> <vault>/wiki <slug>
 ```
-
-Lint buckets: `SOLID_CANDIDATE` · `RETEST` (solid, stale >30d) · `READ_UNTESTED` · `STALE` · …
 
 ---
 

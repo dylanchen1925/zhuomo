@@ -314,7 +314,7 @@ def main() -> int:
     (out_dir / "index.md").write_text("\n".join(index_lines), encoding="utf-8")
     msg = f"Wrote {part} parts to {out_dir}"
     if image_count:
-        msg += f"; {image_count} images in {ASSETS_DIR}/"
+        msg += f"; {image_count} images in corpus/{slug}/assets/"
     print(msg)
     return 0
 

@@ -168,12 +168,12 @@ sources: [raw/paper-b.pdf]
 
 ### Skill revision workflow
 
-1. Read SKILL.md, REFERENCE.md, SOURCES.md + linked wiki pages.
+1. Read SKILL.md, REFERENCE.md + linked wiki pages.
 2. Apply revision card — skills get **behavioral** fixes only (triggers, steps, anti-patterns).
 3. **Enhance** vs **correct**:
    - Enhance = net-new from another source
    - Correct = fix wrong/outdated step or trigger
-4. Append SOURCES.md row documenting the correction.
+4. Append `wiki/log.md` row documenting the correction.
 5. **Re-run RED** if the correction changes a discipline rule or core workflow.
 
 ### Ingest + Revise together
@@ -207,7 +207,7 @@ Propagate to all pages linking to it.
 3. If using a knowledge base: copy original to `raw/`, **ingest to wiki** chapter-by-chapter (characters, themes, claims).
 4. Scan structure: TOC, headings, recurring frameworks, named methods.
 5. Prefer **frameworks and named techniques** for skills; **entities and synthesis** for wiki.
-6. Copyright: paraphrase; no large verbatim blocks; cite source in SOURCES.md and wiki source page.
+6. Copyright: paraphrase; no large verbatim blocks; cite source on wiki source page.
 
 #### EPUB (`.epub`)
 
@@ -346,7 +346,7 @@ for item in book.get_items_of_type(ebooklib.ITEM_DOCUMENT):
 ### Videos and podcasts
 
 1. Get transcript: user paste, auto-caption export, or summary notes.
-2. Record **timestamps** in SOURCES.md for traceability.
+2. Record **timestamps** in `wiki/log.md` for traceability.
 3. Videos often mix story + technique — apply extraction card aggressively.
 4. Demos: convert to one runnable example, not a play-by-play.
 
@@ -366,18 +366,18 @@ for item in book.get_items_of_type(ebooklib.ITEM_DOCUMENT):
 
 **Enhance** = add net-new from a source. **Correct** = fix wrong/outdated content.
 
-1. **Read** current SKILL.md, REFERENCE.md, SOURCES.md + linked wiki pages.
+1. **Read** current SKILL.md, REFERENCE.md + linked wiki pages.
 2. **Diff mentally:** net-new vs correction vs contradiction?
 3. **Merge rules:**
    - Same idea, clearer wording → replace, don't duplicate
    - New trigger → add to description keywords + body
    - New step → insert in workflow where it belongs
-   - Contradiction → user decision; Revise wiki first; ADR note in SOURCES.md
+   - Contradiction → user decision; Revise wiki first; note in `log.md`
 4. **Keep SKILL.md lean** — move new bulk to REFERENCE.md.
 5. **Re-run validation** if correction changes discipline rules or core workflow:
    - Discipline addition → new RED scenario for that rule
    - Technique tweak → re-run application scenario
-6. **Append SOURCES.md** row; never delete prior source rows.
+6. **Append `log.md`**; keep prior log entries.
 
 ## Skill Directory Layout
 

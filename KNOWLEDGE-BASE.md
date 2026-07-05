@@ -302,7 +302,7 @@ digraph bridge {
   "Actionable + non-default?" -> "Wiki only" [label="no"];
   "Ingest to wiki" -> "Domain skill request?" [shape=diamond];
   "Domain skill request?" -> "WIKI-SCOPE + persona SKILL" [label="yes"];
-  "Technique skill" -> "Link in wiki + SOURCES.md";
+  "Technique skill" -> "Link in wiki + log.md";
   "WIKI-SCOPE + persona SKILL" -> "Framework links skill; facts stay in wiki";
 }
 ```

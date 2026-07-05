@@ -1,6 +1,6 @@
 # Personal Knowledge Base (LLM Wiki)
 
-Based on [Karpathy's LLM Wiki pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f). Use with **zhuomo**: the wiki compounds understanding; skills capture agent behaviors refined from it.
+Based on [Karpathy's LLM Wiki pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f). Use with **zhuomo** to compile an Obsidian wiki. Optional Cursor skills (created in a **separate chat**, not a zhuomo verb) can read that wiki at invoke time — [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md).
 
 ## Core idea
 
@@ -9,7 +9,7 @@ Based on [Karpathy's LLM Wiki pattern](https://gist.github.com/karpathy/442a6bf5
 Instead of only retrieving raw chunks at query time, the LLM **incrementally builds and maintains** a persistent markdown wiki between you and immutable sources. Each new source is read, integrated, cross-linked, and checked against existing claims. Synthesis is compiled once and kept current.
 
 Human job: curate sources, ask questions, direct emphasis, **learn and connect ideas across domains**.  
-LLM job: summarize, cross-reference, file, update, flag contradictions, **build learning artifacts and domain frameworks**.
+LLM job: summarize, cross-reference, file, update, flag contradictions, **author Explain-back prompts and domain overviews**.
 
 ## Three layers
 
@@ -100,7 +100,7 @@ Single-domain wikis can omit `domain-map.md` and use flat `wiki/concepts/`. Add 
 
 | Layer | Sync to phone? | Method | Phone role |
 |-------|----------------|--------|------------|
-| **Wiki** (Obsidian vault) | Yes | Obsidian Sync, iCloud vault, Git + Working Copy | Read frameworks, digests, explain-back |
+| **Wiki** (Obsidian vault) | Yes | Obsidian Sync, iCloud vault, Git + Working Copy | Read concepts, Explain-back, domain overviews |
 | **Raw** | Partial | iCloud Drive, Dropbox, Syncthing on `~/zhuomo-data/raw/` | Capture → `inbox/` only |
 | **Raw/books/** | Usually no | Laptop-only or cloud “online-only” | Skip — process on laptop |
 
@@ -216,8 +216,8 @@ When repo conventions change, diff vault `AGENTS.md` against the template and me
    - `wiki/index.md`
    - Entry in `wiki/log.md`
 8. If source was in `raw/inbox/`, move to `raw/processed/` or typed folder (`web/`, `video/`, `books/`).
-9. **Then** run zhuomo extraction card on actionable techniques (per topic, not per book).
-10. **Learn + framework** — digest, `## Explain-back`, update domain overview (see LEARNING.md, REVIEW.md).
+9. Optional: `lint-review-queue.py`, `sync-domain-study-paths.py` (see [SKILL.md](SKILL.md)).
+10. **Study** — Tier A **Explain-back**; domain overview Dataview stays current (see [REVIEW.md](REVIEW.md), [LEARNING.md](LEARNING.md)).
 
 Prefer one source at a time with user in the loop; batch ingest possible with less supervision.
 
@@ -257,10 +257,10 @@ Append `## [date] lint | …` to `log.md`. Each row → **Revise** or deepen fol
 
 ### Revise (correct & update)
 
-Run when: user reports an error; lint finds contradiction/stale/duplicate; new ingest supersedes old claims; skill no longer matches wiki or practice.
+Run when: user reports an error; lint finds contradiction/stale/duplicate; new ingest supersedes old claims.
 
-1. **Locate** — target page(s), backlinks, related skills (`index.md`, grep wiki).
-2. **Revision card** — fill before editing (see REFERENCE.md).
+1. **Locate** — target page(s), backlinks (`index.md`, grep wiki).
+2. **Revision card** — fill before editing (see [REFERENCE.md](REFERENCE.md)).
 3. **Choose action:**
 
 | Action | When |
@@ -271,9 +271,8 @@ Run when: user reports an error; lint finds contradiction/stale/duplicate; new i
 | **Retract** | Claim no longer valid → archive, note why |
 | **Split** | Page mixed two concepts that should diverge |
 
-4. **Propagate** — update every page and skill that cited the old claim.
-5. **Skills** — if wiki correction changes a technique, update linked skill; RED if discipline rule changed.
-6. **Log** — `## [YYYY-MM-DD] revise | [[page]] | reason` (+ source if applicable).
+4. **Propagate** — update every wiki page that cited the old claim.
+5. **Log** — `## [YYYY-MM-DD] revise | [[page]] | reason` (+ source if applicable).
 
 Never silently delete pages with history. Git preserves diffs; `log.md` preserves intent.
 
@@ -284,34 +283,32 @@ Never silently delete pages with history. Git preserves diffs; `log.md` preserve
 | **index.md** | Content catalog by category; updated every ingest; query entry point |
 | **log.md** | Chronological append-only audit; parseable prefixes for `grep` |
 
-## Bridge to skills
+## Optional Cursor skills (not zhuomo verbs)
 
-Two paths from wiki:
+Zhuomo **Ingest / Revise / Query / Study / Lint / Connect** compile **wiki** only. Repeatable agent behavior lives in `~/.cursor/skills/` — create or edit those files in a **separate Cursor chat** after wiki exists.
 
-| Path | Output | When |
-|------|--------|------|
-| **Technique** | `SKILL.md` with triggers + workflow | One actionable, non-default method |
-| **Domain** | Skill + `WIKI-SCOPE.md` manifest | Expert persona; wiki is backend (e.g. BGP) |
+| Step | Surface | What |
+|------|---------|------|
+| 1 | Zhuomo `Ingest` | Concepts + `## Evidence` + `## Explain-back` |
+| 2 | Cursor chat | Cite `[[concepts]]` or domain overview; ask for triggers + `WIKI-SCOPE.md` |
+| 3 | Zhuomo `Revise` | Fix facts in wiki when wrong |
+| 4 | Edit skill files | Only when triggers or workflow changed — not on every wiki Revise |
 
-```dot
-digraph bridge {
-  "New source" -> "Ingest to wiki";
-  "Ingest to wiki" -> "Extraction card";
-  "Extraction card" -> "Actionable + non-default?" [shape=diamond];
-  "Actionable + non-default?" -> "Technique skill" [label="yes"];
-  "Actionable + non-default?" -> "Wiki only" [label="no"];
-  "Ingest to wiki" -> "Domain skill request?" [shape=diamond];
-  "Domain skill request?" -> "WIKI-SCOPE + persona SKILL" [label="yes"];
-  "Technique skill" -> "Link in wiki + log.md";
-  "WIKI-SCOPE + persona SKILL" -> "Framework links skill; facts stay in wiki";
-}
+```mermaid
+flowchart TD
+  A[New source] --> B[Zhuomo Ingest]
+  B --> C[Wiki concepts + Evidence]
+  C --> D{Want agent persona?}
+  D -->|no| E[Query / Study / Connect]
+  D -->|yes| F[Separate chat: create skill + WIKI-SCOPE]
+  F --> G[Invoke: read wiki then apply workflow]
+  C --> H[Zhuomo Revise when facts change]
+  H --> C
 ```
 
-**Domain skills:** agent reads WIKI-SCOPE at invoke → loads concept pages → reasons with citations. Revise wiki updates backend without skill redeploy. Full guide: [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md).
+**Domain skills:** agent reads `WIKI-SCOPE.md` → loads concept pages → cites wiki. Wiki **Revise** updates facts without redeploying the skill unless workflow changed. Layout: [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md).
 
-On wiki concept pages, link to related skills: `Related skill: [[~/.cursor/skills/foo]]` or note in page body.
-
-When enhancing a skill from a new source, ingest to wiki first so synthesis and contradictions stay in the KB; skill gets only the behavioral delta.
+Optional backlink on a concept page: `Related skill (optional): ~/.cursor/skills/network-expert`
 
 ## Tips
 
@@ -348,4 +345,4 @@ Don't build infrastructure before the wiki outgrows the index.
 ## Reference
 
 - Pattern: [Karpathy llm-wiki.md](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)
-- Zhuomo workflow: [SKILL.md](SKILL.md), [REFERENCE.md](REFERENCE.md), [LEARNING.md](LEARNING.md), [REVIEW.md](REVIEW.md), [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md)
+- Zhuomo workflow: [SKILL.md](SKILL.md), [REFERENCE.md](REFERENCE.md), [LEARNING.md](LEARNING.md), [REVIEW.md](REVIEW.md) · optional skills: [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md)

@@ -1,12 +1,12 @@
 # Wiki-Backed Domain Skills
 
-> **Creating skills:** Not a zhuomo verb. Chat with Cursor: point at `[[concepts]]` / domain overview and ask for a skill with triggers + workflow. See layout below if you want files under `~/.cursor/skills/`.
+> **Not a zhuomo verb.** Zhuomo `Ingest` / `Revise` / `Query` / `Study` / `Lint` / `Connect` compile **wiki** only. To add agent behavior, open a **separate Cursor chat**, cite `[[concepts]]` or a domain overview, and ask for files under `~/.cursor/skills/`. This doc is an optional layout reference.
 
 A **domain skill** makes an agent *think and act* like an expert. The **wiki** is the knowledge backend. The skill holds **triggers, workflow, and scope** — not a copy of the wiki.
 
-Example: `network-expert` skill + your BGP/Ospf wiki pages → agent loads wiki at invoke time, reasons with citations, follows expert workflow.
+Example: `network-expert` skill + your BGP/OSPF wiki pages → agent reads wiki at invoke time, reasons with citations, follows an expert workflow.
 
-## Two skill types (both from zhuomo)
+## Two skill types (optional)
 
 | Type | Holds | Wiki role |
 |------|-------|-----------|
@@ -49,7 +49,7 @@ Vault: `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen/wiki/
 
 ## Always read first
 - [[domains/networking/overview.md]]
-- [[domains/networking/index.md]]
+- [[domains/networking/guide.md]]
 
 ## Load by topic (open if question touches)
 | Topic signal | Wiki pages |
@@ -65,7 +65,7 @@ Vault: `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen/wiki/
 1. Prefer **established** claims over **tentative** (see concept frontmatter).
 2. If wiki **contested**, present both sides; don't flatten.
 3. Cite wiki page names in reasoning; if wiki gap, say so and suggest ingest.
-4. After solving a novel case, offer to **Revise** the concept or file synthesis in `wiki/synthesis/`.
+4. After solving a novel case, offer to **Revise** the concept or **Connect** a personal synthesis note.
 ```
 
 ### SOURCES.md
@@ -74,7 +74,7 @@ Vault: `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen/wiki/
 | Backend | Path | Role |
 |---------|------|------|
 | Wiki domain | `wiki/domains/networking/` | Framework + index |
-| Wiki concepts | `wiki/concepts/bgp.md`, … | Facts + synthesis |
+| Wiki concepts | `wiki/concepts/bgp.md`, … | Facts + Evidence |
 | Raw evidence | `~/zhuomo-data/raw/books/…` | Provenance only — don't load unless verifying |
 ```
 
@@ -86,59 +86,65 @@ Trigger matches domain skill
     → Load domain overview + relevant concept pages (don't load entire vault)
     → Apply SKILL.md reasoning workflow
     → Answer citing wiki; flag gaps/contested/stale
-    → Optional: propose Revise or applied/ journal entry
+    → Optional: propose Revise or Connect
 ```
 
-Domain skills **must not** cache wiki text inside SKILL.md — wiki Revise updates backend without redeploying skill unless workflow changes.
+Domain skills **must not** cache wiki text inside SKILL.md — wiki **Revise** updates facts without redeploying the skill unless triggers or workflow changed.
 
-## Creating a domain skill from wiki (zhuomo)
+## Creating via chat (after wiki ingest)
 
-After ingesting a domain (e.g. networking / BGP):
+Prerequisites: domain overview + key concept pages exist.
+
+**Example prompt:**
 
 ```
-/zhuomo Domain skill: network-expert — wiki backend wiki/domains/networking/ + BGP concepts. WIKI-SCOPE manifest only; no fact dump in SKILL.md.
+根据 wiki/domains/networking/overview.md 和其中 BGP 相关 [[concepts]]，
+在 ~/.cursor/skills/network-expert/ 创建 domain skill：
+- SKILL.md：触发词、persona、推理步骤、反模式
+- WIKI-SCOPE.md：always-read 列表 + 按话题路由表
+- SOURCES.md：wiki 路径与 raw 出处
+不要把 wiki Claim/Evidence 全文复制进 skill。
 ```
 
-Checklist:
+**Checklist:**
 
-- [ ] Domain overview exists (`wiki/domains/[slug]/overview.md`)
-- [ ] Key concept pages exist and linked from overview
+- [ ] Domain overview exists (`wiki/domains/<slug>/overview.md`)
+- [ ] Key concept pages linked from overview
 - [ ] WIKI-SCOPE.md lists always-read + topic routing table
 - [ ] SKILL.md: triggers (symptoms), persona, workflow, anti-patterns
 - [ ] SOURCES.md lists wiki paths
-- [ ] RED: ask network question **without** skill — note generic/wrong patterns
-- [ ] GREEN: skill + wiki scope — agent must cite wiki, respect epistemic tags
+- [ ] Smoke test: ask a domain question with skill enabled — agent cites wiki, respects `epistemic` tags
 
-## Wiki concept page hooks for domain skills
+## Optional wiki hooks
 
-On concept pages, optional backlink:
+On concept pages:
 
 ```markdown
-Related domain skill: `~/.cursor/skills/network-expert`
+Related skill (optional): `~/.cursor/skills/network-expert`
 ```
 
 On `overview.md`:
 
 ```markdown
-## Domain skill
-Agent persona: [[~/.cursor/skills/network-expert]] — loads this overview first.
+## Optional agent skill
+`~/.cursor/skills/network-expert` — see WIKI-SCOPE.md for read order.
 ```
 
-## When to Revise vs update skill
+## When to Revise wiki vs edit skill
 
 | Change | Action |
 |--------|--------|
-| BGP fact wrong | **Revise** wiki only |
-| New BGP concept ingested | Wiki + update WIKI-SCOPE table row |
-| Expert workflow changed (new debug order) | Update SKILL.md; RED if discipline |
+| Fact wrong on concept page | **Revise** wiki only |
+| New concept ingested | Wiki + add row to WIKI-SCOPE routing table |
+| Expert workflow changed (new debug order) | Edit skill `SKILL.md` |
 | Wiki domain split (BGP vs DC) | Update WIKI-SCOPE routing; skill name may stay |
 
 ## Example prompts
 
 ```
-/zhuomo Create domain skill network-expert backed by my networking wiki.
+根据 [[cilium-datapath-modes]] 写 technique skill，触发词「Cilium 路由模式」。
 
-/zhuomo Update WIKI-SCOPE for network-expert — I added [[concepts/bgp-communities]].
+我加了 [[concepts/bgp-communities]]，请更新 ~/.cursor/skills/network-expert/WIKI-SCOPE.md 路由表。
 
-/zhuomo Debug this BGP flap — use network-expert skill (load wiki first).
+用 network-expert skill 分析这个 BGP flap（先读 wiki 再回答）。
 ```

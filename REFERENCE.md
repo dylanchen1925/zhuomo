@@ -1,16 +1,19 @@
 # 琢磨 (Zhuomo) — Reference
 
-## Wiki + Skill Together
+Extended ingest, EPUB, Readwise, and revision detail. **Agent entry point:** [SKILL.md](SKILL.md). **Study:** [REVIEW.md](REVIEW.md).
 
-| Stage | Wiki | Skill |
-|-------|--------------|-------|
-| Reading a book chapter | Entity/theme pages, plot/thesis threads | Techniques with triggers |
-| Research paper | Methods, claims, citations, contradictions | Reusable method if non-default |
-| Blog with one trick | Source summary + links | Often skill-only if small |
-| Ongoing domain (months) | Primary home for synthesis | **Domain skill** + WIKI-SCOPE, or technique skills as patterns stabilize |
-| Expert persona (BGP, etc.) | Concepts + framework = backend | Domain skill loads wiki at invoke — [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md) |
+## Optional Cursor skills (not zhuomo verbs)
 
-Full wiki setup and operations: [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md).
+Zhuomo verbs compile **wiki** only (`Ingest`, `Revise`, `Query`, `Study`, `Lint`, `Connect`). Turning wiki into repeatable agent behavior is a **separate Cursor chat** step — cite `[[concepts]]` or a domain overview and ask for triggers + workflow.
+
+| You want | Where it lives |
+|----------|----------------|
+| Facts, Evidence, study progress | `wiki/concepts/`, `wiki/domains/` |
+| Triggers, persona, read order | `~/.cursor/skills/<name>/` (optional) |
+
+When facts change: **Revise wiki** first. Edit skill files only if triggers or workflow changed. Optional layouts: [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md).
+
+Full wiki setup: [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md).
 
 ## Obsidian vault (wiki output only)
 
@@ -79,7 +82,7 @@ For Kindle, O'Reilly, Instapaper, web highlights — when full raw EPUB isn't av
 Treat it as a **lens** (priority, scope, goal) — not the only topic in the material:
 
 - "Focus on replication" → ingest replication deeply first; list other topics for later passes
-- "Skill for chapter 7 only" → scope extraction; still file source summary + cross-links
+- "Chapter 7 only" → deepen that cluster first; still file source summary + cross-links
 
 ### When user gives no topic
 
@@ -103,7 +106,6 @@ Treat it as a **lens** (priority, scope, goal) — not the only topic in the mat
 
 - **Search wiki first** — map discovered topics to existing pages; Revise/merge don't duplicate.
 - **Granularity** — one concept page per distinct idea; split chapters that cover unrelated topics.
-- **Skills** — usually **one skill per technique**, not one skill per book; a multi-topic book may yield 0–N skills after filter.
 - **Large sources** — topic map on first pass; ingest 1–2 topic clusters per session.
 
 ### Example prompts
@@ -118,7 +120,7 @@ Treat it as a **lens** (priority, scope, goal) — not the only topic in the mat
 
 ## Correcting & Updating Existing Knowledge
 
-Zhuomo is not append-only. Existing wiki pages and skills **must be corrected** when wrong or outdated.
+Zhuomo is not append-only. Existing wiki pages **must be corrected** when wrong or outdated.
 
 ### When to Revise
 
@@ -128,7 +130,6 @@ Zhuomo is not append-only. Existing wiki pages and skills **must be corrected** 
 | New source contradicts | Paper B refutes claim from Book A already in wiki |
 | Stale claim | API/library changed; old procedure no longer works |
 | Lint finding | Orphan, duplicate entity, untyped contradiction |
-| Skill drift | Skill contradicts updated wiki or user practice |
 
 ### Revision card
 
@@ -136,12 +137,12 @@ Fill before editing:
 
 | Field | Capture |
 |-------|---------|
-| **Target** | Wiki page path(s) and/or skill path |
+| **Target** | Wiki page path(s) |
 | **Problem** | wrong / stale / contradicts / duplicate / incomplete |
-| **Old claim** | What the wiki/skill currently says (quote briefly) |
-| **New claim** | Corrected statement or behavior |
+| **Old claim** | What the wiki currently says (quote briefly) |
+| **New claim** | Corrected statement |
 | **Evidence** | raw source path, URL, user statement, lint ID |
-| **Propagation** | Other pages/skills that cite the old claim |
+| **Propagation** | Other pages that cite the old claim |
 | **Action** | edit / supersede / merge / retract / split |
 
 ### Wiki revision workflow
@@ -166,16 +167,6 @@ sources: [raw/paper-b.pdf]
 ---
 ```
 
-### Skill revision workflow
-
-1. Read SKILL.md, REFERENCE.md + linked wiki pages.
-2. Apply revision card — skills get **behavioral** fixes only (triggers, steps, anti-patterns).
-3. **Enhance** vs **correct**:
-   - Enhance = net-new from another source
-   - Correct = fix wrong/outdated step or trigger
-4. Append `wiki/log.md` row documenting the correction.
-5. **Re-run RED** if the correction changes a discipline rule or core workflow.
-
 ### Ingest + Revise together
 
 Every ingest must include a **contradiction pass**:
@@ -194,8 +185,6 @@ Propagate to all pages linking to it.
 /zhuomo New paper in raw/ contradicts our synthesis on CAP theorem. Revise affected pages.
 
 /zhuomo Lint found duplicate pages "CQRS" and "Command Query Separation". Merge them.
-
-/zhuomo Update skill ~/.cursor/skills/tdd/ — step 3 is outdated after our wiki revise.
 ```
 
 ## Source Ingestion
@@ -206,8 +195,7 @@ Propagate to all pages linking to it.
 2. Extract text (see **EPUB** below for `.epub` files).
 3. If using a knowledge base: copy original to `raw/`, **ingest to wiki** chapter-by-chapter (characters, themes, claims).
 4. Scan structure: TOC, headings, recurring frameworks, named methods.
-5. Prefer **frameworks and named techniques** for skills; **entities and synthesis** for wiki.
-6. Copyright: paraphrase; no large verbatim blocks; cite source on wiki source page.
+5. Copyright: paraphrase; no large verbatim blocks; cite source on wiki source page.
 
 #### EPUB (`.epub`)
 
@@ -220,7 +208,7 @@ EPUB works well — it's structured HTML in a ZIP, so chapter boundaries are usu
 3. Write `wiki/sources/[slug].md` index (topic map + link to `md/index`).
 4. **Deepen all** topic-map concepts — full pages + **`## Evidence`** on each (default). Use stub-only pass only when user says `overview only`.
 5. On every deepened concept page: **`## Evidence`** table — each claim row links `[[sources/slug/md/part-NNN#heading-anchor]]`.
-6. Then: learn + framework; optional extraction card → skill.
+6. Then: Study (`Explain-back`) and domain overview updates as needed.
 
 **Convert script (repo):**
 
@@ -334,152 +322,24 @@ for item in book.get_items_of_type(ebooklib.ITEM_DOCUMENT):
 - Use the EPUB **TOC/spine order**, not filename order, for chapter sequence.
 - DRM-protected EPUBs must be decrypted by the user first; the skill only reads unlocked files.
 - Footnotes/endnotes often live in separate XHTML files — merge or link in wiki, don't drop silently.
-- For zhuomo to skill, one technique-heavy chapter may be enough; you don't need the whole book.
+- One technique-heavy chapter may be enough for a first ingest pass; deepen the rest later.
 
 ### Blogs and articles (URL or paste)
 
 1. Fetch or read pasted content.
-2. Often **one technique → one skill** or **one section → enhancement**.
-3. Capture URL, date, and which claims are author-specific vs common knowledge.
-4. Blog posts with code: put long API detail in REFERENCE.md, triggers in SKILL.md.
+2. Capture URL, date, and which claims are author-specific vs common knowledge.
+3. Ingest to wiki concepts + Evidence; optional personal notes via **Connect**.
 
 ### Videos and podcasts
 
 1. Get transcript: user paste, auto-caption export, or summary notes.
 2. Record **timestamps** in `wiki/log.md` for traceability.
-3. Videos often mix story + technique — apply extraction card aggressively.
-4. Demos: convert to one runnable example, not a play-by-play.
+3. Demos: convert to one runnable example in synthesis or concept Mechanics, not a play-by-play.
 
 ### Notes and highlights
 
-1. Treat highlights as **pre-filtered** — still run Filter step (actionable + non-default).
+1. Treat highlights as **pre-filtered** — still map topics before deep ingest.
 2. Ask user what they highlighted *for* if ambiguous.
-3. Merge duplicate highlights into one trigger/workflow.
+3. Merge duplicate highlights into one concept update where they repeat the same claim.
 
-### Multiple sources → one skill
-
-- First source: establish skill skeleton (name, core triggers, primary workflow).
-- Later sources: **enhancement pass only** — net-new triggers, steps, anti-patterns, examples.
-- If a new source contradicts the skill, resolve with user; update or split, don't silently merge.
-
-## Enhancing or Correcting an Existing Skill
-
-**Enhance** = add net-new from a source. **Correct** = fix wrong/outdated content.
-
-1. **Read** current SKILL.md, REFERENCE.md + linked wiki pages.
-2. **Diff mentally:** net-new vs correction vs contradiction?
-3. **Merge rules:**
-   - Same idea, clearer wording → replace, don't duplicate
-   - New trigger → add to description keywords + body
-   - New step → insert in workflow where it belongs
-   - Contradiction → user decision; Revise wiki first; note in `log.md`
-4. **Keep SKILL.md lean** — move new bulk to REFERENCE.md.
-5. **Re-run validation** if correction changes discipline rules or core workflow:
-   - Discipline addition → new RED scenario for that rule
-   - Technique tweak → re-run application scenario
-6. **Append `log.md`**; keep prior log entries.
-
-## Skill Directory Layout
-
-**Technique skill:**
-
-```
-skill-name/
-├── SKILL.md        # Triggers, workflow, checklist (required)
-├── REFERENCE.md    # Heavy detail, optional
-├── SOURCES.md      # Provenance (required)
-└── EXAMPLES.md     # Optional pressure scenarios / usage
-```
-
-**Domain skill (wiki backend):**
-
-```
-network-expert/
-├── SKILL.md        # Persona, triggers, workflow (required)
-├── WIKI-SCOPE.md   # Vault paths, topic routing table (required)
-├── REFERENCE.md    # Checklists not yet in wiki (optional)
-└── SOURCES.md      # Wiki paths + raw provenance (required)
-```
-
-See [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md).
-
-## Description (CSO) from Book Material
-
-Book titles and chapter names are bad triggers. Convert to **symptoms and situations**:
-
-| Book language | Skill description language |
-|---------------|----------------------------|
-| "Chapter 7: Dealing with Legacy Code" | "Use when changing code without tests, seam-finding, or safe refactoring constraints" |
-| "The Art of X" | "Use when [specific failure mode X was meant to prevent]" |
-
-Description template:
-
-```yaml
-description: Use when [symptom/situation A], [symptom B], or [context C].
-```
-
-Never include the zhuomo workflow in the description.
-
-## Splitting One Book Into Multiple Skills
-
-Split when:
-
-- Triggers belong to different domains (e.g. "testing" vs "deployment")
-- Combined SKILL.md would exceed ~100 lines of distinct workflows
-- Description would need "or" more than twice for unrelated situations
-
-Keep a lightweight index in SOURCES.md:
-
-```markdown
-## Related skills from same source
-- `characterization-tests` — Ch. 9–11
-- `seam-based-refactoring` — Ch. 12–15
-```
-
-## Validation Scenarios by Type
-
-### Discipline (from books like TDD, clean code rules)
-
-Pressure template:
-
-```markdown
-IMPORTANT: Real scenario. Choose and act.
-
-[Concrete task with sunk cost, time pressure, authority, or exhaustion]
-[Option that violates the book's rule looks attractive]
-
-What do you do?
-```
-
-Document verbatim rationalizations from RED; each gets a counter in REFACTOR.
-
-### Technique (how-to chapters)
-
-Give a novel situation not copied from the book. Agent must pick the book's method over a generic alternative.
-
-### Pattern (mental models)
-
-Present two similar problems; agent must identify which matches the pattern and which doesn't.
-
-### Reference (appendix, API chapters)
-
-Ask for a specific fact or procedure; verify agent finds it in REFERENCE.md and applies correctly.
-
-## Example: Mini Zhuomo
-
-**Source:** Blog post "Condition-Based Waiting for Flaky Tests"
-
-**Extracted (not shipped as summary):**
-
-| Field | Content |
-|-------|---------|
-| Trigger | Tests pass/fail inconsistently; uses sleep/setTimeout |
-| Core move | Wait on observable condition, not time |
-| Anti-pattern | Increasing timeout blindly |
-| Type | technique |
-
-**RED:** Agent adds `sleep(5000)` to flaky test.
-
-**GREEN:** Skill with trigger keywords "flaky", "race condition", "timing".
-
-**SOURCES.md:** URL, date refined.
+---

@@ -20,12 +20,11 @@ How to set up **琢磨 (Zhuomo)**, learn from sources **one concept at a time**,
 8. [Prompt cookbook](#8-prompt-cookbook)
 9. [Learning from sources](#9-learning-from-sources)
 10. [Domain frameworks and progress](#10-domain-frameworks-and-progress)
-11. [Creating agent skills](#11-creating-agent-skills)
-12. [Domain skills (wiki-backed experts)](#12-domain-skills-wiki-backed-experts)
-13. [Multi-device workflow](#13-multi-device-workflow)
-14. [Source types](#14-source-types)
-15. [Troubleshooting](#15-troubleshooting)
-16. [FAQ](#16-faq)
+11. [Optional Cursor skills](#11-optional-cursor-skills)
+12. [Multi-device workflow](#12-multi-device-workflow)
+13. [Source types](#13-source-types)
+14. [Troubleshooting](#14-troubleshooting)
+15. [FAQ](#15-faq)
 
 ---
 
@@ -36,7 +35,7 @@ How to set up **琢磨 (Zhuomo)**, learn from sources **one concept at a time**,
 | You provide | Zhuomo helps produce |
 |-------------|----------------------|
 | EPUB, PDF, articles, video notes, highlights | **Wiki** (Obsidian) — concepts, Evidence, frameworks |
-| Repeatable agent behavior | **Skills** (Cursor) — triggers and workflows |
+| Repeatable agent behavior (optional) | **Cursor skills** — separate chat step; see §11 |
 | Your study time | **Explain-back** prompts (cold / feynman) |
 
 **You do not need to name topics upfront.** Drop a source; the agent proposes a topic map and ingests into `wiki/concepts/`.
@@ -349,33 +348,33 @@ Template: [LEARNING.md](LEARNING.md).
 
 ---
 
-## 11. Creating agent skills
+## 11. Optional Cursor skills
 
-**Not a zhuomo verb.** Ingest concepts to wiki first, then chat with Cursor:
+**Not a zhuomo verb.** Zhuomo compiles wiki; skills are optional files under `~/.cursor/skills/`.
+
+1. **Ingest** concepts to wiki first (`Claim` + `Evidence` + `Explain-back`).
+2. In a **new Cursor chat**, cite wiki pages and ask for a skill:
 
 ```
-根据 wiki 里的 [[cilium-datapath-modes]] 写一个 skill，触发词用「选 Cilium 路由模式」
+根据 wiki 里的 [[cilium-datapath-modes]] 和 [[cilium-ebpf-dataplane]] 写一个 skill，
+触发词用「选 Cilium 路由模式」；事实留在 wiki，skill 只写触发条件和阅读顺序。
 ```
 
-Optional file layout: [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md). When facts change: **Revise wiki** first.
+**Domain expert** (persona + `WIKI-SCOPE.md` manifest, facts in wiki):
+
+```
+根据 wiki/domains/cisco-aci/overview.md 和其中链到的概念，
+在 ~/.cursor/skills/ 建 network-expert：SKILL.md 写 persona/workflow，
+WIKI-SCOPE.md 写要先读哪些页面；不要把 wiki 全文贴进 skill。
+```
+
+Layout reference: [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md).
+
+When facts change: **Revise wiki** first. Edit skill files only if triggers or workflow changed.
 
 ---
 
-## 12. Domain skills (wiki-backed experts)
-
-Expert persona + **WIKI-SCOPE.md** manifest. Facts stay in wiki. Create via chat (see §11).
-
-```
-/zhuomo Domain skill: network-expert — wiki backend wiki/domains/cisco-aci/
-```
-
-When facts change: **Revise wiki** — redeploy skill only if workflow changed.
-
-[WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md).
-
----
-
-## 13. Multi-device workflow
+## 12. Multi-device workflow
 
 | Device | Do | Don't |
 |--------|-----|--------|
@@ -406,7 +405,7 @@ Laptop:
 
 ---
 
-## 14. Source types
+## 13. Source types
 
 | Source | Raw location | Notes |
 |--------|--------------|-------|
@@ -420,7 +419,7 @@ EPUB detail: [REFERENCE.md](REFERENCE.md#epub-epub).
 
 ---
 
-## 15. Troubleshooting
+## 14. Troubleshooting
 
 | Problem | Likely cause | Fix |
 |---------|--------------|-----|
@@ -436,13 +435,13 @@ EPUB detail: [REFERENCE.md](REFERENCE.md#epub-epub).
 
 ---
 
-## 16. FAQ
+## 15. FAQ
 
 **Do I have to name the topic?**  
 No. Optional lens only.
 
-**Wiki only or skill only?**  
-Say explicitly. Default: wiki + learn + framework.
+**Wiki only or also a Cursor skill?**  
+Default zhuomo path is **wiki only**. Say in chat if you also want a skill file; that is not an Ingest side effect.
 
 **One vault for many subjects?**  
 Yes. Use `domain-map.md` and `domains/*/overview.md`.
@@ -473,7 +472,7 @@ Read 5–15 min; Explain-back 5–10 min when ready.
 | [LEARNING.md](LEARNING.md) | Connect, domain overviews |
 | [SKILL.md](SKILL.md) | Agent entry point |
 | [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) | Wiki layout (agents) |
-| [REFERENCE.md](REFERENCE.md) | EPUB, Readwise, revision cards |
-| [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md) | Domain expert skills |
+| [REFERENCE.md](REFERENCE.md) | EPUB, Readwise, revision cards (wiki) |
+| [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md) | Optional skill file layout (chat-created) |
 | [SIMPLE.md](SIMPLE.md) | Minimal path |
 | Obsidian `wiki/help.md` | Daily cheatsheet |

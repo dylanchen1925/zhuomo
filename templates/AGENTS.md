@@ -22,7 +22,7 @@ Bootstrapped: {{BOOTSTRAP_DATE}}
 ## Reference depth workflow
 
 1. **Topic map** on `wiki/sources/[slug].md`
-2. **EPUB/PDF** → `wiki/sources/[slug]/md/` via `~/zhuomo/scripts/epub-to-wiki-md.py` or `pdf-to-wiki-md.py` (text corpus)
+2. **EPUB/PDF** → `wiki/sources/[slug]/md/` via `~/zhuomo/scripts/epub-to-wiki-md.py` or `pdf-to-wiki-md.py` (images → `md/assets/`)
 3. **Deepen all** topic-map concepts unless user opted out
 4. **Domain overview** — `domains/<slug>/overview.md` pillars, Dataview, gaps; optional `guide.md`
 5. **Explain-back** — 3–4 prompts per deepened concept: **no pure definitions**; ≥1 contrast/scenario/trap
@@ -53,7 +53,7 @@ Body order: **`## Claim`** → optional **`## Personal notes`** (link to `notes/
 | Progress tables | **Dataview on concepts** in domain `overview.md` — never hand-maintain 100-row tables |
 | Figures | Inline image or mermaid at first mention of Figure N — never bare "see Figure N" |
 
-Repo: `~/zhuomo/REVIEW.md` (Study), `~/zhuomo/REFERENCE.md` (EPUB, revise cards).
+Repo: `~/zhuomo/REVIEW.md` (Study), `~/zhuomo/REFERENCE.md` (figures, EPUB, revise cards).
 
 ---
 
@@ -66,7 +66,7 @@ Repo: `~/zhuomo/REVIEW.md` (Study), `~/zhuomo/REFERENCE.md` (EPUB, revise cards)
 | Domain guide | `wiki/domains/<slug>/guide.md` — concept index only |
 | Concepts | `wiki/concepts/*.md` |
 | Synthesis | `wiki/synthesis/*.md` |
-| Sources | `wiki/sources/<slug>.md` + `md/` text corpus |
+| Sources | `wiki/sources/<slug>.md` + `md/` text corpus; images in `~/zhuomo-data/corpus/<slug>/assets/` |
 | Log | `wiki/log.md` — append-only |
 | **Personal notes** | `wiki/notes/` — user-authored; see `templates/wiki/notes-README.md` |
 
@@ -99,7 +99,7 @@ Repo: `~/zhuomo/REVIEW.md` (Study), `~/zhuomo/REFERENCE.md` (EPUB, revise cards)
 | **Query** | Questions | Brain-first read order; think mode → Answer + Sources + **Gaps** |
 | **Revise** | Errors, contradictions | Propagate fix; set `updated:`; log |
 | **Study** | Learning | cold, Explain-back, feynman, Promote, Review queue |
-| **Lint** | Health | `lint-review-queue.py` |
+| **Lint** | Health | `lint-review-queue.py`, `lint-figure-visuals.py` |
 
 **Connect:** `Connect: … — 记入 synthesis` → `wiki/notes/synthesis/` (personal). See `~/zhuomo/LEARNING.md`.
 
@@ -129,9 +129,10 @@ Run on request or after large ingest:
 
 ```bash
 python3 ~/zhuomo/scripts/lint-review-queue.py {{VAULT_PATH}}wiki
+python3 ~/zhuomo/scripts/lint-figure-visuals.py {{VAULT_PATH}}wiki
 ```
 
-Fix: broken wikilinks, orphans, missing Evidence / Explain-back, contradictions, duplicates. Lint buckets: `SOLID_CANDIDATE`, `RETEST`, `READ_UNTESTED`, `STALE`, … — see SKILL.md § Lint.
+Fix: broken wikilinks, orphans, missing Evidence / Explain-back, figure embeds, contradictions, duplicates. Lint buckets: `SOLID_CANDIDATE`, `RETEST`, `READ_UNTESTED`, `STALE`, … — see SKILL.md § Lint.
 
 ---
 

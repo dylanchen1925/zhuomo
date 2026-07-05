@@ -46,7 +46,7 @@ Scan the user message **top to bottom**. First matching row wins. If two verbs a
 3. **No hand-maintained progress tables:** Domain progress = Dataview on concept frontmatter only.
 4. **No default digests:** Do not create `learn/digests/` unless user explicitly asks.
 5. **Explain-back:** One prompt per turn — always interactive default.
-6. **Figure N cited:** Pair with `→ [[sources/.../md/part-NNN#figure-n]]` in Evidence or inline; optional mermaid schematic — never bare "see Figure N".
+6. **Figure N cited:** Inline image or mermaid at first mention — never bare "see Figure N".
 7. **Closing block:** After Bootstrap / Ingest / Revise / Lint / major Query file-back — use exact 3-line shape in § Output templates.
 8. **Promote to `solid`:** Only when `explain_back: passed` (never on Review alone).
 9. **Skills ≠ wiki:** Wiki holds facts/synthesis. To create a Cursor skill from wiki content, ask the agent in chat (no zhuomo verb). Do not paste corpus facts into SKILL.md.
@@ -273,7 +273,7 @@ updated: YYYY-MM-DD
 **Trigger:** `Bootstrap: raw …, vault …` optionally `+ ingest: …`
 
 ```
-1. Create raw/ tree: inbox/, web/, video/, books/, processed/
+1. Create raw/ tree: inbox/, web/, video/, books/, assets/, processed/
 2. Create wiki skeleton:
    index.md, log.md, overview.md, help.md (copy ~/zhuomo/templates/wiki/help.md),
    domain-map.md (copy ~/zhuomo/templates/wiki/domain-map.md),
@@ -328,12 +328,12 @@ updated: YYYY-MM-DD
    b. study-analytic: prefer `epistemic: contested` when sources disagree
    c. literary-appreciation + 精读: prefer synthesis over per-chapter concepts
    d. Add/update wikilinks in domain overview pillars + slim guide.md
-   e. When figures are cited: link to md corpus anchors per § Figure rule
+   e. Embed figures per § Figure rule (study-technical / craft only when figures exist)
 6. Update wiki/index.md; domain overview gaps if needed
 6b. **Synthesis gate** — required offer for study-analytic & literary 精读; optional for study-technical:
     `⚙ 是否更新 synthesis / 域心智模型？回复 domain + 要点` (do not auto-write synthesis)
 7. log.md: ## [date] ingest | <title> | N concepts deepened
-8. Optional: run lint-review-queue.py
+8. Optional: run lint-figure-visuals.py, lint-review-queue.py
 9. Closing block
 ```
 
@@ -351,9 +351,12 @@ updated: YYYY-MM-DD
 
 When prose cites **Figure N** or `#figure-*`:
 
-1. Add Evidence row or inline `→ [[sources/.../md/part-NNN#figure-n]]` at first mention
-2. Optional: mermaid schematic after the cite (topology/flow only; must match Claim)
-3. Never a consolidated `## Figures` appendix; open the EPUB/PDF for the bitmap when needed
+1. Insert `![Figure N](/corpus/<slug>/assets/…)` immediately after mentioning paragraph
+2. Next line: `→ [[sources/.../md/part-NNN#figure-n]]`
+3. No asset → mermaid schematic at same spot (topology/flow only)
+4. Never a consolidated `## Figures` appendix
+
+Backfill: `python3 ~/zhuomo/scripts/embed-figure-visuals.py <vault>/wiki`
 
 ---
 
@@ -577,6 +580,7 @@ Run (replace `<vault>`):
 ```bash
 python3 ~/zhuomo/scripts/lint-review-queue.py <vault>/wiki
 python3 ~/zhuomo/scripts/lint-review-queue.py <vault>/wiki --domain kubernetes-cilium
+python3 ~/zhuomo/scripts/lint-figure-visuals.py <vault>/wiki
 ```
 
 **Review queue buckets (script output — act in order):**
@@ -596,6 +600,7 @@ python3 ~/zhuomo/scripts/lint-review-queue.py <vault>/wiki --domain kubernetes-c
 | Orphan concept (no inbound link) | Link from overview / guide / peer concept |
 | Text mentions concept, no page | Stub or merge duplicate |
 | Deepened concept missing `## Evidence` | Add Evidence or note in overview gaps |
+| Figure N without inline visual | embed-figure-visuals.py or manual inline |
 | `updated > reviewed` | Report in review queue (user Study) |
 | Missing `## Explain-back` on deepened concept | Add 3 prompts |
 | Contradiction between pages | Revise |
@@ -674,6 +679,8 @@ Append `## [date] lint | N issues` to `log.md`. List each issue with suggested R
 | `epub-to-wiki-md.py` | EPUB → `sources/<slug>/md/` |
 | `pdf-to-wiki-md.py` | Text PDF |
 | `pdf-ocr-to-wiki-md.py` | Scanned PDF |
+| `embed-figure-visuals.py` | Inline figures at mentions |
+| `lint-figure-visuals.py` | Find missing figure embeds |
 | `lint-review-queue.py` | `updated > reviewed`, missing Explain-back |
 | `add-evidence-sections.py` | Backfill Evidence blocks |
 | `sync-domain-study-paths.py` | Study paths + inline **A**/**B** tiers + Dataview queues on overviews |
@@ -747,7 +754,7 @@ Tier definitions: `scripts/domain_study_tiers.py` — edit then re-run sync.
 | Progress table edited by hand in overview | Dataview reads concept frontmatter |
 | Web search before reading wiki | overview → concepts → then web |
 | Skill file full of BGP facts | Domain skill + wiki backend; Revise wiki when facts change |
-| "See Figure 5" with no source link | Add `→ [[sources/.../md/part-NNN#figure-5]]` in Evidence or inline |
+| "See Figure 5" with no image | Inline `![Figure 5](…)` + source link |
 | `[[path|alias]]` inside markdown table cell | `[[path]]` only — pipe splits table columns |
 | `mastery: solid` after Review only | solid only after `explain_back: passed` |
 

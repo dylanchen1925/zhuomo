@@ -88,7 +88,7 @@ Or bootstrap and ingest the first book in one line:
 ```
 ~/zhuomo-data/raw/
 ├── inbox/          # phone captures
-├── web/ · video/ · books/ · assets/
+├── web/ · video/ · books/
 └── processed/
 
 vault/

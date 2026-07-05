@@ -31,14 +31,9 @@ AGENTS.md     → schema: structure, conventions, workflows (co-evolve with user
 ├── web/
 ├── video/
 ├── books/
-├── assets/
 └── processed/
 
-~/zhuomo-data/corpus/           # source MD images (outside iCloud vault)
-└── <slug>/assets/              # EPUB/PDF figures; linked as /corpus/<slug>/assets/…
-
 ~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen/  # Obsidian vault root
-├── corpus → ~/zhuomo-data/corpus   # /corpus/… image paths resolve here
 ├── wiki/
 │   ├── domain-map.md
 │   ├── index.md
@@ -72,7 +67,6 @@ Multi-device: phone → `raw/inbox/`; laptop processes inbox. See [Multi-device 
 | Location | Holds | You in Obsidian |
 |----------|-------|-----------------|
 | **Raw** | EPUB, PDF, clips, transcripts, O'Reilly notes | Optional — usually don't open |
-| **Corpus assets** | `~/zhuomo-data/corpus/<slug>/assets/` | Via `/corpus/…` in Obsidian (Mac); not on phone iCloud |
 | **Wiki** | Concepts, frameworks, synthesis (compiled) + `notes/` (personal) | **Yes** — daily driver |
 
 Wiki `sources/` pages are **agent-written summaries** with links to `[[concepts]]` and a `raw:` path — not copies of raw files.
@@ -112,7 +106,6 @@ Single-domain wikis can omit `domain-map.md` and use flat `wiki/concepts/`. Add 
 ├── web/
 ├── video/
 ├── books/                      # EPUB/PDF — keep off phone when possible
-├── assets/
 └── processed/                  # moved here after successful ingest
 ```
 
@@ -319,7 +312,6 @@ When enhancing a skill from a new source, ingest to wiki first so synthesis and 
 - **Multi-device** — phone → `raw/inbox/`; laptop ingests; Obsidian wiki syncs for reading on phone
 - **Spaced repetition** — per-concept **Explain-back** — see [REVIEW.md](REVIEW.md)
 - **Web Clipper** — save articles to `raw/web/` (export/move from Obsidian if clipped into vault by mistake)
-- **Download images locally** — store under `raw/assets/`; wiki pages embed or link as needed
 - **Graph view** — see hubs, orphans, connection shape
 - **Git** — wiki is a repo; free history and collaboration
 - **Dataview** (optional) — query frontmatter if LLM adds YAML tags/dates

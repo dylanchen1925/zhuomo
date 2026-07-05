@@ -8,13 +8,10 @@ import html
 import re
 import sys
 from pathlib import Path
-from urllib.parse import unquote, urlparse
 
 import ebooklib
 from bs4 import BeautifulSoup, NavigableString, Tag
 from ebooklib import epub
-
-from corpus_assets import DEFAULT_CORPUS_ROOT, asset_vault_path, corpus_root_from_arg, slug_assets_dir
 
 
 def slugify(text: str, max_len: int = 80) -> str:
@@ -24,49 +21,7 @@ def slugify(text: str, max_len: int = 80) -> str:
     return (text or "section")[:max_len]
 
 
-def basename_from_href(href: str) -> str:
-    path = unquote(urlparse(href).path)
-    return Path(path).name
-
-
-def extract_epub_images(book: epub.EpubBook, assets_dir: Path, slug: str) -> dict[str, str]:
-    """Write EPUB images to external corpus assets_dir; return basename → vault path."""
-    assets_dir.mkdir(parents=True, exist_ok=True)
-    lookup: dict[str, str] = {}
-    for item in book.get_items_of_type(ebooklib.ITEM_IMAGE):
-        name = item.get_name() or ""
-        base = Path(name).name
-        if not base:
-            continue
-        # Disambiguate rare basename collisions (same filename, different folders).
-        dest = assets_dir / base
-        if dest.exists() and dest.read_bytes() != item.get_content():
-            stem, suffix = dest.stem, dest.suffix
-            n = 2
-            while dest.exists():
-                dest = assets_dir / f"{stem}-{n}{suffix}"
-                n += 1
-        if not dest.exists():
-            dest.write_bytes(item.get_content())
-        vault_ref = asset_vault_path(slug, dest.name)
-        lookup[base] = vault_ref
-        # Also map full EPUB internal path when present.
-        lookup[basename_from_href(name)] = vault_ref
-    return lookup
-
-
-def resolve_image_src(src: str, image_lookup: dict[str, str]) -> str | None:
-    if not src or src.startswith(("data:", "http://", "https://")):
-        return None
-    base = basename_from_href(src)
-    return image_lookup.get(base)
-
-
-def node_to_md(
-    node: Tag | NavigableString,
-    lines: list[str],
-    image_lookup: dict[str, str],
-) -> None:
+def node_to_md(node: Tag | NavigableString, lines: list[str]) -> None:
     if isinstance(node, NavigableString):
         text = str(node).strip()
         if text:
@@ -77,18 +32,7 @@ def node_to_md(
         return
 
     name = node.name.lower()
-    if name in {"script", "style", "svg"}:
-        return
-
-    if name == "img":
-        src = node.get("src") or ""
-        rel = resolve_image_src(src, image_lookup)
-        if rel:
-            alt = (node.get("alt") or basename_from_href(src) or "image").strip()
-            alt = re.sub(r"\s+", " ", alt)
-            lines.append("")
-            lines.append(f"![{alt}]({rel})")
-            lines.append("")
+    if name in {"script", "style", "svg", "img"}:
         return
 
     if name == "a" and node.get("name"):
@@ -118,7 +62,7 @@ def node_to_md(
     if name == "p":
         if node.find("img"):
             for child in node.children:
-                node_to_md(child, lines, image_lookup)
+                node_to_md(child, lines)
             return
         # Bold-only line as pseudo-heading (common in publisher EPUBs)
         bold = node.find(["b", "strong"])
@@ -165,19 +109,15 @@ def node_to_md(
         return
 
     for child in node.children:
-        node_to_md(child, lines, image_lookup)
+        node_to_md(child, lines)
 
 
-def html_to_markdown(
-    content: bytes,
-    part_title: str,
-    image_lookup: dict[str, str],
-) -> tuple[str, list[str]]:
+def html_to_markdown(content: bytes, part_title: str) -> tuple[str, list[str]]:
     soup = BeautifulSoup(content, "html.parser")
     body = soup.body or soup
     lines: list[str] = [f"# {part_title}", ""]
     for child in body.children:
-        node_to_md(child, lines, image_lookup)
+        node_to_md(child, lines)
     md = "\n".join(lines)
     md = re.sub(r"\n{3,}", "\n\n", md).strip() + "\n"
     md = promote_standalone_titles(md)
@@ -224,17 +164,6 @@ def main() -> int:
         help="Output directory, e.g. wiki/sources/my-book/md",
     )
     parser.add_argument("--slug", type=str, default="", help="Source slug for index")
-    parser.add_argument(
-        "--corpus-root",
-        type=Path,
-        default=DEFAULT_CORPUS_ROOT,
-        help=f"External corpus root (images -> corpus/<slug>/assets/, default: {DEFAULT_CORPUS_ROOT})",
-    )
-    parser.add_argument(
-        "--no-images",
-        action="store_true",
-        help="Skip image extraction (text-only corpus)",
-    )
     args = parser.parse_args()
 
     book = epub.read_epub(str(args.epub))
@@ -242,15 +171,6 @@ def main() -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     slug = args.slug or args.epub.stem
-    corpus_root = corpus_root_from_arg(args.corpus_root)
-
-    image_lookup: dict[str, str] = {}
-    image_count = 0
-    if not args.no_images:
-        image_lookup = extract_epub_images(
-            book, slug_assets_dir(corpus_root, slug), slug
-        )
-        image_count = len({v for v in image_lookup.values()})
 
     index_lines = [
         "---",
@@ -262,20 +182,9 @@ def main() -> int:
         "",
         "Full EPUB text converted for provenance links. Concept pages cite `[[md/part-NNN#heading]]`.",
         "",
+        "| Part | File | First headings |",
+        "|------|------|----------------|",
     ]
-    if image_count:
-        index_lines.append(
-            f"Images extracted to `/corpus/{slug}/assets/` ({image_count} files) "
-            f"on disk under `{corpus_root / 'corpus' / slug / 'assets'}`. "
-            f"Requires `{{vault_root}}/corpus` symlink (see migrate-corpus-assets-out.py)."
-        )
-        index_lines.append("")
-    index_lines.extend(
-        [
-            "| Part | File | First headings |",
-            "|------|------|----------------|",
-        ]
-    )
 
     part = 0
     for item in book.get_items_of_type(ebooklib.ITEM_DOCUMENT):
@@ -284,7 +193,7 @@ def main() -> int:
             continue
         part += 1
         part_title = f"Part {part}"
-        md, headings = html_to_markdown(item.get_content(), part_title, image_lookup)
+        md, headings = html_to_markdown(item.get_content(), part_title)
         if len(md.strip()) < 80:
             part -= 1
             continue
@@ -312,10 +221,7 @@ def main() -> int:
         ]
     )
     (out_dir / "index.md").write_text("\n".join(index_lines), encoding="utf-8")
-    msg = f"Wrote {part} parts to {out_dir}"
-    if image_count:
-        msg += f"; {image_count} images in corpus/{slug}/assets/"
-    print(msg)
+    print(f"Wrote {part} parts to {out_dir}")
     return 0
 
 

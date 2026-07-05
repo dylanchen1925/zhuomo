@@ -129,11 +129,6 @@ Only **generic** tools are tracked here. One-off ingest helpers for a specific b
 | **Study & lint** | `lint-review-queue.py` | Review queue: `SOLID_CANDIDATE` · `RETEST` · `READ_UNTESTED` · `STALE` · … |
 | | `sync-domain-study-paths.py` | Sync `domains/*/overview.md` study paths + tiers |
 | | `domain_study_tiers.py` | Tier data (imported by sync script) |
-| | `lint-figure-visuals.py` | Flag concepts missing inline Figure images |
-| **Assets** | `corpus_assets.py` | Shared paths for corpus images outside vault |
-| | `embed-figure-visuals.py` | Inline Figure N images in concept pages |
-| | `clean-orphan-assets.py` | Remove unreferenced corpus images |
-| | `migrate-corpus-assets-out.py` | Move `sources/*/md/assets/` → `~/zhuomo-data/corpus/` |
 | **Wiki repair** | `fix-table-wikilink-pipes.py` | Fix `[[wikilink\|alias]]` inside table cells |
 | | `recover-table-wikilink-damage.py` | Undo over-aggressive table wikilink fixes |
 | **One-shot migration** | `simplify-vault.py` | Legacy vault layout → current conventions |

@@ -5,12 +5,9 @@ from __future__ import annotations
 
 import argparse
 import re
-import shutil
 import subprocess
 import sys
 from pathlib import Path
-
-from corpus_assets import DEFAULT_CORPUS_ROOT, asset_vault_path, corpus_root_from_arg, slug_assets_dir
 
 # Book reading order (index.rst toctree, excluding meta pages).
 CHAPTER_ROOTS = [
@@ -156,37 +153,11 @@ def add_heading_anchors(md: str) -> tuple[str, list[str]]:
     return md, headings
 
 
-def fix_image_paths(md: str, rst_path: Path, assets_dir: Path, book_root: Path, slug: str) -> str:
-    def copy_and_relink(match: re.Match[str]) -> str:
-        alt = match.group(1)
-        src = match.group(2)
-        if src.startswith(("http://", "https://", "data:")):
-            return match.group(0)
-        src_path = (rst_path.parent / src).resolve()
-        if not src_path.exists():
-            src_path = (book_root / src).resolve()
-        if not src_path.exists():
-            return match.group(0)
-        dest = assets_dir / src_path.name
-        if not dest.exists():
-            dest.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(src_path, dest)
-        return f"![{alt}]({asset_vault_path(slug, dest.name)})"
-
-    return re.sub(r"!\[([^\]]*)\]\(([^)]+)\)", copy_and_relink, md)
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(description="RST book repo → wiki/sources/<slug>/md/")
     parser.add_argument("book_root", type=Path, help="Root of cloned RST book repo")
     parser.add_argument("--out", type=Path, required=True, help="Output dir, e.g. wiki/sources/foo/md")
     parser.add_argument("--slug", type=str, default="", help="Source slug for index")
-    parser.add_argument(
-        "--corpus-root",
-        type=Path,
-        default=DEFAULT_CORPUS_ROOT,
-        help=f"External corpus root (default: {DEFAULT_CORPUS_ROOT})",
-    )
     parser.add_argument(
         "--preset",
         type=str,
@@ -201,9 +172,6 @@ def main() -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     slug = args.slug or book_root.name
-    corpus_root = corpus_root_from_arg(args.corpus_root)
-    assets_dir = slug_assets_dir(corpus_root, slug)
-    assets_dir.mkdir(parents=True, exist_ok=True)
     chapter_roots = PRESETS[args.preset]
 
     rst_files = collect_rst_files_for_roots(book_root, chapter_roots)
@@ -223,16 +191,12 @@ def main() -> int:
     ]
 
     part = 0
-    image_names: set[str] = set()
 
     for rst_path in rst_files:
         md = pandoc_convert(rst_path, book_root)
         if len(md.strip()) < 60:
             continue
         md, headings = add_heading_anchors(md)
-        md = fix_image_paths(md, rst_path, assets_dir, book_root, slug)
-        for m in re.finditer(rf"\]\({ASSETS_DIR}/([^)]+)\)", md):
-            image_names.add(m.group(1))
 
         part += 1
         title = headings[0] if headings else rst_path.stem
@@ -244,12 +208,6 @@ def main() -> int:
         preview = "; ".join(headings[:3]) if headings else rel_rst.stem
         index_lines.append(
             f"| {part} | [[md/{fname}\\|{fname}]] | `{rel_rst}` | {preview[:100]} |"
-        )
-
-    if image_names:
-        index_lines.insert(
-            8,
-            f"Images extracted to `md/{ASSETS_DIR}/` ({len(image_names)} files) and embedded in part Markdown.\n",
         )
 
     index_lines.extend(
@@ -267,7 +225,7 @@ def main() -> int:
         ]
     )
     (out_dir / "index.md").write_text("\n".join(index_lines), encoding="utf-8")
-    print(f"Wrote {part} parts to {out_dir}; {len(image_names)} images in {ASSETS_DIR}/")
+    print(f"Wrote {part} parts to {out_dir}")
     return 0
 
 

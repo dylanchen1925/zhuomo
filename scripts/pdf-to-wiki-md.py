@@ -9,8 +9,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-from corpus_assets import DEFAULT_CORPUS_ROOT, corpus_root_from_arg, slug_assets_dir
-
 # HDN (Hardware-Defined Networking) — PDF page ranges (1-indexed, inclusive).
 HDN_CHAPTERS: list[tuple[str, int, int]] = [
     ("Introduction", 5, 7),
@@ -220,40 +218,18 @@ def promote_headings(md: str, title: str) -> tuple[str, list[str]]:
     return body, headings
 
 
-def extract_images(pdf: Path, assets_dir: Path) -> int:
-    assets_dir.mkdir(parents=True, exist_ok=True)
-    prefix = assets_dir / "img"
-    result = subprocess.run(
-        ["pdfimages", "-png", str(pdf), str(prefix)],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if result.returncode != 0:
-        return 0
-    return len(list(assets_dir.glob("img-*.png")))
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(description="PDF → wiki/sources/<slug>/md/")
     parser.add_argument("pdf", type=Path)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--slug", type=str, default="")
-    parser.add_argument(
-        "--corpus-root",
-        type=Path,
-        default=DEFAULT_CORPUS_ROOT,
-        help=f"External corpus root (default: {DEFAULT_CORPUS_ROOT})",
-    )
     parser.add_argument("--preset", type=str, default="", help="Chapter map preset (e.g. hdn)")
-    parser.add_argument("--no-images", action="store_true")
     args = parser.parse_args()
 
     pdf = args.pdf.resolve()
     out_dir = args.out
     out_dir.mkdir(parents=True, exist_ok=True)
     slug = args.slug or pdf.stem.lower()
-    corpus_root = corpus_root_from_arg(args.corpus_root)
 
     preset = args.preset or slug.replace("-", "")
     if preset not in PRESETS and slug in PRESETS:
@@ -262,10 +238,6 @@ def main() -> int:
     if not chapters:
         print(f"No chapter preset for {preset!r}; add page ranges to PRESETS", file=sys.stderr)
         return 1
-
-    image_count = 0
-    if not args.no_images:
-        image_count = extract_images(pdf, slug_assets_dir(corpus_root, slug))
 
     index_lines = [
         "---",
@@ -278,11 +250,6 @@ def main() -> int:
         "Full PDF text converted for provenance links. Concept pages cite `[[md/part-NNN#heading]]`.",
         "",
     ]
-    if image_count:
-        index_lines.append(
-            f"Images extracted to `/corpus/{slug}/assets/` ({image_count} PNG files via pdfimages)."
-        )
-        index_lines.append("")
     index_lines.extend(
         [
             "| Part | File | Chapter | PDF pages | First headings |",
@@ -315,7 +282,7 @@ def main() -> int:
         ]
     )
     (out_dir / "index.md").write_text("\n".join(index_lines), encoding="utf-8")
-    print(f"Wrote {part} parts to {out_dir}; {image_count} images in /corpus/{slug}/assets/")
+    print(f"Wrote {part} parts to {out_dir}")
     return 0
 
 

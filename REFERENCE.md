@@ -216,7 +216,7 @@ EPUB works well — it's structured HTML in a ZIP, so chapter boundaries are usu
 **Workflow (required steps):**
 
 1. Copy the `.epub` to `raw/books/` (immutable source).
-2. **Convert full text to Markdown** under `wiki/sources/[slug]/md/` — one file per spine item/chapter, with heading anchors. **Images** go to `~/zhuomo-data/corpus/<slug>/assets/` (not in the vault); embed as `![alt](/corpus/<slug>/assets/…)` in part files. Requires **`{vault_root}/corpus`** → `~/zhuomo-data/corpus` symlink (Obsidian `/corpus/…` is vault root, not `wiki/`). This is the **provenance corpus**; concept pages link here, not only to the EPUB path.
+2. **Convert full text to Markdown** under `wiki/sources/[slug]/md/` — one file per spine item/chapter, with heading anchors. Text-only provenance corpus; concept pages link `[[md/part-NNN#heading]]`, not only to the EPUB path.
 3. Write `wiki/sources/[slug].md` index (topic map + link to `md/index`).
 4. **Deepen all** topic-map concepts — full pages + **`## Evidence`** on each (default). Use stub-only pass only when user says `overview only`.
 5. On every deepened concept page: **`## Evidence`** table — each claim row links `[[sources/slug/md/part-NNN#heading-anchor]]`.
@@ -268,51 +268,20 @@ ebook-convert book.epub book.txt
 - **MD 全文:** [[sources/my-book/md/index]]
 ```
 
-### Figure visuals on wiki pages
+### Figure cites on wiki pages
 
-When ingest, deepen, or revise mentions **Figure N** (or `#figure-*` anchors), embed the visual **where the figure is discussed** — not in a consolidated `## Figures` block at the end.
+When ingest, deepen, or revise mentions **Figure N** (or `#figure-*` anchors), link to the md corpus — do not rely on copied bitmaps in the vault.
 
-**Placement:**
-
-1. **Body mention** — insert image/mermaid **immediately after** the paragraph or bullet that cites Figure N (prefer prose lines over `##` headings when both mention the same figure).
-2. **Evidence-only cite** — insert under the matching thematic section (e.g. `#figure-3-4` under `## Mechanics`, scheduler figures under `## Concept`); Evidence bullet keeps the wikilink only.
-3. **Never** append all figures before `## Evidence`.
-
-**Priority (what to embed):**
-
-1. **Source asset** — `![Figure N](/corpus/<slug>/assets/…)` from EPUB MD corpus (same image as `part-NNN.md`; files live under `~/zhuomo-data/corpus/`).
-2. **Mermaid schematic** — when no asset exists or book figure is unreadable; topology/flow only; must match wiki claims.
-3. **Link only** — never alone; always pair `→ [[sources/.../md/part-NNN#figure-x-y]]` with (1) or (2).
+1. Add Evidence row or inline `→ [[sources/.../md/part-NNN#figure-n]]` at first mention
+2. Optional: mermaid schematic after the cite (topology/flow only)
+3. Never a consolidated `## Figures` appendix; open the EPUB/PDF for the original figure when needed
 
 **Inline template:**
 
 ```markdown
 Guide **Figure 91** = …
 
-![Figure 91](/corpus/my-book/assets/…)
-
 → [[sources/…/md/part-NNN#figure-91]]
-```
-
-**Migrate existing vault assets (one-time):**
-
-```bash
-python3 ~/zhuomo/scripts/migrate-corpus-assets-out.py ~/path/to/vault/wiki --dry-run
-python3 ~/zhuomo/scripts/migrate-corpus-assets-out.py ~/path/to/vault/wiki
-```
-
-**Backfill existing vault:**
-
-```bash
-python3 scripts/embed-figure-visuals.py ~/path/to/vault/wiki
-```
-
-Removes legacy `## Figures` sections and re-inlines at mention sites.
-
-**Lint:**
-
-```bash
-python3 scripts/lint-figure-visuals.py ~/path/to/vault/wiki
 ```
 
 Python (when scripting ingest):

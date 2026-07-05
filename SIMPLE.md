@@ -1,6 +1,6 @@
 # Zhuomo — simplified mode
 
-**Six verbs:** Bootstrap · Ingest · Query · Revise · Study · Lint. Everything else is optional.
+**Six verbs:** Bootstrap · Ingest · Query · Revise · Study · Lint. **Connect** for personal cross-concept notes.
 
 ## Minimum viable Zhuomo
 
@@ -8,27 +8,23 @@
 Raw  →  Bootstrap + Ingest  →  concepts + Evidence  →  Query
 ```
 
-**Daily cheatsheet:** Obsidian `wiki/help.md`.
+**Daily reference:** Obsidian `wiki/help.md`.
 
-| Keep | Drop (until needed) |
-|------|---------------------|
-| `~/zhuomo-data/raw/` inbox | Domain skills |
-| `wiki/concepts/` + Explain-back | Weekly ritual (use Lint + Study ad hoc) |
-| `wiki/overview.md` + domain overviews | 10+ repo docs — read `help.md` + [REVIEW.md](REVIEW.md) |
-| `wiki/sources/` + md corpus | Digests, applied journal, review logs |
+| Keep | Skip until needed |
+|------|-------------------|
+| `~/zhuomo-data/raw/` inbox | Domain-specific Cursor skills (ask agent in chat) |
+| `wiki/concepts/` + Explain-back | Extra repo docs — `help.md` + REVIEW.md enough |
+| `wiki/overview.md` + domain overviews | Extra repo docs |
 | Chat with agent | — |
 
-## Default: reference depth at bootstrap
+## Study (lite)
 
-Bootstrap + first ingest **deepen all** concepts unless you say `overview only` / `lite`.
-
-## Lite mode (opt-in)
-
-| Phase | Trigger | Output |
-|-------|---------|--------|
-| Map | `Ingest overview only: book.epub` | Stubs + topic map |
-| Deepen | `Deepen all` or `Deepen tenant` | Full concepts + Evidence |
-| Study | `Explain-back [[concept]]` | Interactive prompts → grade per turn → frontmatter ([REVIEW.md](REVIEW.md#interactive-explain-back-default)) |
+| Step | Say |
+|------|-----|
+| First learn | `Explain-back [[concept]] cold` |
+| Stuck explaining | `Explain-back [[concept]] feynman` |
+| Promote | `Promote [[concept]] to solid` |
+| Health | `Lint` |
 
 ## Ingest depth
 
@@ -38,39 +34,15 @@ Bootstrap + first ingest **deepen all** concepts unless you say `overview only` 
 | Lite map | `Ingest overview only: …` |
 | Storage only | `archive only` |
 
-## Obsidian layout
+## Connect
 
-| View | Path |
-|------|------|
-| Vault hub | `wiki/overview.md` |
-| Domain entry + **Dataview progress** | `domains/<domain>/overview.md` |
-| Concept index (not full digest) | `domains/<domain>/guide.md` |
-| Truth + Explain-back | `wiki/concepts/` |
+`Connect: <insight across concepts> — 记入 synthesis` → `wiki/notes/synthesis/`
 
-Install **Dataview** plugin to see progress tables on domain overviews.
-
-## Repo docs
-
-| Read | Skip |
-|------|------|
-| `wiki/help.md` | FRAMEWORK, KNOWLEDGE-BASE (agent) |
-| [REVIEW.md](REVIEW.md) | RETENTION (merged into REVIEW) |
-| [USER-GUIDE.md](USER-GUIDE.md) if stuck | — |
-
-## One-line prompts
+## Example session
 
 ```
-/zhuomo Bootstrap + ingest: ~/zhuomo-data/raw/books/my-book.epub
-
-/zhuomo Ingest: ~/zhuomo-data/raw/inbox/book.epub
-
-/zhuomo Query think: Multi-Pod vs Multi-Site?
-
-Explain-back [[aci-border-leaf-l3out]]
-
+/zhuomo Query think: when use native routing vs overlay?
+/zhuomo Explain-back [[cilium-datapath-modes]] cold
+/zhuomo Connect: Cilium overlay vs ACI — 记入 synthesis
 /zhuomo Lint
-
-/zhuomo Learn fable: [[aci-tenant-epg-contract]]
 ```
-
-Optional: `Weekly` = Lint + suggest one Explain-back (~15 min).

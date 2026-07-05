@@ -238,7 +238,7 @@ Output forms: markdown page, comparison table, slides (Marp), chart — user cho
 
 ### Lint
 
-Doctor-lite health check — on request, after major ingest, or in **Weekly**:
+Doctor-lite health check — on request or after major ingest:
 
 | Check | Fix |
 |-------|-----|

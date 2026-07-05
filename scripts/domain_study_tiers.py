@@ -337,6 +337,41 @@ TIERS: dict[str, TierSpec] = {
         "c_note": "来源检索与写作风格章 — learning + Query",
         "d_note": "—",
     },
+    "meta-skills": {
+        "a_label": "元能力与防御核心（建议 solid）",
+        "a": [
+            "ms-system-feedback-loops",
+            "ms-meadows-leverage-points",
+            "ms-polya-problem-solving",
+            "ms-problem-vs-solution",
+            "ms-deliberate-practice",
+            "ms-system1-system2",
+            "ms-heuer-competing-hypotheses",
+            "ms-pearl-causal-ladder",
+            "ms-simon-satisficing",
+            "ms-rumelt-strategy-kernel",
+            "ms-perrow-normal-accidents",
+            "ms-cialdini-influence-defense",
+            "ms-forward-fog",
+            "ms-cloud-boundaries",
+            "ms-fisher-interests-not-positions",
+            "ms-patterson-dialogue-safety",
+            "ms-axelrod-tit-for-tat",
+        ],
+        "b": [
+            "ms-retrieval-practice",
+            "ms-minto-pyramid-principle",
+            "ms-tetlock-calibration",
+            "ms-klein-naturalistic-decision",
+            "ms-dalio-believability-weighting",
+            "ms-grant-giver-trap",
+            "ms-stone-three-conversations",
+            "ms-debecker-pre-incident-indicators",
+        ],
+        "b_label": "表达 / 校准 / 对话深化",
+        "c_note": "ingest 后其余 `ms-*` 概念 — learning + Query；延展 Sterman/Popper/Goffman — overview only",
+        "d_note": "—",
+    },
     "model-thinking": {
         "a_label": "框架与高频模型（建议 solid）",
         "a": [
@@ -520,7 +555,7 @@ STUDY_TABLE_COLS = (
     'file.link AS "概念", '
     'choice(explain_back = "passed" AND mastery != "solid", "① Promote", '
     'choice(reviewed != null AND explain_back != "passed", "② Explain-back", '
-    'choice(reviewed = null OR (updated != null AND reviewed != null AND updated > reviewed), "③ Review", "—"))) AS "下一步", '
+    'choice(reviewed = null OR (updated != null AND reviewed != null AND updated > reviewed), "③ Cold", "—"))) AS "下一步", '
     'mastery AS "掌握度", reviewed AS "Review", '
     'explain_back AS "Explain-back", updated AS "更新"'
 )
@@ -617,7 +652,7 @@ def format_study_page(slug: str, title: str, spec: TierSpec | None, updated: str
         )
     intro.append(
         "> 需要 Obsidian **Dataview** 插件。日常 Study 从 **下一步** 列优先："
-        "`① Promote` → `② Explain-back` → `③ Review`；`—` 表示暂无需动作。"
+        "`① Promote` → `② Explain-back` → `③ Cold`（`Explain-back [[概念]] cold`）；`—` 表示暂无需动作。"
     )
 
     lines = [

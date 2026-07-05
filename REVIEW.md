@@ -2,7 +2,7 @@
 
 **Study** = read a concept, teach it back, promote mastery. One human doc for learning + retention.
 
-**Related:** [LEARNING.md](LEARNING.md) (fable only) · [SKILL.md](SKILL.md) (agent ops) · vault `[[help]]` (daily cheatsheet)
+**Related:** [LEARNING.md](LEARNING.md) · [SKILL.md](SKILL.md) (agent ops) · vault `[[help]]`
 
 ---
 
@@ -14,7 +14,7 @@
 
 | Column | Purpose |
 |--------|---------|
-| **下一步** | `① Promote` → `② Explain-back` → `③ Review` → `—` |
+| **下一步** | `① Promote` → `② Explain-back` → `③ Cold` → `—` |
 | mastery / reviewed / explain_back | Status at a glance |
 
 Rows sort by **下一步** priority — no separate consolidate section.
@@ -26,8 +26,8 @@ Vault index: `wiki/overview.md` · `wiki/domain-map.md`
 | Mark | You do |
 |------|--------|
 | `① Promote` | `Promote [[slug]] to solid` |
-| `② Explain-back` | `Explain-back [[slug]]` |
-| `③ Review` | Re-read concept → `Review [[slug]]` |
+| `② Explain-back` | `Explain-back [[slug]]` or `cold` |
+| `③ Cold` | `Explain-back [[slug]] cold` (never reviewed or `updated > reviewed`) |
 | `—` | No action; continue **建议学习顺序** for next **A** |
 
 Same buckets from `lint-review-queue.py` or `Review queue: <domain>`.
@@ -40,11 +40,12 @@ A concept page is a **compiled map**, not the textbook. Explain-back often tests
 
 ### First learn (Tier A / new material)
 
-1. Read **`## Explain-back`** first — use as self-test outline  
-2. Read **Claim**, body, **`## Prerequisites`** chain  
-3. Try to answer Explain-back bullets closed-book  
-4. On miss → open **one** matching **Evidence** row (`sources/.../md/`)  
-5. `Review [[slug]]` → `Explain-back [[slug]]` → `Promote` if passed  
+1. **`Explain-back [[slug]] cold`** (recommended) — answer from memory before seeing Claim  
+2. After cold session: read gaps → **Evidence** rows for misses only  
+3. If mechanism still weak → **`Explain-back [[slug]] feynman`**  
+4. Pass → `Promote [[slug]] to solid`  
+
+**Review-first path** (revision only): read Claim + body → default `Explain-back [[slug]]`.
 
 ### Review (already studied)
 
@@ -69,9 +70,9 @@ A concept page is a **compiled map**, not the textbook. Explain-back often tests
 ### 15-minute block
 
 1. Pick one row with **下一步** `①`/`②`/`③` on `study.md`  
-2. Explain-back bullets → Claim/body (5–8 min)  
-3. Closed-book attempt → one Evidence row if stuck  
-4. `Explain-back [[slug]]` or `Review` first  
+2. **New material:** `Explain-back [[slug]] cold` (5–8 min)  
+3. Fill gaps from Evidence; feynman if needed  
+4. Promote if passed  
 
 ---
 
@@ -83,10 +84,8 @@ A concept page is a **compiled map**, not the textbook. Explain-back often tests
 | Ingest | deepen + Evidence + Explain-back | New source |
 | Query | search / think | Questions |
 | Revise | fix pages | Errors |
-| **Study** | Review, Explain-back, Promote, Review queue | Learning |
-| Lint | health + review queue | After big ingest, or when something feels stale |
-
-**Weekly** is optional — a bundled alias for `Lint` + one suggested Explain-back (~15 min). **Not required** if you Study ad hoc. Skip Weekly entirely when you already run `Review queue` and `Lint` when needed.
+| **Study** | Explain-back (cold / default / feynman), Promote, Review queue | Learning |
+| Lint | health + review queue | After big ingest |
 
 ---
 
@@ -94,11 +93,13 @@ A concept page is a **compiled map**, not the textbook. Explain-back often tests
 
 | You say | Agent does |
 |---------|------------|
-| `Review [[concept]]` | Set `reviewed:` today |
-| `Explain-back [[concept]]` | **Interactive (default):** one `## Explain-back` prompt at a time → you answer → brief feedback → next — [§ Interactive explain-back](#interactive-explain-back-default) |
+| `Explain-back [[concept]]` | **Interactive (default):** one prompt at a time — [§ Interactive explain-back](#interactive-explain-back-default) |
+| `Explain-back [[concept]] cold` / `先测后读` | [§ Cold explain-back](#cold-explain-back-first-learn) — no Claim/body until after you answer |
+| `Explain-back [[concept]] feynman` | [§ Feynman explain-back](#feynman-explain-back-opt-in) — teach like to a curious 12-year-old; why/example probes |
 | `Review queue: cisco-aci` | List `updated > reviewed` and never reviewed |
 | `Promote [[concept]] to solid` | Only if `explain_back: passed` |
-| `Weekly` | Optional: lint + review queue + suggest one Explain-back → `log.md` |
+
+`reviewed:` is set by Explain-back sessions (not a separate verb).
 
 ---
 
@@ -116,7 +117,7 @@ updated: 2026-06-14            # last agent or study edit (replaces wiki_revised
 
 | Field | Who sets | Meaning |
 |-------|----------|---------|
-| `reviewed` | You / Review | You've read this version |
+| `reviewed` | Explain-back end | You've engaged this version (set automatically) |
 | `explain_back` | Explain-back | Can you teach it back? |
 | `mastery` | Promote / passed explain-back | `learning` vs `solid` |
 | `updated` | Agent on Revise/Ingest; agent on Explain-back | Triggers re-read if `> reviewed` |
@@ -131,12 +132,14 @@ Add `epistemic: contested` only when sources disagree — not on every page.
 
 Place **before** `## Evidence`. Ingest/deepen adds 3–4 prompts per concept.
 
+**Quality rules (ingest):** No pure-definition prompts. Each concept needs ≥1 contrast, scenario, remove-premise, or failure-mode question. Prefer synthesis across Claim sections.
+
 ```markdown
 ## Explain-back
 
 1. *"…open question…"*
 2. *"…trap or contrast…"*
-3. *"…procedure or object model…"*
+3. *"…scenario or migration…"*
 
 **Rubric:** Claim correct · mechanism OK · ≥1 constraint/trap · aligns with Evidence.
 ```
@@ -152,6 +155,22 @@ Place **before** `## Evidence`. Ingest/deepen adds 3–4 prompts per concept.
 | **fail** | Wrong or contradicts wiki | `explain_back: attempted`; suggest **Revise** |
 
 **Promote to `solid`:** `explain_back: passed` required.
+
+---
+
+## Cold explain-back (first learn)
+
+**Trigger:** `Explain-back [[concept]] cold` or `先测后读`.
+
+**Tier A first pass:** use **cold** instead of reading Claim then default Explain-back.
+
+| Phase | Agent | User |
+|-------|-------|------|
+| During session | Ask `## Explain-back` prompts one at a time; grade each | Answer from memory only |
+| **Hidden** | Do **not** show Claim, body, or Evidence until session ends | — |
+| After last prompt | Reveal Claim one-liner + gap list vs Evidence | Read missed Evidence; feynman if needed |
+
+Same frontmatter rubric as default. **Retest:** Lint `RETEST` bucket → `Explain-back [[slug]] cold` for stale `solid`.
 
 ---
 
@@ -218,9 +237,27 @@ flowchart TD
 ## [YYYY-MM-DD] explain-back | [[concept-slug]] — passed (4/4)
 ```
 
-### Batch mode (opt-in)
+---
 
-If user says `Explain-back [[concept]] batch` or `一次出题`, may publish all prompts without answers, then grade when they submit — same rubric. **Not default.**
+## Feynman explain-back (opt-in)
+
+**Trigger:** `Explain-back [[concept]] feynman` or `feynman` on the same line.
+
+Use when default or cold Explain-back feels too quiz-like, or you can recite facts but cannot **explain simply**. Same Promote gate: `explain_back: passed`.
+
+**Persona:** Agent plays a curious **12-year-old** — probes with「为什么？」「举个具体例子？」「如果去掉 X 会怎样？」(1–2 per round, not a lecture).
+
+| Step | You | Agent |
+|------|-----|-------|
+| 1 | `Explain-back [[slug]] feynman` | Domain context only (not full Claim); ask you to teach back freely |
+| 2 | Explain in your own words | ✅/⚠️/❌; gaps; child-style follow-ups on weak spots |
+| 3 | Optional link | 「这和 [[prerequisite]] 怎么连？」when ## Prerequisite exists |
+| 4 | Explain again, simpler | Repeat until core mechanism ✅ |
+| 5 | `Promote [[slug]] to solid` if passed | — |
+
+**Agent rules:** No long lecture before your first attempt. Grade against Claim + Evidence only. Optional clean summary → `notes/on-concept/<slug>.md` if you say `保存 feynman 笔记`.
+
+**Log:** `## [YYYY-MM-DD] explain-back-feynman | [[slug]] — passed`
 
 ---
 
@@ -268,29 +305,16 @@ WHERE domain = "cisco-aci" AND mastery = "solid"
 python3 scripts/lint-review-queue.py <vault>/wiki
 ```
 
-Or say `Lint` / optional `Weekly` — script prints buckets:
+Or say `Lint` — script prints buckets:
 
 | Bucket | Meaning | Action |
 |--------|---------|--------|
 | `SOLID_CANDIDATE` | passed, not solid | `Promote [[slug]] to solid` |
-| `READ_UNTESTED` | reviewed, not passed | `Explain-back [[slug]]` |
+| `RETEST` | solid, `reviewed` >30d (default) | `Explain-back [[slug]] cold` |
+| `READ_UNTESTED` | reviewed, not passed | `Explain-back [[slug]]` or `cold` |
 | `STALE` | updated > reviewed | Re-read |
-| `NEVER_REVIEWED` | has Evidence, no reviewed | Review |
+| `NEVER_REVIEWED` | has Evidence, no reviewed | `Explain-back [[slug]] cold` (Tier A) |
 | `MISSING_EXPLAIN_BACK_SECTION` | deepened, no section | Add prompts |
-
----
-
-## Optional Weekly (~15 min)
-
-Only if you want a fixed ritual. Otherwise run **Lint** and **Study** when you feel like it.
-
-```
-- [ ] 1. Review queue — re-read where updated > reviewed
-- [ ] 2. One Explain-back on a weak concept
-- [ ] 3. Lint — links, Evidence, figures, review queue
-```
-
-Append `wiki/log.md`: `## [YYYY-MM-DD] weekly | …`
 
 ---
 
@@ -309,18 +333,16 @@ Append `wiki/log.md`: `## [YYYY-MM-DD] weekly | …`
 ## Example prompts
 
 ```
+Explain-back [[aci-border-leaf-l3out]] cold
+Explain-back [[aci-border-leaf-l3out]] feynman
 Explain-back [[aci-border-leaf-l3out]]
 /zhuomo explain-back eigrp
-
-Review [[aci-spine-leaf-topology]]
 
 Review queue: cisco-aci
 
 Promote [[aci-spine-leaf-topology]] to solid
 
 Lint
-
-Weekly
 ```
 
 ---
@@ -333,6 +355,5 @@ Weekly
 | L1 | `wiki/sources/` |
 | L2 | `wiki/concepts/` + `## Explain-back` |
 | L3 | `domains/<slug>/overview.md` (pillars + Dataview) |
-| Optional | `wiki/learn/fables/` |
 
-No `learn/digests/`, `learn/reviews/`, or `learn/applied/` by default.
+No `learn/digests/` or `learn/fables/` by default.

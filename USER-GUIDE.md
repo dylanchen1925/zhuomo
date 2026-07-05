@@ -4,7 +4,7 @@ How to set up **琢磨 (Zhuomo)**, learn from sources **one concept at a time**,
 
 **You read this guide.** The agent reads [SKILL.md](SKILL.md).
 
-**Quick links:** [REVIEW.md](REVIEW.md) · [LEARNING.md](LEARNING.md) · [FRAMEWORK.md](FRAMEWORK.md) · Obsidian `wiki/help.md`
+**Quick links:** [REVIEW.md](REVIEW.md) · [LEARNING.md](LEARNING.md) · Obsidian `wiki/help.md`
 
 ---
 
@@ -37,7 +37,7 @@ How to set up **琢磨 (Zhuomo)**, learn from sources **one concept at a time**,
 |-------------|----------------------|
 | EPUB, PDF, articles, video notes, highlights | **Wiki** (Obsidian) — concepts, Evidence, frameworks |
 | Repeatable agent behavior | **Skills** (Cursor) — triggers and workflows |
-| Your study time | **Digests**, **Explain-back** prompts, optional **fables** |
+| Your study time | **Explain-back** prompts (cold / feynman) |
 
 **You do not need to name topics upfront.** Drop a source; the agent proposes a topic map and ingests into `wiki/concepts/`.
 
@@ -99,8 +99,7 @@ vault/
     ├── concepts/*.md
     ├── sources/
     ├── synthesis/
-    └── learn/
-        └── fables/     # optional
+    └── notes/
 ```
 
 ### Step 3: Open Obsidian
@@ -129,19 +128,21 @@ Browse `wiki/concepts/` — each deepened page should have **Explain-back** then
 
 ```mermaid
 flowchart LR
-  R[Read concept] --> V[Review]
-  V --> E[Explain-back]
-  E --> P{passed?}
+  C[cold Explain-back] --> E[Evidence gaps]
+  E --> F[feynman]
+  F --> P{passed?}
   P -->|yes| S[solid]
-  P -->|no| F[Fable or Revise]
+  P -->|no| R[Revise]
 ```
 
 | Step | You say | What happens |
 |------|---------|----------------|
-| **Read** | Open `wiki/concepts/…` | Claim, mechanics, figures inline |
-| **Review** | `Review [[concept]]` | `reviewed: YYYY-MM-DD` on the page |
-| **Explain-back** | `Explain-back [[concept]]` | Agent 逐题用 `## Explain-back` 提问 → 你讲回来 → 简短反馈 → 全部完成后更新 frontmatter（[REVIEW.md](REVIEW.md#interactive-explain-back-default)） |
-| **Promote** | `Promote [[concept]] to solid` | After **passed** — updates concept frontmatter |
+| **Cold** | `Explain-back [[concept]] cold` | Test before Claim — [REVIEW.md](REVIEW.md#cold-explain-back-first-learn) |
+| **Explain-back** | `Explain-back [[concept]]` | Revision path; one prompt per turn |
+| **Feynman** | `Explain-back [[concept]] feynman` | Teach-back with child-style probes |
+| **Promote** | `Promote [[concept]] to solid` | After **passed** |
+
+`reviewed` is set automatically by Explain-back sessions.
 
 Full spec: [REVIEW.md](REVIEW.md).
 
@@ -171,7 +172,7 @@ Full spec: [REVIEW.md](REVIEW.md).
 | `mastery` | `learning` · `solid` |
 | `updated` | Agent last edited — if **after** `reviewed`, read again |
 
-**Agent revise ≠ you reviewed.** After you and the agent fix a page in chat, run `Review [[concept]]` when satisfied.
+**After Revise:** run `Explain-back [[concept]] cold` if the page changed materially (`updated > reviewed`).
 
 ### Explain-back rubric (summary)
 
@@ -179,7 +180,7 @@ Full spec: [REVIEW.md](REVIEW.md).
 
 **Passed:** correct Claim, mechanism OK, at least one constraint/trap, aligns with Evidence, handles one follow-up.
 
-**Partial / fail:** agent suggests re-read, **Learn fable**, or **Revise**.
+**Partial / fail:** re-read Evidence, try **feynman**, or **Revise**.
 
 ### Review queue
 
@@ -202,56 +203,46 @@ Shows concepts where:
 | | **Lint** | **Revise** |
 |---|----------|------------|
 | **Purpose** | Health scan — find problems | Fix a specific page |
-| **Trigger** | `Lint`, `Weekly`, after big ingest | You spot error; Explain-back fail; Lint item |
+| **Trigger** | `Lint`, after big ingest | You spot error; Explain-back fail; Lint item |
 | **Changes wiki?** | Usually lists issues only | **Yes** — edits content |
 | **Log** | `lint | …` | `revise | [[concept]]` |
-| **Side effect** | — | Sets `updated` → may need **Review** again |
+| **Side effect** | — | Sets `updated` → run `Explain-back [[concept]] cold` again |
 
 **Typical flow:**
 
 ```
 Lint  →  "aci-border-leaf missing inline Figure"
 Revise →  Revise [[aci-border-leaf-l3out]] — add Figure 91 inline
-Review →  Review [[aci-border-leaf-l3out]] — I've read the fix
-Explain-back →  test mastery
+Explain-back cold →  test mastery after fix
 ```
 
 ---
 
-## 6. Daily and weekly habits
-
-### Light daily (5–10 min)
+## 6. Daily habits
 
 - Drop captures in `raw/inbox/`
-- Read one concept
-- `Review [[concept]]` or `Explain-back [[concept]]`
-
-### Weekly (optional)
-
-**Not required.** `Weekly` ≈ `Lint` + suggest one Explain-back (~15 min). Study ad hoc is enough.
+- One **Explain-back cold** on next Tier A from `domains/<slug>/study`
+- **`Lint`** when something feels stale
 
 ```
-/zhuomo Weekly
+/zhuomo Lint
+/zhuomo Review queue: kubernetes-cilium
 ```
-
-Or anytime: `Lint` · `Review queue: cisco-aci` · `Explain-back [[concept]]`
-
-Agent may append `wiki/log.md`.
 
 ---
 
 ## 7. Operations reference
 
-**Six verbs:** Bootstrap · Ingest · Query · Revise · Study · Lint. **Weekly** optional.
+**Six verbs:** Bootstrap · Ingest · Query · Revise · Study · Lint. **Connect** for personal cross-concept notes.
 
 | Verb | Examples | Output |
 |------|----------|--------|
 | **Ingest** | `Ingest: book.epub` | Concepts + Explain-back + Evidence |
 | **Query** | `Query: …` | Synthesis + Gaps |
-| **Study** | `Review` / `Explain-back` / `Promote` | Frontmatter mastery |
+| **Study** | `Explain-back cold` / `feynman` / `Promote` | Frontmatter mastery |
 | **Revise** | `Revise [[page]] — …` | Fixed pages + `updated` |
 | **Lint** | `Lint` | Issues + review queue |
-| **Learn fable** | `Learn fable: [[concept]]` | `wiki/learn/fables/` |
+| **Connect** | `Connect: … — 记入 synthesis` | `wiki/notes/synthesis/` |
 
 **Archive only** (no learn artifacts):
 
@@ -277,20 +268,15 @@ Agent may append `wiki/log.md`.
 /zhuomo Process everything in ~/zhuomo-data/raw/inbox/
 
 /zhuomo Lint
-
-/zhuomo Weekly
 ```
 
 ### Per-concept study
 
 ```
-Review [[aci-spine-leaf-topology]]
-
-Explain-back [[aci-border-leaf-l3out]]
-
+Explain-back [[aci-border-leaf-l3out]] cold
+Explain-back [[aci-border-leaf-l3out]] feynman
 Review queue: cisco-aci
-
-Promote [[aci-spine-leaf-topology]] to solid — explain-back passed
+Promote [[aci-spine-leaf-topology]] to solid
 ```
 
 ### Ingest
@@ -303,22 +289,10 @@ Promote [[aci-spine-leaf-topology]] to solid — explain-back passed
 /zhuomo Ingest overview only: huge-book.epub
 ```
 
-### Learn
+### Connect
 
 ```
-/zhuomo Learn mode: preview raw/new-book.epub ch.1
-
-/zhuomo Learn fable: [[aci-tenant-epg-contract]] — reveal at end
-
-/zhuomo Connect: how does [[aci-multi-pod]] relate to [[aci-multi-site]]?
-```
-
-### Skills
-
-```
-/zhuomo Extract skill from [[concept-page]] — RED first
-
-/zhuomo Domain skill: network-expert — wiki backend wiki/domains/networking/
+/zhuomo Connect: how does [[aci-multi-pod]] relate to [[aci-multi-site]]? — 记入 synthesis
 ```
 
 ### Revise
@@ -343,8 +317,7 @@ Default ingest: **concepts only** — no `learn/digests/`.
 
 | On demand | Output |
 |-----------|--------|
-| **Fable** | `Learn fable: [[concept]]` → `wiki/learn/fables/` |
-| **Connect** | Cross-domain relations in chat |
+| **Connect** | `Connect: … — 记入 synthesis` → `wiki/notes/synthesis/` |
 
 Explain-back prompts live on each concept page. Detail: [LEARNING.md](LEARNING.md).
 
@@ -372,38 +345,25 @@ How to use queries: [REVIEW.md](REVIEW.md#progress-in-obsidian-dataview).
 /zhuomo Promote [[aci-spine-leaf-topology]] to solid
 ```
 
-Template: [LEARNING.md](LEARNING.md) · [FRAMEWORK.md](FRAMEWORK.md).
+Template: [LEARNING.md](LEARNING.md).
 
 ---
 
 ## 11. Creating agent skills
 
-Create a **technique skill** when:
-
-- Clear **trigger** (symptom, situation)
-- Action is **non-default** for the agent
-- You want compliance under pressure
-
-Do **not** skill-ify book summaries or wiki-only facts.
-
-### Workflow (TDD)
-
-1. Ingest to wiki first
-2. Extraction card — trigger, move, steps, anti-pattern
-3. RED → GREEN → REFACTOR on `SKILL.md`
-4. Link wiki + `SOURCES.md`
+**Not a zhuomo verb.** Ingest concepts to wiki first, then chat with Cursor:
 
 ```
-/zhuomo Extract skill from [[concept]] — RED then GREEN
+根据 wiki 里的 [[cilium-datapath-modes]] 写一个 skill，触发词用「选 Cilium 路由模式」
 ```
 
-Follow [SKILL.md § Skill extraction](SKILL.md#skill-extraction-self-contained-red--green--refactor) — RED/GREEN/REFACTOR is inlined; no other Cursor skill required.
+Optional file layout: [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md). When facts change: **Revise wiki** first.
 
 ---
 
 ## 12. Domain skills (wiki-backed experts)
 
-Expert persona + **WIKI-SCOPE.md** manifest. Facts stay in wiki.
+Expert persona + **WIKI-SCOPE.md** manifest. Facts stay in wiki. Create via chat (see §11).
 
 ```
 /zhuomo Domain skill: network-expert — wiki backend wiki/domains/cisco-aci/
@@ -509,9 +469,8 @@ Read 5–15 min; Explain-back 5–10 min when ready.
 | File | Use when |
 |------|----------|
 | [USER-GUIDE.md](USER-GUIDE.md) | This guide |
-| [REVIEW.md](REVIEW.md) | Study, Explain-back, Dataview, optional Weekly |
-| [LEARNING.md](LEARNING.md) | Fable, framework |
-| [FRAMEWORK.md](FRAMEWORK.md) | System model |
+| [REVIEW.md](REVIEW.md) | Study, Explain-back, Dataview |
+| [LEARNING.md](LEARNING.md) | Connect, domain overviews |
 | [SKILL.md](SKILL.md) | Agent entry point |
 | [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) | Wiki layout (agents) |
 | [REFERENCE.md](REFERENCE.md) | EPUB, Readwise, revision cards |

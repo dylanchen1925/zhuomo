@@ -13,7 +13,7 @@ Bootstrapped: {{BOOTSTRAP_DATE}}
 
 **Opt-out / literary:** `overview only`, `lite`, `archive only`, `selective deepen`, `精读` — fiction/poetry appreciation defaults to overview/archive unless user says 精读.
 
-**Archive only:** Ingest source + concept stubs only; skip Explain-back / fable unless asked.
+**Archive only:** Ingest source + concept stubs only; skip Explain-back unless asked.
 
 **No default digests:** Do not create `learn/digests/`, `learn/reviews/`, or `learn/applied/`.
 
@@ -24,8 +24,9 @@ Bootstrapped: {{BOOTSTRAP_DATE}}
 1. **Topic map** on `wiki/sources/[slug].md`
 2. **EPUB/PDF** → `wiki/sources/[slug]/md/` via `~/zhuomo/scripts/epub-to-wiki-md.py` or `pdf-to-wiki-md.py` (images → `md/assets/`)
 3. **Deepen all** topic-map concepts unless user opted out
-4. **Framework** — `domains/<slug>/overview.md` pillars, **Dataview progress**, gaps; optional concept-index `guide.md`
-5. **Explain-back** — 3+ prompts under `## Explain-back` on each deepened concept; **fable** only if user asks
+4. **Domain overview** — `domains/<slug>/overview.md` pillars, Dataview, gaps; optional `guide.md`
+5. **Explain-back** — 3–4 prompts per deepened concept: **no pure definitions**; ≥1 contrast/scenario/trap
+6. **Study paths** — run `sync-domain-study-paths.py` after ingest
 
 ---
 
@@ -47,7 +48,7 @@ Body order: **`## Claim`** → optional **`## Personal notes`** (link to `notes/
 | Rule | Detail |
 |------|--------|
 | **Personal prose** | `wiki/notes/` only — not long text in `## Claim` / `## Evidence` |
-| Re-read | `updated > reviewed` → user should Review again |
+| Re-read | `updated > reviewed` → `Explain-back [[slug]] cold` |
 | **solid** | Only after `explain_back: passed` (Promote or passed Explain-back session) |
 | Progress tables | **Dataview on concepts** in domain `overview.md` — never hand-maintain 100-row tables |
 | Figures | Inline image or mermaid at first mention of Figure N — never bare "see Figure N" |
@@ -68,7 +69,6 @@ Repo: `~/zhuomo/REVIEW.md` (Study), `~/zhuomo/REFERENCE.md` (figures, EPUB, revi
 | Sources | `wiki/sources/<slug>.md` + `md/` text corpus; images in `~/zhuomo-data/corpus/<slug>/assets/` |
 | Log | `wiki/log.md` — append-only |
 | **Personal notes** | `wiki/notes/` — user-authored; see `templates/wiki/notes-README.md` |
-| Fables (optional) | `wiki/learn/fables/` |
 
 **New domain:** Add row to `wiki/overview.md` + `wiki/domain-map.md`; create `domains/<slug>/overview.md`.
 
@@ -98,10 +98,10 @@ Repo: `~/zhuomo/REVIEW.md` (Study), `~/zhuomo/REFERENCE.md` (figures, EPUB, revi
 | **Ingest** | New source | Brain-first search wiki; topic map; reference depth default |
 | **Query** | Questions | Brain-first read order; think mode → Answer + Sources + **Gaps** |
 | **Revise** | Errors, contradictions | Propagate fix; set `updated:`; log |
-| **Study** | Learning | Review, Explain-back (one prompt/turn), Promote, Review queue |
-| **Lint** | Health | `lint-review-queue.py`, `lint-figure-visuals.py`; log issues |
+| **Study** | Learning | cold, Explain-back, feynman, Promote, Review queue |
+| **Lint** | Health | `lint-review-queue.py`, `lint-figure-visuals.py` |
 
-**Weekly (optional):** Lint + review queue + suggest one Explain-back (~15 min). Not required.
+**Connect:** `Connect: … — 记入 synthesis` → `wiki/notes/synthesis/` (personal). See `~/zhuomo/LEARNING.md`.
 
 ---
 
@@ -125,14 +125,14 @@ File durable synthesis to `wiki/synthesis/` or extend concepts; append `log.md` 
 
 ## Lint (doctor-lite)
 
-Run on request, after large ingest, or optional Weekly:
+Run on request or after large ingest:
 
 ```bash
 python3 ~/zhuomo/scripts/lint-review-queue.py {{VAULT_PATH}}wiki
 python3 ~/zhuomo/scripts/lint-figure-visuals.py {{VAULT_PATH}}wiki
 ```
 
-Fix: broken wikilinks, orphans, missing Evidence / Explain-back, figure embeds, contradictions, duplicates. Lint buckets: `SOLID_CANDIDATE`, `READ_UNTESTED`, `STALE`, … — see SKILL.md § Lint.
+Fix: broken wikilinks, orphans, missing Evidence / Explain-back, figure embeds, contradictions, duplicates. Lint buckets: `SOLID_CANDIDATE`, `RETEST`, `READ_UNTESTED`, `STALE`, … — see SKILL.md § Lint.
 
 ---
 
@@ -146,13 +146,11 @@ When wrong, stale, contradicted, or duplicated: revision card → edit / superse
 
 ## Study / Explain-back
 
-- `Review [[concept]]` → set `reviewed: <today>`
-- `Explain-back [[concept]]` → **one** `## Explain-back` prompt per turn; grade ✅/⚠️/❌; update frontmatter **after last prompt only**
+- `Explain-back [[concept]] cold` → Tier A first pass: **hide Claim** until session ends
+- `Explain-back [[concept]]` → one prompt per turn (revision path)
+- `Explain-back [[concept]] feynman` → child-persona teach-back loop
 - `Promote [[concept]] to solid` → only if `explain_back: passed`
-- Domain **Tier A/B** in `overview.md` §建议学习顺序; progress in `domains/<slug>/study.md` — sync via `sync-domain-study-paths.py`
-- Overview Dataview: **Solid 候选** · **读过未测** (see REVIEW.md)
-
-Batch mode only if user says `batch` or `一次出题`.
+- `reviewed:` set by Explain-back sessions — no separate Review verb
 
 ---
 

@@ -1,85 +1,107 @@
-# Learning & Frameworks (Zhuomo)
+# Learning & domain overviews (Zhuomo)
 
 Help the user **learn from concepts** and **maintain domain overviews** — not duplicate content in digests.
 
-**Study loop:** [REVIEW.md](REVIEW.md) — per-concept `## Explain-back`; on demand, **interactive explain-back** (one prompt per turn).
+**Study loop:** [REVIEW.md](REVIEW.md) — `Explain-back` (cold / default / feynman) + Promote.
 
 ---
 
-## Learn operation
+## Architecture (optional)
 
-Runs **during ingest** (Explain-back prompts on concepts) or **on demand** (fable). Default ingest does **not** write `learn/digests/`.
+**North star:** Turn raw sources into durable wiki you can study from; agents query corpus, not re-read EPUBs.
+
+| Layer | Location | Role |
+|-------|----------|------|
+| **Raw** | `~/zhuomo-data/raw/` | Immutable snapshots — never edited by agent |
+| **Wiki** | Obsidian `wiki/` | Concepts, Evidence, domains, synthesis |
+| **Personal** | `wiki/notes/` | Your models and takes — not ingest output |
+
+**RAG rediscovers every question. A wiki accumulates.** Ingest compiles once; Query and Revise keep it current.
+
+**Cursor skills:** Not part of zhuomo verbs. To build a skill from wiki content, chat with the agent and point at `[[concepts]]` — no `Extract skill` workflow in this repo.
+
+---
+
+## Explain-back at ingest (required quality)
+
+Every deepened concept gets `## Explain-back` with **3–4 prompts**:
+
+| Rule | Detail |
+|------|--------|
+| **Ban** | Pure definition recall ("What is X?") |
+| **Require ≥1** | Contrast, scenario/decision, remove-premise, or failure/troubleshooting |
+| **Prefer** | Synthesis across Claim — not copying one bullet |
+| **Rubric line** | `Claim correct · mechanism OK · ≥1 constraint/trap · aligns with Evidence` |
+
+**Tier A first pass:** `Explain-back [[slug]] cold` — [REVIEW.md](REVIEW.md#cold-explain-back-first-learn).
 
 ### Learning outputs
 
 | Artifact | Path | When |
 |----------|------|------|
 | **Explain-back prompts** | `wiki/concepts/*.md` `## Explain-back` | Every deepen (default) |
-| **Concept fable** | `wiki/learn/fables/[domain]/` | User asks; hard abstract concept |
 | **Gap list** | `domains/<slug>/overview.md` §尚未覆盖 | After ingest |
 | **Synthesis (compiled L1)** | `wiki/synthesis/*.md` | Ingest / Query file-back (`origin: zhuomo`) |
 | **Personal take (L2)** | `wiki/notes/on-concept/<slug>.md` | `Revise [[x]] — 我的想法：…` |
 | **Personal synthesis (L1)** | `wiki/notes/synthesis/*.md` | `Connect: … — 记入 synthesis` |
 
-### Model layers (where your thinking lives)
+### Model layers
 
 | Layer | Location | Content |
 |-------|----------|---------|
-| **L0** | `domains/<slug>/overview.md` 心智模型 | One domain map — agent/user Revise on corpus |
-| **L1 compiled** | `wiki/synthesis/` | Cross-book themes from ingest (`origin: zhuomo`) |
+| **L0** | `domains/<slug>/overview.md` | Domain map — pillars, gaps, Dataview progress |
+| **L1 compiled** | `wiki/synthesis/` | Cross-book themes (`origin: zhuomo`) |
 | **L1 personal** | `wiki/notes/synthesis/` | Your cross-concept models (`origin: personal`) |
-| **L2 personal** | `wiki/notes/on-concept/` | Your judgment on one concept — not `## Evidence` |
+| **L2 personal** | `wiki/notes/on-concept/` | Your judgment on one concept |
 
-### Learn modes
+---
 
-| Mode | When | What agent does |
-|------|------|-----------------|
-| **Fable** | User says "I don't get [[concept]]" | Askell-style story → `wiki/learn/fables/` |
-| **Connect** | Cross-domain or personal model | Chat + **file** to `wiki/notes/synthesis/` if user says 记入 synthesis |
+## Connect
 
-### Fable mode (Amanda Askell)
+**What it is:** Save a **personal** cross-concept insight from chat — comparison, mental model, checklist — into `wiki/notes/synthesis/`.
 
-1. Read `[[concept]]` + Evidence — fable must match wiki.
-2. Short story (≈300–800 words); reveal at end.
-3. File to `wiki/learn/fables/[domain]/[slug].md`; link from concept.
+**When to use:** You connected two or more `[[concepts]]` (or domains) in conversation and want it filed for later — not merged into corpus Claim.
 
-**Not a substitute for** Evidence or Explain-back.
+**Say:** `Connect: <your insight> — 记入 synthesis`
+
+**Agent does:**
+
+1. Copy `templates/wiki/synthesis.md` → `wiki/notes/synthesis/<kebab>.md`
+2. Set `origin: personal`, `kind: chat-summary`
+3. Fill `## Model` / `## My take`; wikilink related concepts
+4. Append `log.md`: `## [date] connect | notes/synthesis/<slug>`
+
+**Not Connect:** Ingest/Query writing compiled themes to `wiki/synthesis/` (`origin: zhuomo`) — that is corpus file-back, not personal Connect.
+
+**Single-concept opinion:** `Revise [[concept]] — 我的想法：…` → `notes/on-concept/<slug>.md` instead.
+
+---
+
+## Domain overview maintenance
+
+**`domains/<slug>/overview.md`** — pillars, **Dataview progress**, glossary, gaps, **建议学习顺序** (Tier **A** / **B**).
+
+**`guide.md`** — concept index only (concept-first).
+
+Progress: Obsidian Dataview on concept frontmatter — [REVIEW.md](REVIEW.md#progress-in-obsidian-dataview).
+
+**After ingest (agent checklist):**
+
+- [ ] Concepts: `## Evidence` + `## Explain-back` (quality rules above)
+- [ ] Frontmatter: `domain`, `mastery`, `explain_back`, `updated`
+- [ ] Domain `overview.md` pillars + gaps
+- [ ] Run `sync-domain-study-paths.py` (or `--tiers-only`)
+
+```bash
+python3 ~/zhuomo/scripts/sync-domain-study-paths.py <vault>/wiki
+python3 ~/zhuomo/scripts/sync-domain-study-paths.py <vault>/wiki --tiers-only
+```
 
 ### Example prompts
 
 ```
-/zhuomo Learn fable: [[aci-tenant-epg-contract]] — story first, reveal at end
+Connect: native routing vs overlay in Cilium and ACI L3Out — 记入 synthesis
 
-Explain-back [[aci-border-leaf-l3out]]
+Explain-back [[aci-border-leaf-l3out]] cold
+Explain-back [[aci-border-leaf-l3out]] feynman
 ```
-
----
-
-## Framework operation
-
-**`domains/<slug>/overview.md`** — north star, pillars, **Dataview progress**, glossary, gaps.
-
-**`guide.md`** — concept index + mental model only (concept-first). No merged technical digest.
-
-Progress: Obsidian Dataview on concept frontmatter — see [REVIEW.md](REVIEW.md#progress-in-obsidian-dataview).
-
-**Study path:** numbered list with `[[concept-slug]]` wikilinks on `overview.md` (and short mirror on `guide.md`).
-
-**Mastery tiers (A/B/C/D):** inline on **建议学习顺序** (**A** / **B** markers); synced from `scripts/domain_study_tiers.py`.
-
-```bash
-# Paths + tiers + Dataview solid/read queues
-python3 ~/zhuomo/scripts/sync-domain-study-paths.py <vault>/wiki
-
-# After ingest — tiers/queues only
-python3 ~/zhuomo/scripts/sync-domain-study-paths.py <vault>/wiki --tiers-only
-```
-
-### After ingest checklist (agent)
-
-- [ ] Concepts: `## Evidence` + `## Explain-back`
-- [ ] Frontmatter: `domain`, `mastery`, `explain_back`, `updated` on deepen/revise
-- [ ] Domain `overview.md` pillars + gaps (no hand-maintained progress table)
-- [ ] Optional slim `guide.md` index
-- [ ] **Study path / tiers:** run `sync-domain-study-paths.py` (or `--tiers-only` if paths unchanged)
-- [ ] **Synthesis gate:** closing block asks if user wants domain model / synthesis update

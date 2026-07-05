@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 **琢磨** — polish raw sources into a **personal wiki** + optional **agent skills**. This file is **self-contained**: follow it without loading other Cursor skills. Extended detail: [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md), [REFERENCE.md](REFERENCE.md), [REVIEW.md](REVIEW.md).
 
-**Human docs:** [USER-GUIDE.md](USER-GUIDE.md) · [SIMPLE.md](SIMPLE.md) · [FRAMEWORK.md](FRAMEWORK.md)
+**Human docs:** [USER-GUIDE.md](USER-GUIDE.md) · [SIMPLE.md](SIMPLE.md) · [LEARNING.md](LEARNING.md)
 
 ---
 
@@ -23,10 +23,9 @@ Scan the user message **top to bottom**. First matching row wins. If two verbs a
 | `Query search:` or "list wiki pages" | **Query (search)** | § Query — search template only |
 | `Query`, `Query think:`, question about existing wiki | **Query (think)** | § Query — read wiki brain-first |
 | `Revise`, `修正`, user reports wiki error | **Revise** | § Revise |
-| `Review [[`, `Explain-back`, `explain-back`, `Promote [[`, `Review queue` | **Study** | § Study |
-| `Lint`, `Weekly`, `doctor`, health check | **Lint** (+ Weekly if said) | Run scripts § Scripts |
-| `Learn fable`, `Framework`, `Connect` | **Learn** (subset) | [LEARNING.md](LEARNING.md); `Framework` → `sync-domain-study-paths.py` (`--tiers-only` = 只更新分层) |
-| `Extract skill`, `RED`, skill from concept | **Skill extract** | § Skill extraction |
+| `Explain-back`, `explain-back`, `Explain-back … cold`, `先测后读`, `Explain-back … feynman`, `feynman`, `Promote [[`, `Review queue` | **Study** | § Study |
+| `Lint`, `doctor`, health check | **Lint** | Run scripts § Scripts |
+| `Connect` | **Connect** | § Connect — [LEARNING.md](LEARNING.md) |
 | "怎么用", "有哪些功能" | **Help** | Link vault `[[help]]` + `SIMPLE.md`; do not dump full spec |
 | Ambiguous + large book/EPUB, no `overview only` / `lite` | **Confirm** | § Confirm menu — **stop** until user replies |
 
@@ -46,11 +45,11 @@ Scan the user message **top to bottom**. First matching row wins. If two verbs a
 2. **Never silent overwrite:** Revise in place or supersede with link; append `log.md`; set `updated:` on changed concept pages.
 3. **No hand-maintained progress tables:** Domain progress = Dataview on concept frontmatter only.
 4. **No default digests:** Do not create `learn/digests/` unless user explicitly asks.
-5. **Explain-back:** One prompt per turn unless user says `batch` / `一次出题`.
+5. **Explain-back:** One prompt per turn — always interactive default.
 6. **Figure N cited:** Inline image or mermaid at first mention — never bare "see Figure N".
 7. **Closing block:** After Bootstrap / Ingest / Revise / Lint / major Query file-back — use exact 3-line shape in § Output templates.
 8. **Promote to `solid`:** Only when `explain_back: passed` (never on Review alone).
-9. **Skills ≠ wiki:** Wiki holds facts/synthesis; skills hold triggers + workflows. Do not paste BGP facts into SKILL.md — use domain skill + WIKI-SCOPE ([WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md)).
+9. **Skills ≠ wiki:** Wiki holds facts/synthesis. To create a Cursor skill from wiki content, ask the agent in chat (no zhuomo verb). Do not paste corpus facts into SKILL.md.
 10. **Corpus vs personal:** Skill writes **corpus** only (`concepts/`, `sources/`, ingest `synthesis/`). User personal notes live under **`wiki/notes/`** — never Ingest into `notes/`; never paste user judgment into corpus `## Claim` / `## Evidence`.
 
 ---
@@ -63,12 +62,9 @@ Scan the user message **top to bottom**. First matching row wins. If two verbs a
 | **Ingest** | topic map, md corpus, deepen, framework | Concepts + Evidence + `## Explain-back` |
 | **Query** | search / think | Answer + Gaps; optional file to `synthesis/` |
 | **Revise** | propagate fix | Corrected pages; `updated:`; log |
-| **Study** | Review, Explain-back, Promote, queue | Frontmatter mastery fields |
+| **Study** | Review, Explain-back (cold / feynman), Promote, queue | Frontmatter mastery fields |
 | **Lint** | doctor-lite + review queue | Issue list → Revise |
 
-**Weekly** = optional alias for Lint + suggest one Explain-back (~15 min). Not required.
-
----
 
 ## Wiki layout (do not invent other shapes)
 
@@ -204,7 +200,9 @@ One paragraph — current trusted statement.
 ## Explain-back
 1. *"Open question testing mechanism…"*
 2. *"Trap or contrast…"*
-3. *"Procedure or object model…"*
+3. *"Procedure, scenario, or migration…"*
+
+**Ingest quality (required):** See § Explain-back at ingest — no pure-definition prompts; ≥1 application/contrast/trap per concept.
 
 ## Evidence
 | 要点 | 原文 |
@@ -279,7 +277,6 @@ updated: YYYY-MM-DD
 2. Create wiki skeleton:
    index.md, log.md, overview.md, help.md (copy ~/zhuomo/templates/wiki/help.md),
    domain-map.md (copy ~/zhuomo/templates/wiki/domain-map.md),
-   learn/fables/ only,
    notes/ tree (copy ~/zhuomo/templates/wiki/notes-README.md → notes/README.md;
      mkdir notes/inbox notes/by-domain notes/on-concept notes/synthesis)
 3. Copy AGENTS.md template — do NOT write from scratch:
@@ -445,18 +442,7 @@ Output: numbered list — `[[page]] — one line why relevant`. No synthesis ess
 8. Closing block
 ```
 
-**Connect → wiki (model layer L1):**
-
-```
-User: Connect: <cross-concept insight> — 记入 synthesis
-```
-
-1. **Personal model** (default for Connect): copy `templates/wiki/synthesis.md` → `wiki/notes/synthesis/<kebab-slug>.md`, set `origin: personal`, fill `## My take`, link `[[concepts]]`
-2. **Compiled model** (only if user says「记入 corpus synthesis」或 ingest 主题): → `wiki/synthesis/<kebab-slug>.md` with `origin: zhuomo`
-3. Link from domain `overview.md` 心智模型 or corpus concept `## Personal notes`
-4. log.md: `## [date] connect | notes/synthesis/<slug>` or `synthesis/<slug>`
-
-**Never:** paste user model into corpus `## Claim` without separation in `notes/`.
+**Personal / cross-concept notes:** see § Connect and `Revise [[x]] — 我的想法：…` → `notes/on-concept/`.
 
 ---
 
@@ -466,11 +452,11 @@ User: Connect: <cross-concept insight> — 记入 synthesis
 
 | User says | Agent does |
 |-----------|------------|
-| `Review [[concept]]` | Set `reviewed: <today>` in frontmatter |
-| `Explain-back [[concept]]` | § Explain-back protocol |
+| `Explain-back [[concept]]` | § Explain-back protocol (default) |
+| `Explain-back [[concept]] cold` / `先测后读` | § Cold explain-back — test before revealing Claim |
+| `Explain-back [[concept]] feynman` / `feynman` | § Feynman explain-back protocol |
 | `Review queue: <domain>` | List concepts where `reviewed = null` OR `updated > reviewed` |
-| `Promote [[concept]] to solid` | If `explain_back: passed` → `mastery: solid`; else refuse and say run Explain-back |
-| `Weekly` | Lint + review queue + suggest one Explain-back → log |
+| `Promote [[concept]] to solid` | If `explain_back: passed` → `mastery: solid`; else refuse |
 
 ### Explain-back protocol (interactive — default)
 
@@ -510,13 +496,84 @@ END (after last prompt):
 | **partial** | Mix ⚠️/❌ but Claim salvageable | `explain_back: attempted`, `reviewed: today`, `updated: today` |
 | **fail** | Wrong Claim or repeated ❌ on mechanism | `explain_back: attempted`; suggest Revise or re-read Evidence |
 
-**Batch mode:** Only if user says `batch` or `一次出题`.
+### Cold explain-back protocol (first learn — recommended)
+
+**Trigger:** `Explain-back [[concept]] cold` or `… 先测后读` on same line.
+
+**Goal:** Retrieval practice before reading Claim — avoid fluency illusion from pre-reading summaries.
+
+```
+START:
+  1. Read wiki/concepts/<slug>.md internally (Claim, Explain-back, Evidence) — DO NOT quote Claim/body to user yet
+  2. Post intro: "先凭记忆答，不看笔记。答完再对照 wiki。"
+  3. Post ONLY prompt 1 from ## Explain-back
+
+EACH USER REPLY:
+  4. Grade THIS prompt: ✅ / ⚠️ / ❌ (same table as default)
+  5. Brief feedback — cite gaps only; still NO full Claim paste
+  6. Post ONLY next prompt
+
+END (after last prompt):
+  7. Session verdict + frontmatter (same table as default)
+  8. THEN reveal: Claim one-liner + bullet list of what user missed vs Evidence
+  9. Suggest: read missed Evidence rows OR `Explain-back [[slug]] feynman` if core mechanism weak
+ 10. Offer Promote if passed
+```
+
+**Rules:** Never show Claim, body, or Evidence anchors before user finishes the prompt. **Tier A first pass:** prefer `cold` over `Review` then default Explain-back.
+
+**Retest:** For `mastery: solid` with stale `reviewed`, Lint RETEST bucket → run `cold` again.
+
+### Feynman explain-back protocol
+
+**Trigger:** `Explain-back [[concept]] feynman` or `… feynman` on same line.
+
+Same **frontmatter** as default Explain-back (`explain_back: passed` → eligible for Promote). Differs in interaction shape:
+
+```
+START:
+  1. Read wiki/concepts/<slug>.md (Claim, Explain-back, Evidence)
+  2. Post intro: one-line domain context only (NOT full Claim) + "用你自己的话讲清楚，像教一个好奇的 12 岁小孩"
+  3. Persona: curious child — ask "为什么？" "能举个具体例子吗？" "如果去掉 X 会怎样？"
+
+EACH USER EXPLANATION:
+  3. Grade holistically: ✅ / ⚠️ / ❌ vs Claim + Evidence
+  4. List: what was right · exact gaps/mistakes · one trap if missed
+  5. Child follow-ups on gaps only (1–2 probes max per round) — not a lecture
+  6. Optional: "这和 [[prerequisite]] 怎么连？" if concept has ## Prerequisite links
+  7. Re-teach ONLY missed parts (short; cite Evidence anchor)
+  8. Ask user to explain again — simpler and more complete
+  9. Do NOT advance until core mechanism is ✅ (⚠️ on minor detail OK after 2 rounds)
+
+END:
+  8. Session verdict: passed | partial | fail (same table as default)
+  9. Update frontmatter per verdict
+ 10. Offer Promote if passed
+ 11. Optional: append clean 5–8 sentence summary to notes/on-concept/<slug>.md
+     (origin: personal) — user says `保存 feynman 笔记` or offer once at end
+ 12. log.md: ## [date] explain-back-feynman | [[slug]] — passed
+```
+
+**Rules:** One turn = one user explanation + one agent feedback block. No lecture before first attempt. No dumping full Claim rewrite. Feynman does **not** skip the numbered `## Explain-back` bullets — if passed via Feynman, those prompts are considered covered for Promote.
+
+### Explain-back at ingest (prompt quality)
+
+When deepening concepts, every `## Explain-back` section must follow:
+
+| Required | Detail |
+|----------|--------|
+| **Ban** | Pure definition recall ("What is X?") |
+| **Include ≥1** | Contrast (X vs Y), scenario/decision, remove-premise ("if we drop …"), or failure/troubleshooting |
+| **Prefer** | Synthesis across Claim sections — not a single bullet copy-paste answer |
+| **Count** | 3–4 prompts per deepened concept |
+
+Rubric line on page: `Claim correct · mechanism OK · ≥1 constraint/trap · aligns with Evidence`.
 
 ---
 
 ## Lint
 
-**Trigger:** `Lint`, after large ingest, or part of Weekly.
+**Trigger:** `Lint`, after large ingest.
 
 Run (replace `<vault>`):
 
@@ -531,9 +588,10 @@ python3 ~/zhuomo/scripts/lint-figure-visuals.py <vault>/wiki
 | Bucket | Action |
 |--------|--------|
 | `SOLID_CANDIDATE` | `Promote [[slug]] to solid` |
-| `READ_UNTESTED` | `Explain-back [[slug]]` — reviewed but not passed |
+| `RETEST` | `Explain-back [[slug]] cold` — solid but `reviewed` >30d (default; `--retest-days`) |
+| `READ_UNTESTED` | `Explain-back [[slug]]` or `cold` — reviewed but not passed |
 | `STALE` | Re-read + Review |
-| `NEVER_REVIEWED` | Review or deepen |
+| `NEVER_REVIEWED` | `Explain-back [[slug]] cold` (Tier A) or Review |
 | `MISSING_EXPLAIN_BACK_SECTION` | Add `## Explain-back` |
 
 | Check | If failed |
@@ -554,40 +612,22 @@ Append `## [date] lint | N issues` to `log.md`. List each issue with suggested R
 
 ---
 
-## Skill extraction (self-contained RED / GREEN / REFACTOR)
+## Connect
 
-**No external skill required.** Use when user says `Extract skill from [[concept]]` or after ingest for actionable techniques.
+**Trigger:** `Connect: …` or `Connect: … — 记入 synthesis` or user asks to save a cross-concept insight from chat.
 
-### Extraction card (fill before writing SKILL.md)
+**Purpose:** File **personal** cross-concept models to `wiki/notes/synthesis/` — not corpus `concepts/`.
 
-| Field | Content |
-|-------|---------|
-| Trigger | Situation/symptoms — not chapter title |
-| Core move | One non-obvious action |
-| Steps | Numbered workflow or decision tree |
-| Anti-pattern | Common failure |
-| Example | One before/after |
-| Type | technique / pattern / reference / discipline |
+```
+1. User states link/comparison/model across [[concepts]] or domains
+2. If user says 记入 synthesis (or clear intent to save):
+   - Copy templates/wiki/synthesis.md → wiki/notes/synthesis/<kebab>.md
+   - origin: personal, kind: chat-summary
+   - Fill ## Model / ## My take; wikilink concepts
+3. Do NOT merge into corpus Claim/Evidence unless user says Revise
+```
 
-**Filter:** Keep only if **actionable AND non-default** (agent would not do this without the skill).
-
-### RED (baseline — before SKILL.md exists)
-
-1. Describe trigger scenario to agent **without** showing draft skill.
-2. Record what agent actually does (especially wrong shortcuts).
-3. For **discipline** type: add time pressure / authority / sunk cost; note verbatim rationalizations.
-
-**Gate:** Do not write SKILL.md until RED shows a gap the skill must fix.
-
-### GREEN (minimal skill)
-
-Write SKILL.md with: name, description (CSO ≤1024 chars, third person, "Use when…"), trigger keywords, numbered steps, anti-pattern counter.
-
-### REFACTOR
-
-Add explicit counters for each RED rationalization. Re-run one RED scenario — agent must follow skill.
-
-Update `SOURCES.md` + `log.md`: `## [date] skill | <name> | from [[concept]]`
+**Compiled** cross-book themes from Ingest/Query still go to `wiki/synthesis/` (`origin: zhuomo`) — that is not Connect; it is ingest/query file-back.
 
 ---
 
@@ -607,7 +647,7 @@ Update `SOURCES.md` + `log.md`: `## [date] skill | <name> | from [[concept]]`
 ```markdown
 **✓ 完成：** [操作] — [1 句结果，如 12 concepts + Evidence]
 **→ 下一步：** [1–2 个具体建议，链到 [[wikilinks]] 或指令]
-**⚙ 可选：** `overview only` · `Learn fable [[stub]]` · `Weekly` · `Lint` · `更新 synthesis？`
+**⚙ 可选：** `overview only` · `Lint` · `Connect: … — 记入 synthesis` · `更新 synthesis？`
 ```
 
 ### log.md lines
@@ -618,7 +658,6 @@ Update `SOURCES.md` + `log.md`: `## [date] skill | <name> | from [[concept]]`
 ## [YYYY-MM-DD] revise | [[aci-foo]] | corrected FD_VNID claim
 ## [YYYY-MM-DD] lint | 3 broken links
 ## [YYYY-MM-DD] explain-back | [[aci-foo]] — passed (3/3)
-## [YYYY-MM-DD] weekly | lint + suggested [[aci-bar]]
 ```
 
 ### Source page header
@@ -685,7 +724,7 @@ Tier definitions: `scripts/domain_study_tiers.py` — edit then re-run sync.
 
 ### Explain-back
 
-- [ ] One prompt per turn (unless batch)
+- [ ] One prompt per turn
 - [ ] Frontmatter updated only at session end
 - [ ] `passed` not set if core mechanism contradicts wiki
 
@@ -745,6 +784,6 @@ Tier definitions: `scripts/domain_study_tiers.py` — edit then re-run sync.
 | [templates/AGENTS.md](templates/AGENTS.md) | Vault AGENTS.md — copy on Bootstrap |
 | [REFERENCE.md](REFERENCE.md) | EPUB/video/Readwise edge cases, revision cards |
 | [REVIEW.md](REVIEW.md) | Human-facing Study guide, Dataview examples |
-| [LEARNING.md](LEARNING.md) | Fable, Connect, framework rituals |
+| [LEARNING.md](LEARNING.md) | Connect, domain overviews, ingest study-path sync |
 | [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md) | Domain skills with WIKI-SCOPE |
 | [USER-GUIDE.md](USER-GUIDE.md) | Full user manual |

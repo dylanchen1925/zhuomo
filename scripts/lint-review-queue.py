@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Lint wiki concepts: review queue, solid candidates, read-but-untested."""
+"""Lint wiki concepts: review queue, solid candidates, read-but-untested, retest."""
 
 from __future__ import annotations
 
 import argparse
 import re
 import sys
+from datetime import date, timedelta
 from pathlib import Path
 
 FM_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.S)
@@ -17,6 +18,12 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("wiki_dir", type=Path)
     p.add_argument("--concepts-glob", default="concepts/*.md")
     p.add_argument("--domain", default=None, help="Filter by domain slug")
+    p.add_argument(
+        "--retest-days",
+        type=int,
+        default=30,
+        help="Flag solid concepts with reviewed older than N days (0 = disable)",
+    )
     return p.parse_args()
 
 
@@ -47,7 +54,12 @@ def main() -> int:
         "stale": [],
         "never_reviewed": [],
         "missing_explain_back": [],
+        "retest": [],
     }
+
+    retest_cutoff: date | None = None
+    if args.retest_days > 0:
+        retest_cutoff = date.today() - timedelta(days=args.retest_days)
 
     for path in sorted(wiki.glob(args.concepts_glob)):
         text = path.read_text(encoding="utf-8", errors="replace")
@@ -73,6 +85,24 @@ def main() -> int:
             buckets["solid_candidate"].append((rel, ["Promote to solid"]))
             continue
 
+        if (
+            retest_cutoff
+            and mastery == "solid"
+            and reviewed
+            and DATE_RE.match(reviewed)
+            and date.fromisoformat(reviewed) <= retest_cutoff
+        ):
+            buckets["retest"].append(
+                (
+                    rel,
+                    [
+                        f"reviewed={reviewed} (>{args.retest_days}d ago)",
+                        "Suggest: Explain-back [[slug]] cold",
+                    ],
+                )
+            )
+            continue
+
         if reviewed and explain_back != "passed":
             buckets["read_untested"].append(
                 (rel, [f"reviewed={reviewed}, explain_back={explain_back}"])
@@ -96,6 +126,7 @@ def main() -> int:
         "stale": "STALE (updated > reviewed)",
         "never_reviewed": "NEVER_REVIEWED",
         "missing_explain_back": "MISSING_EXPLAIN_BACK_SECTION",
+        "retest": f"RETEST (solid, reviewed >{args.retest_days}d ago — cold explain-back)",
     }
     for key in labels:
         items = buckets[key]

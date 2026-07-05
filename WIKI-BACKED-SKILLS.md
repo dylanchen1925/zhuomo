@@ -1,6 +1,8 @@
 # Wiki-Backed Domain Skills
 
-A **domain skill** makes an agent *think and act* like an expert. The **wiki** is the knowledge backend — facts, synthesis, contradictions, frameworks. The skill holds **triggers, workflow, and scope** — not a copy of the wiki.
+> **Creating skills:** Not a zhuomo verb. Chat with Cursor: point at `[[concepts]]` / domain overview and ask for a skill with triggers + workflow. See layout below if you want files under `~/.cursor/skills/`.
+
+A **domain skill** makes an agent *think and act* like an expert. The **wiki** is the knowledge backend. The skill holds **triggers, workflow, and scope** — not a copy of the wiki.
 
 Example: `network-expert` skill + your BGP/Ospf wiki pages → agent loads wiki at invoke time, reasons with citations, follows expert workflow.
 

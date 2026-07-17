@@ -231,6 +231,41 @@ python3 scripts/pdf-to-wiki-md.py raw/books/HDN.pdf \
 
 Requires: `pdftotext` (poppler); optional `pdfimages` for PNG extraction. Add page-range presets in `scripts/pdf-to-wiki-md.py` for new books.
 
+#### PPTX, DOCX, YouTube (MarkItDown)
+
+Use for training decks, whitepapers, and video transcripts when EPUB/PDF presets do not apply.
+
+**Workflow:**
+
+1. Copy source to `raw/ppt/`, `raw/web/`, or `raw/video/` (or pass a YouTube URL / `.url` sidecar).
+2. Convert to md corpus:
+
+```bash
+python3 -m pip install 'markitdown[pptx,docx]' youtube-transcript-api
+
+python3 scripts/markitdown-to-wiki-md.py raw/ppt/cwna-deck.pptx \
+  --out wiki/sources/cwna-deck/md \
+  --slug cwna-deck
+
+python3 scripts/markitdown-to-wiki-md.py 'https://www.youtube.com/watch?v=…' \
+  --out wiki/sources/my-talk/md \
+  --slug my-talk \
+  --youtube-chunk-sec 300
+```
+
+3. Write `wiki/sources/<slug>.md` topic map; **selective deepen** concepts (same as EPUB).
+4. Evidence links: `[[sources/<slug>/md/part-012#slide-title]]` or `[[…#t-0012-34]]` for YouTube timestamps.
+
+**Split rules:**
+
+| Input | Parts |
+|-------|--------|
+| **PPTX** | One part per slide (`<!-- Slide number: N -->`) |
+| **DOCX** | Split on `#` headings or short title lines |
+| **YouTube** | Metadata part + transcript chunks (default 300s); needs `youtube-transcript-api` for timestamps |
+
+PPTX images extract to `/corpus/<slug>/assets/` unless `--no-images`.
+
 **Alternative extraction options:**
 
 ```bash
@@ -332,9 +367,16 @@ for item in book.get_items_of_type(ebooklib.ITEM_DOCUMENT):
 
 ### Videos and podcasts
 
-1. Get transcript: user paste, auto-caption export, or summary notes.
-2. Record **timestamps** in `wiki/log.md` for traceability.
-3. Demos: convert to one runnable example in synthesis or concept Mechanics, not a play-by-play.
+1. **Preferred:** convert with MarkItDown + transcript API:
+
+```bash
+python3 scripts/markitdown-to-wiki-md.py 'https://www.youtube.com/watch?v=…' \
+  --out wiki/sources/<slug>/md --slug <slug>
+```
+
+2. Or get transcript manually: user paste, auto-caption export, or summary notes.
+3. Record **timestamps** in Evidence (`#t-MM-SS` anchors) and `wiki/log.md` for traceability.
+4. Demos: convert to one runnable example in synthesis or concept Mechanics, not a play-by-play.
 
 ### Notes and highlights
 

@@ -125,6 +125,7 @@ Only **generic** tools are tracked here. One-off ingest helpers for a specific b
 | **Ingest** | `epub-to-wiki-md.py` | EPUB → `wiki/sources/<slug>/md/` |
 | | `pdf-to-wiki-md.py` | Text PDF → per-chapter md (chapter map in script) |
 | | `pdf-ocr-to-wiki-md.py` | Scanned PDF → OCR md |
+| | `markitdown-to-wiki-md.py` | PPTX / DOCX / YouTube → per-part md |
 | | `rst-to-wiki-md.py` | Sphinx/RST book repo → md |
 | **Study & lint** | `lint-review-queue.py` | Review queue: `SOLID_CANDIDATE` · `RETEST` · `READ_UNTESTED` · `STALE` · … |
 | | `sync-domain-study-paths.py` | Sync `domains/*/overview.md` study paths + tiers |
@@ -145,7 +146,23 @@ Only **generic** tools are tracked here. One-off ingest helpers for a specific b
 python3 ~/zhuomo/scripts/lint-review-queue.py <vault>/wiki
 python3 ~/zhuomo/scripts/sync-domain-study-paths.py <vault>/wiki
 python3 ~/zhuomo/scripts/epub-to-wiki-md.py <book.epub> <vault>/wiki <slug>
+python3 ~/zhuomo/scripts/markitdown-to-wiki-md.py deck.pptx --out <vault>/wiki/sources/<slug>/md --slug <slug>
 ```
+
+**MarkItDown ingest** (PPTX, DOCX, YouTube):
+
+```bash
+python3 -m pip install 'markitdown[pptx,docx]' youtube-transcript-api
+
+python3 ~/zhuomo/scripts/markitdown-to-wiki-md.py ~/zhuomo-data/raw/ppt/training.pptx \
+  --out ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/Dylan\ Chen/wiki/sources/training-deck/md \
+  --slug training-deck
+
+python3 ~/zhuomo/scripts/markitdown-to-wiki-md.py 'https://www.youtube.com/watch?v=VIDEO_ID' \
+  --out .../wiki/sources/my-talk/md --slug my-talk --youtube-chunk-sec 300
+```
+
+Requires: `markitdown[pptx,docx]`; `youtube-transcript-api` optional but recommended for timestamped transcript parts.
 
 ---
 

@@ -317,7 +317,7 @@ updated: YYYY-MM-DD
 3. Write topic map on wiki/sources/<slug>.md (table: Topic | Evidence location | Existing page? | Action)
 4. EPUB/PDF → convert full md corpus:
    python3 ~/zhuomo/scripts/epub-to-wiki-md.py <epub> <vault>/wiki/sources/<slug>/md/
-   (or pdf-to-wiki-md.py / pdf-ocr-to-wiki-md.py per REFERENCE.md)
+   (or pdf-to-wiki-md.py / pdf-ocr-to-wiki-md.py / markitdown-to-wiki-md.py per REFERENCE.md)
 5. Deepen per class + depth (§ Source types):
    - reference depth → every topic-map row → full concept pages
    - selective deepen → only listed rows + optional wiki/synthesis/<book>.md
@@ -679,6 +679,7 @@ Append `## [date] lint | N issues` to `log.md`. List each issue with suggested R
 | `epub-to-wiki-md.py` | EPUB → `sources/<slug>/md/` |
 | `pdf-to-wiki-md.py` | Text PDF |
 | `pdf-ocr-to-wiki-md.py` | Scanned PDF |
+| `markitdown-to-wiki-md.py` | PPTX / DOCX / YouTube → `sources/<slug>/md/` |
 | `embed-figure-visuals.py` | Inline figures at mentions |
 | `lint-figure-visuals.py` | Find missing figure embeds |
 | `lint-review-queue.py` | `updated > reviewed`, missing Explain-back |

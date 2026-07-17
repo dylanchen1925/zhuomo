@@ -96,6 +96,18 @@ CISCO_CAMPUS_LAN_WLAN_CHAPTERS: list[tuple[str, int, int]] = [
     ("Appendix Glossary", 73, 76),
 ]
 
+# Isovalent — Cilium Network Policy Deep Dive (2025, 52 pp).
+CILIUM_NETWORK_POLICY_DEEP_DIVE_CHAPTERS: list[tuple[str, int, int]] = [
+    ("Front Matter", 1, 3),
+    ("Introduction", 4, 4),
+    ("Background and Concepts", 5, 14),
+    ("The Cilium Network Policy Model", 15, 24),
+    ("Operating Cilium — Writing Policies", 25, 32),
+    ("Operating Cilium — Debugging and Tooling", 33, 42),
+    ("Operating Cilium — Scaling", 43, 48),
+    ("Conclusion and Appendix", 49, 52),
+]
+
 # Isovalent Networking for Kubernetes: Design Guide (Cisco ACI + NX-OS, Jun 2025, 38 pp).
 ISOVALENT_K8S_ACI_NXOS_DESIGN_CHAPTERS: list[tuple[str, int, int]] = [
     ("Front Matter", 1, 4),
@@ -135,7 +147,37 @@ CRAFT_OF_RESEARCH_CHAPTERS: list[tuple[str, int, int]] = [
     ("Ethics Appendix and Index", 292, 337),
 ]
 
+# Anthropic — A General Language Assistant as a Laboratory for Alignment (arXiv:2112.00861, 48 pp).
+ARXIV_ALIGNMENT_LAB_CHAPTERS: list[tuple[str, int, int]] = [
+    ("Front Matter", 1, 2),
+    ("Introduction", 3, 8),
+    ("Conditioning on Aligned Behavior", 9, 13),
+    ("Scaling Preference Modeling vs Imitation Learning", 14, 19),
+    ("Preference Model Pre-Training and Transfer", 20, 23),
+    ("Discussion", 24, 26),
+    ("Appendix A Language Model Pre-training", 27, 28),
+    ("Appendix B Prompting Context Distillation Evaluations", 29, 33),
+    ("Appendix C More Details on Preference Models", 34, 39),
+    ("Appendix D Per-Token GAN-Style Discriminator", 40, 48),
+]
+
+# Qi et al. — Safety Alignment Should Be Made More Than Just a Few Tokens Deep (arXiv:2406.05946, 25 pp).
+ARXIV_SHALLOW_ALIGNMENT_CHAPTERS: list[tuple[str, int, int]] = [
+    ("Front Matter", 1, 1),
+    ("Introduction", 2, 3),
+    ("Shallow Safety Alignment Characteristics", 3, 5),
+    ("Inference and Finetuning Vulnerabilities", 5, 7),
+    ("Deepening Safety Alignment", 7, 9),
+    ("Constrained Finetuning Defense", 9, 11),
+    ("Discussion and Related Work", 11, 15),
+    ("Appendix", 16, 25),
+]
+
 PRESETS: dict[str, list[tuple[str, int, int]]] = {
+    "arxiv-alignment-lab": ARXIV_ALIGNMENT_LAB_CHAPTERS,
+    "arxiv211200861": ARXIV_ALIGNMENT_LAB_CHAPTERS,
+    "arxiv-shallow-safety-alignment": ARXIV_SHALLOW_ALIGNMENT_CHAPTERS,
+    "arxiv240605946": ARXIV_SHALLOW_ALIGNMENT_CHAPTERS,
     "hdn": HDN_CHAPTERS,
     "k8s-up-and-running": K8S_UP_AND_RUNNING_CHAPTERS,
     "k8supandrunning": K8S_UP_AND_RUNNING_CHAPTERS,
@@ -148,6 +190,8 @@ PRESETS: dict[str, list[tuple[str, int, int]]] = {
     "ciscocampuslanwlan": CISCO_CAMPUS_LAN_WLAN_CHAPTERS,
     "isovalent-k8s-aci-nxos-design": ISOVALENT_K8S_ACI_NXOS_DESIGN_CHAPTERS,
     "isovalentk8sacinxosdesign": ISOVALENT_K8S_ACI_NXOS_DESIGN_CHAPTERS,
+    "cilium-network-policy-deep-dive": CILIUM_NETWORK_POLICY_DEEP_DIVE_CHAPTERS,
+    "ciliumnetworkpolicydeepdive": CILIUM_NETWORK_POLICY_DEEP_DIVE_CHAPTERS,
     "craft-of-research": CRAFT_OF_RESEARCH_CHAPTERS,
     "craftofresearch": CRAFT_OF_RESEARCH_CHAPTERS,
     "the-craft-of-research": CRAFT_OF_RESEARCH_CHAPTERS,

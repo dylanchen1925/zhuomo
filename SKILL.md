@@ -1,6 +1,6 @@
 ---
 name: zhuomo
-description: Turn books, EPUBs, blogs, videos, or notes into a personal Obsidian wiki and agent skills; ingest with Evidence, query brain-first, Study via Explain-back, Lint health. Use when user says zhuomo, ingest, bootstrap, query wiki, revise concept, explain-back, lint, weekly, or wants to build/learn from a knowledge base across domains.
+description: Turn books, EPUBs, blogs, videos, or notes into a personal Obsidian wiki and agent skills; ingest with Evidence, query brain-first, Study via Explain-back, 外搜 external fact-check, Lint health. Use when user says zhuomo, ingest, bootstrap, query wiki, revise concept, 外搜, external fact-check, explain-back, lint, weekly, or wants to build/learn from a knowledge base across domains.
 disable-model-invocation: true
 ---
 
@@ -14,7 +14,7 @@ disable-model-invocation: true
 
 ## Step 0 — Intent router (match first, then act)
 
-Scan the user message **top to bottom**. First matching row wins. If two verbs apply, run in order: **Lint → Revise → Ingest → Study → Query**.
+Scan the user message **top to bottom**. First matching row wins. If two verbs apply, run in order: **Lint → 外搜 → Revise → Ingest → Study → Query**.
 
 | If message contains… | Verb | First action |
 |----------------------|------|--------------|
@@ -22,6 +22,7 @@ Scan the user message **top to bottom**. First matching row wins. If two verbs a
 | `Ingest`, `ingest:`, `Process raw`, book/EPUB/PDF path + import intent | **Ingest** | § Ingest — step 1 topic map |
 | `Query search:` or "list wiki pages" | **Query (search)** | § Query — search template only |
 | `Query`, `Query think:`, question about existing wiki | **Query (think)** | § Query — read wiki brain-first |
+| `外搜`, `external fact-check`, `external search:` + domain/concept scope | **外搜** | § 外搜 — brain-first then web |
 | `Revise`, `修正`, user reports wiki error | **Revise** | § Revise |
 | `Explain-back`, `explain-back`, `Explain-back … cold`, `先测后读`, `Explain-back … feynman`, `feynman`, `Promote [[`, `Review queue` | **Study** | § Study |
 | `Lint`, `doctor`, health check | **Lint** | Run scripts § Scripts |
@@ -47,23 +48,24 @@ Scan the user message **top to bottom**. First matching row wins. If two verbs a
 4. **No default digests:** Do not create `learn/digests/` unless user explicitly asks.
 5. **Explain-back:** One prompt per turn — always interactive default.
 6. **Figure N cited:** Inline image or mermaid at first mention — never bare "see Figure N".
-7. **Closing block:** After Bootstrap / Ingest / Revise / Lint / major Query file-back — use exact 3-line shape in § Output templates.
+7. **Closing block:** After Bootstrap / Ingest / Revise / 外搜 / Lint / major Query file-back — use exact 3-line shape in § Output templates.
 8. **Promote to `solid`:** Only when `explain_back: passed` (never on Review alone).
 9. **Skills ≠ wiki:** Wiki holds facts/synthesis. To create a Cursor skill from wiki content, ask the agent in chat (no zhuomo verb). Do not paste corpus facts into SKILL.md.
 10. **Corpus vs personal:** Skill writes **corpus** only (`concepts/`, `sources/`, ingest `synthesis/`). User personal notes live under **`wiki/notes/`** — never Ingest into `notes/`; never paste user judgment into corpus `## Claim` / `## Evidence`.
 
 ---
 
-## User verbs (6)
+## User verbs (7)
 
 | Verb | Bundled ops | Primary output |
 |------|-------------|----------------|
 | **Bootstrap** | setup + optional first ingest | Folders, `AGENTS.md`, wiki skeleton |
 | **Ingest** | topic map, md corpus, deepen, framework | Concepts + Evidence + `## Explain-back` |
 | **Query** | search / think | Answer + Gaps; optional file to `synthesis/` |
+| **外搜** | web fact-check + propagate | `External (YYYY)` rows; Claim fixes; domain overview |
 | **Revise** | propagate fix | Corrected pages; `updated:`; log |
 | **Study** | Review, Explain-back (cold / feynman), Promote, queue | Frontmatter mastery fields |
-| **Lint** | doctor-lite + review queue | Issue list → Revise |
+| **Lint** | doctor-lite + review queue + external gap scan | Issue list → 外搜 / Revise |
 
 
 ## Wiki layout (do not invent other shapes)
@@ -446,6 +448,125 @@ Output: numbered list — `[[page]] — one line why relevant`. No synthesis ess
 
 ---
 
+## 外搜 (External fact-check)
+
+**Trigger:** `外搜`, `外搜 <domain>`, `外搜 [[concept]]`, `external fact-check`, `/zhuomo 外搜 cisco-aci`.
+
+**Purpose:** Proactively validate **corpus** claims against **current external sources** (vendor matrices, exam catalogs, CVE advisories, renames/EOL). Book Evidence stays; add **`External (YYYY)`** rows and fix Claims only when external facts supersede stale book baseline.
+
+**Not:** personal notes (`notes/`), one-off Query answers, or replacing `## Evidence` book anchors.
+
+### Scope (pick one)
+
+| User says | Scope |
+|-----------|--------|
+| `外搜 [[slug]]` | Single concept page |
+| `外搜 <domain-slug>` | All `domain: <slug>` concept pages + `domains/<slug>/overview.md` |
+| `外搜` (no scope) | Run `lint-external-fact-check.py`; list domains with `MISSING_EXTERNAL`; ask user OR pick domain from message context |
+| `外搜 batch N continue` | Resume partial domain run (same domain, next chunk) |
+
+**Skip by default:** `literary-appreciation` domains unless user explicitly names scope. **Cross-domain** full vault → confirm once.
+
+### Read order (mandatory — before any web search)
+
+```
+wiki/overview.md → domain-map → domains/<slug>/overview (+ guide)
+→ Tier A concept slugs from overview
+→ sample 3–5 concept Claims + Evidence in scope
+→ grep scope for legacy names / version numbers in Claims
+```
+
+Then web search for **domain-relevant fact categories** (not page-by-page random search).
+
+### Fact categories (study-technical default)
+
+| Category | Look for | Typical Claim impact |
+|----------|----------|----------------------|
+| **Recommended release** | Vendor software matrix, EM/LTS trains | Deployment / ops concepts |
+| **Rename / rebrand** | Product name changes | Architecture / component pages |
+| **Exam / cert** | Active exam version, EOL, blueprint % | Use-case / design methodology |
+| **CVE / security** | Critical advisories, fixed trains | Control deployment, firewall, troubleshooting |
+| **Feature gate** | "From version X" availability | Multi-site, new object models |
+| **EOL / migration** | Deprecated products, replacement | Architecture, integration pages |
+
+**study-analytic:** add contested primary sources, revised dates, school debate — prefer `epistemic: contested` footnote over hard Claim swap unless consensus shifted.
+
+Record search URLs in chat revision card; wiki Evidence row summarizes facts (no bare URL dumps in Claim).
+
+### Procedure (numbered)
+
+```
+1. Resolve scope § above; record YYYY = current year for External (YYYY) label
+2. Web research: 2–4 authoritative sources per category (vendor docs > exam page > CVE > community)
+3. Build revision card (mental or chat table):
+   Theme | Old wiki signal | New external fact | Pages to touch
+4. For each page in scope:
+   a. If no External (YYYY) row → add to ## Evidence (table row preferred):
+      | External (YYYY) | <concise facts; page-specific override when needed> |
+   b. If Claim contradicts external (version gate, "not supported", wrong name) → edit Claim in place
+   c. Propagate same fact to every page citing old name/version (grep wiki)
+   d. Set updated: today; wiki_revised: today if field exists
+   e. Do NOT change explain_back / mastery unless user asks
+5. domains/<slug>/overview.md:
+   - updated: today
+   - Ensure ## 外搜 fact-check table (create if missing):
+     | Batch | 状态 |
+     | 全域 YYYY-MM-DD | 完成 — <1-line key themes>; see log.md |
+   - Refresh ## 尚未覆盖 / gaps rows that referenced stale baselines
+6. log.md append:
+   ## [YYYY-MM-DD] external-fact-check | <domain or [[slug]]> | N pages | <key themes>
+7. Optional: re-run `lint-review-queue.py` (includes external section)
+8. Closing block § Output templates
+```
+
+### Per-page contract
+
+| Field | Rule |
+|-------|------|
+| `External (YYYY)` | One row per pass; newer year supersedes — do not delete old External rows |
+| `## Claim` | Edit only when external fact **changes** design truth (not "nice to know") |
+| Book Evidence rows | Keep; External supplements time-sensitive facts |
+| `notes/` | Never write |
+
+**After 外搜:** `updated > reviewed` on touched pages → suggest `Explain-back [[tier-a-slug]] cold` in closing block.
+
+### Lint integration
+
+Included in default `lint-review-queue.py` output. Standalone:
+
+```bash
+python3 ~/zhuomo/scripts/lint-external-fact-check.py <vault>/wiki --domain <slug>
+```
+
+| Bucket | Action |
+|--------|--------|
+| `MISSING_EXTERNAL` | Run `外搜 <domain>` or `外搜 [[slug]]` |
+| `STALE_EXTERNAL` | Re-run 外搜 for that scope |
+
+### 外搜 vs Revise vs Query
+
+| | **外搜** | **Revise** | **Query** |
+|---|----------|------------|-----------|
+| **Trigger** | Stale domain / scheduled refresh | User error / contradiction | Question |
+| **Web** | Yes — systematic | Only if new evidence cited | After wiki insufficient |
+| **Scope** | Domain or concept batch | Targeted pages + backlinks | Answer in chat |
+| **Evidence** | Adds `External (YYYY)` | Edits Claim + book Evidence | Cites existing pages |
+| **log** | `external-fact-check` | `revise` | optional file-back |
+
+User-reported mistake mid-外搜 → finish external row, then **Revise** card for that page.
+
+### Output (chat summary — optional before closing block)
+
+```markdown
+## 外搜摘要 — <domain>
+| 主题 | 旧信号 | 更新 |
+|------|--------|------|
+| … | book ≤20.6 | Recommended 20.15.x |
+**触及：** N 概念页 · Tier A Claim 修正：[[slug]] …
+```
+
+---
+
 ## Study
 
 ### Operations
@@ -583,6 +704,8 @@ python3 ~/zhuomo/scripts/lint-review-queue.py <vault>/wiki --domain kubernetes-c
 python3 ~/zhuomo/scripts/lint-figure-visuals.py <vault>/wiki
 ```
 
+`lint-review-queue.py` **includes External (YYYY) fact-check by default** (section `EXTERNAL FACT-CHECK`). Skip with `--skip-external`. Standalone scan: `lint-external-fact-check.py`.
+
 **Review queue buckets (script output — act in order):**
 
 | Bucket | Action |
@@ -593,6 +716,7 @@ python3 ~/zhuomo/scripts/lint-figure-visuals.py <vault>/wiki
 | `STALE` | Re-read + Review |
 | `NEVER_REVIEWED` | `Explain-back [[slug]] cold` (Tier A) or Review |
 | `MISSING_EXPLAIN_BACK_SECTION` | Add `## Explain-back` |
+| `MISSING_EXTERNAL` / `STALE_EXTERNAL` (lint-external-fact-check.py) | `外搜 <domain>` |
 
 | Check | If failed |
 |-------|-----------|
@@ -656,6 +780,7 @@ Append `## [date] lint | N issues` to `log.md`. List each issue with suggested R
 ## [YYYY-MM-DD] bootstrap | vault created
 ## [YYYY-MM-DD] ingest | Book Title | 12 concepts deepened
 ## [YYYY-MM-DD] revise | [[aci-foo]] | corrected FD_VNID claim
+## [YYYY-MM-DD] external-fact-check | cisco-sdwan | 48 pages | Manager rebrand, 20.15 EM, CVE-2026-20127
 ## [YYYY-MM-DD] lint | 3 broken links
 ## [YYYY-MM-DD] explain-back | [[aci-foo]] — passed (3/3)
 ```
@@ -682,7 +807,8 @@ Append `## [date] lint | N issues` to `log.md`. List each issue with suggested R
 | `markitdown-to-wiki-md.py` | PPTX / DOCX / YouTube → `sources/<slug>/md/` |
 | `embed-figure-visuals.py` | Inline figures at mentions |
 | `lint-figure-visuals.py` | Find missing figure embeds |
-| `lint-review-queue.py` | `updated > reviewed`, missing Explain-back |
+| `lint-review-queue.py` | Review queue + **External (YYYY)** scan (default) |
+| `lint-external-fact-check.py` | External scan only (same logic as lint-review-queue) |
 | `add-evidence-sections.py` | Backfill Evidence blocks |
 | `sync-domain-study-paths.py` | Study paths + inline **A**/**B** tiers + Dataview queues on overviews |
 | `simplify-vault.py` | One-shot vault migration (archive) |
@@ -734,6 +860,15 @@ Tier definitions: `scripts/domain_study_tiers.py` — edit then re-run sync.
 - [ ] Old claim propagated fix on all citing pages
 - [ ] `updated:` set; `log.md` appended
 
+### 外搜
+
+- [ ] Brain-first read before web search
+- [ ] Every in-scope deepened concept has `External (YYYY)` row
+- [ ] Claim edits only where external supersedes book; propagated via grep
+- [ ] `domains/<slug>/overview` **外搜 fact-check** row + gaps refreshed
+- [ ] `log.md`: `external-fact-check | …`
+- [ ] Closing block posted; offer Tier A `Explain-back cold` if `updated > reviewed`
+
 ### Lint
 
 - [ ] Scripts run or manual equivalent checks listed
@@ -753,7 +888,9 @@ Tier definitions: `scripts/domain_study_tiers.py` — edit then re-run sync.
 | Reference depth on 诗歌消遣读 | archive only; Query + personal notes when needed |
 | All Explain-back Q&A in one message | One prompt → wait → grade → next |
 | Progress table edited by hand in overview | Dataview reads concept frontmatter |
-| Web search before reading wiki | overview → concepts → then web |
+| Web search before reading wiki | overview → concepts → then web (外搜: read scope first, then web) |
+| 外搜 only in chat, no wiki write | Every fact → Evidence `External (YYYY)` + log.md |
+| Replace book Evidence with External | External **supplements**; Revise if book Claim wrong |
 | Skill file full of BGP facts | Domain skill + wiki backend; Revise wiki when facts change |
 | "See Figure 5" with no image | Inline `![Figure 5](…)` + source link |
 | `[[path|alias]]` inside markdown table cell | `[[path]]` only — pipe splits table columns |
@@ -770,8 +907,9 @@ Tier definitions: `scripts/domain_study_tiers.py` — edit then re-run sync.
 | One concept per whole book | Topic map → many concept pages |
 | Skip confirm on ambiguous huge ingest | § Confirm menu + § Source types class |
 | IT defaults applied to fiction | Classify literary-appreciation; overview/archive default |
-| Fix only in chat | Revise wiki + log.md |
+| Fix only in chat | Revise wiki + log.md; time-sensitive → **外搜** |
 | New source contradicts old | Revise affected pages; don't keep both as true |
+| Stale release/CVE in Claims | `外搜 <domain>` not one-off Query |
 | `framework.md` / mega-overview | `overview.md` + optional `guide.md` only |
 | Dump nine verbs in chat | Link `[[help]]` |
 

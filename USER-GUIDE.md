@@ -14,7 +14,7 @@ How to set up **琢磨 (Zhuomo)**, learn from sources **one concept at a time**,
 2. [Prerequisites](#2-prerequisites)
 3. [First-time setup](#3-first-time-setup)
 4. [Learn by concept (Review & Explain-back)](#4-learn-by-concept-review--explain-back)
-5. [Lint vs Revise](#5-lint-vs-revise)
+5. [Lint vs Revise vs 外搜](#5-lint-vs-revise-vs-外搜)
 6. [Daily and weekly habits](#6-daily-and-weekly-habits)
 7. [Operations reference](#7-operations-reference)
 8. [Prompt cookbook](#8-prompt-cookbook)
@@ -197,22 +197,29 @@ Shows concepts where:
 
 ---
 
-## 5. Lint vs Revise
+## 5. Lint vs Revise vs 外搜
 
-| | **Lint** | **Revise** |
-|---|----------|------------|
-| **Purpose** | Health scan — find problems | Fix a specific page |
-| **Trigger** | `Lint`, after big ingest | You spot error; Explain-back fail; Lint item |
-| **Changes wiki?** | Usually lists issues only | **Yes** — edits content |
-| **Log** | `lint | …` | `revise | [[concept]]` |
-| **Side effect** | — | Sets `updated` → run `Explain-back [[concept]] cold` again |
+| | **Lint** | **外搜** | **Revise** |
+|---|----------|----------|------------|
+| **Purpose** | Health scan | Refresh time-sensitive facts vs web | Fix a specific error |
+| **Trigger** | `Lint`, after big ingest | Stale domain; missing `External (YYYY)` | You spot error; Explain-back fail |
+| **Changes wiki?** | Usually lists issues | **Yes** — batch Evidence + Claims | **Yes** — targeted edits |
+| **Web?** | No | **Yes** (after reading wiki scope) | Only if you cite new source |
+| **Log** | `lint \| …` | `external-fact-check \| …` | `revise \| [[concept]]` |
+| **Side effect** | — | Sets `updated` → cold Explain-back on Tier A | Sets `updated` → cold Explain-back |
 
 **Typical flow:**
 
 ```
-Lint  →  "aci-border-leaf missing inline Figure"
+Lint  →  MISSING_EXTERNAL on cisco-sdwan
+外搜  →  外搜 cisco-sdwan
+Explain-back cold →  Tier A after wiki refresh
+```
+
+**Single-page mistake (not domain refresh):**
+
+```
 Revise →  Revise [[aci-border-leaf-l3out]] — add Figure 91 inline
-Explain-back cold →  test mastery after fix
 ```
 
 ---
@@ -232,15 +239,16 @@ Explain-back cold →  test mastery after fix
 
 ## 7. Operations reference
 
-**Six verbs:** Bootstrap · Ingest · Query · Revise · Study · Lint. **Connect** for personal cross-concept notes.
+**Seven verbs:** Bootstrap · Ingest · Query · **外搜** · Revise · Study · Lint. **Connect** for personal cross-concept notes.
 
 | Verb | Examples | Output |
 |------|----------|--------|
 | **Ingest** | `Ingest: book.epub` | Concepts + Explain-back + Evidence |
 | **Query** | `Query: …` | Synthesis + Gaps |
+| **外搜** | `外搜 cisco-aci` / `外搜 [[concept]]` | `External (YYYY)` + Claim fixes + overview |
 | **Study** | `Explain-back cold` / `feynman` / `Promote` | Frontmatter mastery |
 | **Revise** | `Revise [[page]] — …` | Fixed pages + `updated` |
-| **Lint** | `Lint` | Issues + review queue |
+| **Lint** | `Lint` | Issues + review queue + external gaps |
 | **Connect** | `Connect: … — 记入 synthesis` | `wiki/notes/synthesis/` |
 
 **Archive only** (no learn artifacts):
@@ -293,6 +301,16 @@ Promote [[aci-spine-leaf-topology]] to solid
 ```
 /zhuomo Connect: how does [[aci-multi-pod]] relate to [[aci-multi-site]]? — 记入 synthesis
 ```
+
+### 外搜
+
+```
+/zhuomo 外搜 cisco-sdwan
+/zhuomo 外搜 [[sdwan-architecture-planes]]
+/zhuomo external fact-check kubernetes-cilium
+```
+
+Refreshes vendor releases, exam versions, CVEs, renames. Writes `External (YYYY)` in Evidence — does not replace book anchors.
 
 ### Revise
 

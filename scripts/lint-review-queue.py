@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Lint wiki concepts: review queue, solid candidates, read-but-untested, retest."""
+"""Lint wiki concepts: review queue, solid candidates, read-but-untested, retest, external facts."""
 
 from __future__ import annotations
 
@@ -8,6 +8,8 @@ import re
 import sys
 from datetime import date, timedelta
 from pathlib import Path
+
+from external_fact_check import format_external_report, scan_wiki_external
 
 FM_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.S)
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
@@ -23,6 +25,17 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=30,
         help="Flag solid concepts with reviewed older than N days (0 = disable)",
+    )
+    p.add_argument(
+        "--skip-external",
+        action="store_true",
+        help="Skip External (YYYY) fact-check scan",
+    )
+    p.add_argument(
+        "--external-year",
+        type=int,
+        default=date.today().year,
+        help="Expected External (YYYY) year (default: current year)",
     )
     return p.parse_args()
 
@@ -139,10 +152,29 @@ def main() -> int:
                 print(f"  - {n}")
         total += len(items)
 
-    if total:
-        print(f"\n{total} concept(s) flagged")
+    external_issues = 0
+    if not args.skip_external:
+        ext = scan_wiki_external(
+            wiki,
+            domain=args.domain,
+            year=args.external_year,
+            concepts_glob=args.concepts_glob,
+        )
+        ext_lines, external_issues = format_external_report(
+            ext,
+            domain=args.domain,
+            group_by_domain=not args.domain,
+        )
+        if ext_lines:
+            print(f"\n=== EXTERNAL FACT-CHECK ({ext.year}) ===")
+            for line in ext_lines:
+                print(line)
+
+    flagged = total + external_issues
+    if flagged:
+        print(f"\n{flagged} issue(s) flagged ({total} review + {external_issues} external)")
         return 1
-    print("Review queue empty")
+    print("Review queue empty; external fact-check OK")
     return 0
 
 

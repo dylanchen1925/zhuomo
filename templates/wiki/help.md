@@ -50,16 +50,17 @@ flowchart TD
 
 ---
 
-## 六个动词
+## 七个动词
 
 | 动词 | 说 | 产出 |
 |------|-----|------|
 | **Bootstrap** | `Bootstrap + ingest: 书.epub` | 建库 + 第一本书 |
 | **Ingest** | `Ingest: …` | concepts + Evidence + Explain-back |
 | **Query** | `Query: …` | 答案 + Gaps + Next step |
+| **外搜** | `外搜 cisco-sdwan` / `外搜 [[概念]]` | Evidence 加 `External (YYYY)`；过时 Claim 修正 |
 | **Revise** | `Revise [[页]] — …` | 改 corpus；`我的想法` → `notes/on-concept/` |
 | **Study** | `cold` / `Explain-back` / `feynman` / `Promote` | 掌握度 |
-| **Lint** | `Lint` | 健康 + Review 分桶 |
+| **Lint** | `Lint` | 健康 + Review 分桶 + External 扫描（默认一体） |
 
 **Connect（个人模型）：** `Connect: … — 记入 synthesis` → `notes/synthesis/`（见下）
 
@@ -99,6 +100,8 @@ Connect: Cilium native routing 和 ACI L3Out 的相似点 — 记入 synthesis
 ```
 Ingest: ~/zhuomo-data/raw/inbox/book.epub
 Query think: Multi-Pod vs Multi-Site?
+外搜 cisco-aci
+外搜 [[sdwan-architecture-planes]]
 Explain-back [[cilium-network-policy-identity]] cold
 Explain-back [[cilium-kube-proxy-replacement]] feynman
 Promote [[k8s-network-visibility-gap]] to solid

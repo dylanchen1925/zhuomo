@@ -1,6 +1,6 @@
 # Zhuomo — simplified mode
 
-**Six verbs:** Bootstrap · Ingest · Query · Revise · Study · Lint. **Connect** for personal cross-concept notes.
+**Seven verbs:** Bootstrap · Ingest · Query · **外搜** · Revise · Study · Lint. **Connect** for personal cross-concept notes.
 
 ## Minimum viable Zhuomo
 
@@ -25,6 +25,17 @@ Raw  →  Bootstrap + Ingest  →  concepts + Evidence  →  Query
 | Stuck explaining | `Explain-back [[concept]] feynman` |
 | Promote | `Promote [[concept]] to solid` |
 | Health | `Lint` |
+| Stale releases/CVE | `外搜 <domain>` |
+
+## 外搜 (lite)
+
+| Scope | Say |
+|-------|-----|
+| Whole domain | `外搜 cisco-sdwan` |
+| One concept | `外搜 [[sdwan-omp-routing]]` |
+| Check gaps | `Lint`（含 External 扫描；或 `lint-external-fact-check.py` 单独跑） |
+
+Adds `External (YYYY)` to Evidence; fixes Claims when vendor/exam/CVE facts supersede book baseline.
 
 ## Ingest depth
 
@@ -42,6 +53,7 @@ Raw  →  Bootstrap + Ingest  →  concepts + Evidence  →  Query
 
 ```
 /zhuomo Query think: when use native routing vs overlay?
+/zhuomo 外搜 cisco-sdwan
 /zhuomo Explain-back [[cilium-datapath-modes]] cold
 /zhuomo Connect: Cilium overlay vs ACI — 记入 synthesis
 /zhuomo Lint

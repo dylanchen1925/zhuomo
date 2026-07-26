@@ -35,7 +35,9 @@ Raw  →  Bootstrap + Ingest  →  concepts + Evidence  →  Query
 | One concept | `外搜 [[sdwan-omp-routing]]` |
 | Check gaps | `Lint`（含 External 扫描；或 `lint-external-fact-check.py` 单独跑） |
 
-Adds `External (YYYY)` to Evidence; fixes Claims when vendor/exam/CVE facts supersede book baseline.
+Adds `External (YYYY)` to Evidence; **Claim 修正需你确认**（`确认 Claim`）后才写入 wiki。
+
+**study-technical** ingest（reference / selective deepen）完成后 **自动外搜** 该 domain（overview only / archive only 除外）。
 
 ## Ingest depth
 

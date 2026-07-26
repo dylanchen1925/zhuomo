@@ -203,7 +203,7 @@ Shows concepts where:
 |---|----------|----------|------------|
 | **Purpose** | Health scan | Refresh time-sensitive facts vs web | Fix a specific error |
 | **Trigger** | `Lint`, after big ingest | Stale domain; missing `External (YYYY)` | You spot error; Explain-back fail |
-| **Changes wiki?** | Usually lists issues | **Yes** — batch Evidence + Claims | **Yes** — targeted edits |
+| **Changes wiki?** | Usually lists issues | **Yes** — External rows + overview；Claim **先确认再改** | **Yes** — targeted edits |
 | **Web?** | No | **Yes** (after reading wiki scope) | Only if you cite new source |
 | **Log** | `lint \| …` | `external-fact-check \| …` | `revise \| [[concept]]` |
 | **Side effect** | — | Sets `updated` → cold Explain-back on Tier A | Sets `updated` → cold Explain-back |
@@ -245,7 +245,7 @@ Revise →  Revise [[aci-border-leaf-l3out]] — add Figure 91 inline
 |------|----------|--------|
 | **Ingest** | `Ingest: book.epub` | Concepts + Explain-back + Evidence |
 | **Query** | `Query: …` | Synthesis + Gaps |
-| **外搜** | `外搜 cisco-aci` / `外搜 [[concept]]` | `External (YYYY)` + Claim fixes + overview |
+| **外搜** | `外搜 cisco-aci` / `外搜 [[concept]]` | `External (YYYY)` + overview；Claim 修正 **待你确认** |
 | **Study** | `Explain-back cold` / `feynman` / `Promote` | Frontmatter mastery |
 | **Revise** | `Revise [[page]] — …` | Fixed pages + `updated` |
 | **Lint** | `Lint` | Issues + review queue + external gaps |
@@ -295,6 +295,8 @@ Promote [[aci-spine-leaf-topology]] to solid
 
 /zhuomo Ingest overview only: huge-book.epub
 ```
+
+**study-technical** + reference / selective deepen：ingest 完成后 agent **自动外搜** 该 domain（写 `External (YYYY)`；若需改 Claim 会先发 **Claim 修正待确认** 等你回复 `确认 Claim`）。
 
 ### Connect
 

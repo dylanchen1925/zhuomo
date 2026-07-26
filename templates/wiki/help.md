@@ -57,7 +57,7 @@ flowchart TD
 | **Bootstrap** | `Bootstrap + ingest: 书.epub` | 建库 + 第一本书 |
 | **Ingest** | `Ingest: …` | concepts + Evidence + Explain-back |
 | **Query** | `Query: …` | 答案 + Gaps + Next step |
-| **外搜** | `外搜 cisco-sdwan` / `外搜 [[概念]]` | Evidence 加 `External (YYYY)`；过时 Claim 修正 |
+| **外搜** | `外搜 cisco-sdwan` / `外搜 [[概念]]` | Evidence 加 `External (YYYY)`；Claim 修正 **需确认** |
 | **Revise** | `Revise [[页]] — …` | 改 corpus；`我的想法` → `notes/on-concept/` |
 | **Study** | `cold` / `Explain-back` / `feynman` / `Promote` | 掌握度 |
 | **Lint** | `Lint` | 健康 + Review 分桶 + External 扫描（默认一体） |

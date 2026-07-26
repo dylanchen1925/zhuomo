@@ -62,7 +62,7 @@ Scan the user message **top to bottom**. First matching row wins. If two verbs a
 | **Bootstrap** | setup + optional first ingest | Folders, `AGENTS.md`, wiki skeleton |
 | **Ingest** | topic map, md corpus, deepen, framework | Concepts + Evidence + `## Explain-back` |
 | **Query** | search / think | Answer + Gaps; optional file to `synthesis/` |
-| **外搜** | web fact-check + propagate | `External (YYYY)` rows; Claim fixes; domain overview |
+| **外搜** | web fact-check + propagate | `External (YYYY)` rows; Claim fixes **after user confirms**; domain overview |
 | **Revise** | propagate fix | Corrected pages; `updated:`; log |
 | **Study** | Review, Explain-back (cold / feynman), Promote, queue | Frontmatter mastery fields |
 | **Lint** | doctor-lite + review queue + external gap scan | Issue list → 外搜 / Revise |
@@ -334,9 +334,14 @@ updated: YYYY-MM-DD
 6. Update wiki/index.md; domain overview gaps if needed
 6b. **Synthesis gate** — required offer for study-analytic & literary 精读; optional for study-technical:
     `⚙ 是否更新 synthesis / 域心智模型？回复 domain + 要点` (do not auto-write synthesis)
+6c. **Auto 外搜 (study-technical only)** — when class = **study-technical** AND depth is **reference** or **selective deepen** (skip **overview only** / **archive only**):
+    - Resolve domain from new/updated concepts' `domain:` frontmatter (majority wins; tie → source page Topics domain)
+    - Immediately run § 外搜 for that `<domain-slug>` (same session; do not wait for user to say `外搜`)
+    - Write `External (YYYY)` + overview + log as usual; **Claim patches → § 外搜 Claim confirmation gate** (stop for approval before editing Claim)
+    - If ingest touched multiple domains → run 外搜 once per affected domain (batch if large; offer `外搜 batch N continue`)
 7. log.md: ## [date] ingest | <title> | N concepts deepened
 8. Optional: run lint-figure-visuals.py, lint-review-queue.py
-9. Closing block
+9. Closing block — if step 6c ran, mention 外搜 scope + pending Claim confirmations in **→ 下一步**
 ```
 
 ### Topic map template
@@ -503,9 +508,12 @@ Record search URLs in chat revision card; wiki Evidence row summarizes facts (no
 4. For each page in scope:
    a. If no External (YYYY) row → add to ## Evidence (table row preferred):
       | External (YYYY) | <concise facts; page-specific override when needed> |
-   b. If Claim contradicts external (version gate, "not supported", wrong name) → edit Claim in place
-   c. Propagate same fact to every page citing old name/version (grep wiki)
-   d. Set updated: today; wiki_revised: today if field exists
+   b. **Claim confirmation gate (mandatory):** If Claim contradicts external (version gate, "not supported", wrong name) → **do NOT edit Claim yet**. Collect in revision card:
+      | Page | Old Claim (excerpt) | Proposed Claim | External fact |
+      Post **Claim 修正待确认** block in chat; **stop** until user replies **确认 Claim** / **确认全部 Claim** / per-row approve or reject.
+      Only after approval → edit Claim in place + propagate (step 4c).
+   c. Propagate approved Claim fixes to every page citing old name/version (grep wiki)
+   d. Set updated: today on pages where External row and/or approved Claim changed; wiki_revised: today if field exists
    e. Do NOT change explain_back / mastery unless user asks
 5. domains/<slug>/overview.md:
    - updated: today
@@ -524,7 +532,7 @@ Record search URLs in chat revision card; wiki Evidence row summarizes facts (no
 | Field | Rule |
 |-------|------|
 | `External (YYYY)` | One row per pass; newer year supersedes — do not delete old External rows |
-| `## Claim` | Edit only when external fact **changes** design truth (not "nice to know") |
+| `## Claim` | Edit only when external fact **changes** design truth (not "nice to know") — **always user-confirmed first** (§ Claim confirmation gate) |
 | Book Evidence rows | Keep; External supplements time-sensitive facts |
 | `notes/` | Never write |
 
@@ -562,7 +570,13 @@ User-reported mistake mid-外搜 → finish external row, then **Revise** card f
 | 主题 | 旧信号 | 更新 |
 |------|--------|------|
 | … | book ≤20.6 | Recommended 20.15.x |
-**触及：** N 概念页 · Tier A Claim 修正：[[slug]] …
+**触及：** N 概念页 · External (YYYY) 已写入 · Claim 待确认：[[slug]] …
+
+## Claim 修正待确认
+| Page | 现 Claim（摘录） | 建议 Claim | 依据 |
+|------|------------------|------------|------|
+| [[slug]] | … | … | External (YYYY) + source |
+回复 **确认 Claim** / **确认全部 Claim** / 逐条改意见；未确认前不得改 wiki Claim。
 ```
 
 ---
@@ -841,6 +855,7 @@ Tier definitions: `scripts/domain_study_tiers.py` — edit then re-run sync.
 - [ ] No dangling `[[wikilinks]]` on touched pages
 - [ ] Closing block posted
 - [ ] If domain mental model may change: offer synthesis update in `⚙ 可选`
+- [ ] **study-technical** + reference/selective deepen: § 外搜 auto-run for ingest domain(s); Claim patches gated per § Claim confirmation gate
 
 ### Query (think)
 
@@ -864,9 +879,11 @@ Tier definitions: `scripts/domain_study_tiers.py` — edit then re-run sync.
 
 - [ ] Brain-first read before web search
 - [ ] Every in-scope deepened concept has `External (YYYY)` row
-- [ ] Claim edits only where external supersedes book; propagated via grep
+- [ ] **No Claim edit without user `确认 Claim` / `确认全部 Claim`**
+- [ ] If Claim patches proposed → **Claim 修正待确认** block posted; wiki Claim unchanged until approved
+- [ ] Approved Claim fixes propagated via grep
 - [ ] `domains/<slug>/overview` **外搜 fact-check** row + gaps refreshed
-- [ ] `log.md`: `external-fact-check | …`
+- [ ] `log.md`: `external-fact-check | …` (note pending Claim count if any)
 - [ ] Closing block posted; offer Tier A `Explain-back cold` if `updated > reviewed`
 
 ### Lint
@@ -890,6 +907,8 @@ Tier definitions: `scripts/domain_study_tiers.py` — edit then re-run sync.
 | Progress table edited by hand in overview | Dataview reads concept frontmatter |
 | Web search before reading wiki | overview → concepts → then web (外搜: read scope first, then web) |
 | 外搜 only in chat, no wiki write | Every fact → Evidence `External (YYYY)` + log.md |
+| 外搜 silently edits Claim | Post **Claim 修正待确认**; apply only after user confirms |
+| study-technical ingest ends without 外搜 | Auto § 外搜 step 6c (unless overview only / archive only) |
 | Replace book Evidence with External | External **supplements**; Revise if book Claim wrong |
 | Skill file full of BGP facts | Domain skill + wiki backend; Revise wiki when facts change |
 | "See Figure 5" with no image | Inline `![Figure 5](…)` + source link |

@@ -7,6 +7,8 @@ import argparse
 import html
 import re
 import sys
+import tempfile
+import zipfile
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
@@ -214,6 +216,33 @@ def promote_standalone_titles(md: str) -> str:
     return "\n".join(out)
 
 
+def read_epub_safe(epub_path: Path) -> epub.EpubBook:
+    """Load EPUB; repair common broken EPUB3 nav (missing epub:type=toc) in a temp copy."""
+    try:
+        return epub.read_epub(str(epub_path))
+    except IndexError:
+        pass
+
+    with tempfile.TemporaryDirectory() as tmp:
+        fixed_path = Path(tmp) / "fixed.epub"
+        with zipfile.ZipFile(epub_path, "r") as zin, zipfile.ZipFile(
+            fixed_path, "w", compression=zipfile.ZIP_DEFLATED
+        ) as zout:
+            for info in zin.infolist():
+                data = zin.read(info.filename)
+                if info.filename.endswith("toc.xhtml") and b"<nav epub:type=\"toc\"" not in data:
+                    text = data.decode("utf-8", errors="replace")
+                    if "</title></nav>" in text:
+                        text = text.replace(
+                            "</title></nav>",
+                            '</title></head><body><nav epub:type="toc" id="toc"><ol></ol></nav>',
+                            1,
+                        )
+                    data = text.encode("utf-8")
+                zout.writestr(info, data)
+        return epub.read_epub(str(fixed_path))
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="EPUB → wiki/sources/<slug>/md/")
     parser.add_argument("epub", type=Path, help="Path to .epub file")
@@ -237,7 +266,7 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    book = epub.read_epub(str(args.epub))
+    book = read_epub_safe(args.epub)
     out_dir = args.out
     out_dir.mkdir(parents=True, exist_ok=True)
 

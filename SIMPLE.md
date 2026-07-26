@@ -37,7 +37,7 @@ Raw  →  Bootstrap + Ingest  →  concepts + Evidence  →  Query
 
 Adds `External (YYYY)` to Evidence; **Claim 修正需你确认**（`确认 Claim`）后才写入 wiki。
 
-**study-technical** ingest（reference / selective deepen）完成后 **自动外搜** 该 domain（overview only / archive only 除外）。
+**自动外搜：** study-technical ingest 后；Query/Study 引用页 **>180 天未 external_checked** 或缺 External 时跟进（可说 `no 外搜` 跳过）。
 
 ## Ingest depth
 

@@ -9,7 +9,11 @@ import sys
 from datetime import date, timedelta
 from pathlib import Path
 
-from external_fact_check import format_external_report, scan_wiki_external
+from external_fact_check import (
+    DEFAULT_EXTERNAL_MAX_AGE_DAYS,
+    format_external_report,
+    scan_wiki_external,
+)
 
 FM_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.S)
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
@@ -36,6 +40,15 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=date.today().year,
         help="Expected External (YYYY) year (default: current year)",
+    )
+    p.add_argument(
+        "--external-max-age-days",
+        type=int,
+        default=DEFAULT_EXTERNAL_MAX_AGE_DAYS,
+        help=(
+            "Flag stale when external_checked older than N days "
+            f"(default: {DEFAULT_EXTERNAL_MAX_AGE_DAYS}; 0 = year-only)"
+        ),
     )
     return p.parse_args()
 
@@ -158,6 +171,7 @@ def main() -> int:
             wiki,
             domain=args.domain,
             year=args.external_year,
+            max_age_days=args.external_max_age_days,
             concepts_glob=args.concepts_glob,
         )
         ext_lines, external_issues = format_external_report(

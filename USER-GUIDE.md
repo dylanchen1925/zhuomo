@@ -296,7 +296,9 @@ Promote [[aci-spine-leaf-topology]] to solid
 /zhuomo Ingest overview only: huge-book.epub
 ```
 
-**study-technical** + reference / selective deepen：ingest 完成后 agent **自动外搜** 该 domain（写 `External (YYYY)`；若需改 Claim 会先发 **Claim 修正待确认** 等你回复 `确认 Claim`）。
+**study-technical** + reference / selective deepen：ingest 完成后 agent **自动外搜** 该 domain（写 `External (YYYY)`；Claim 待确认）。
+
+**Query / Explain-back cold：**若引用的 technical 概念 **>180 天**未外搜（或缺 `External (YYYY)`），同会话 **自动跟进外搜**（可说 `no 外搜` 跳过）。
 
 ### Connect
 

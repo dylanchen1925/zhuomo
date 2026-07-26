@@ -265,8 +265,16 @@ updated: YYYY-MM-DD
 | `reviewed` | Review / Explain-back end | `YYYY-MM-DD` or empty |
 | `explain_back` | Explain-back session | `not_started` \| `attempted` \| `passed` |
 | `updated` | Any agent edit or explain-back | `YYYY-MM-DD` |
+| `external_checked` | **外搜** pass wrote/confirmed External row | `YYYY-MM-DD` or empty |
 
 **Re-read trigger:** `updated > reviewed` → user should Review again.
+
+**External staleness (study-technical):** concept is stale when **no** `External (YYYY)` for current year, **or** `external_checked` older than **180 days** (default), **or** missing `external_checked` despite current-year External row. Check:
+
+```bash
+python3 ~/zhuomo/scripts/lint-external-fact-check.py <vault>/wiki --domain <slug>
+python3 ~/zhuomo/scripts/lint-external-fact-check.py <vault>/wiki --slugs slug-a,slug-b
+```
 
 ---
 
@@ -424,6 +432,36 @@ Output: numbered list — `[[page]] — one line why relevant`. No synthesis ess
 
 **File back when:** comparison, cross-concept synthesis, or durable Q&A → `wiki/synthesis/<slug>.md` or extend concept; append `log.md` if substantial.
 
+### Opportunistic 外搜 after Query (staleness-triggered)
+
+**When:** After **Answer / Sources / Gaps / Next step** are posted (do **not** block the answer).
+
+**Skip when:** user says `no 外搜` / `skip 外搜`; query class is **literary-appreciation** or **reference-lookup**; or no cited **study-technical** concepts in Answer/Sources.
+
+**Detect stale cited pages:**
+
+1. Collect `[[wikilinks]]` from Answer + Sources (deepened concepts only; skip sources/md parts-only).
+2. Run (or equivalent manual check):
+
+```bash
+python3 ~/zhuomo/scripts/lint-external-fact-check.py <vault>/wiki \
+  --slugs slug-a,slug-b,slug-c --max-age-days 180
+```
+
+3. If **any** cited study-technical slug is `MISSING_EXTERNAL` or `STALE_EXTERNAL` → run § 外搜 opportunistically (same session):
+
+| Stale cited slugs (same domain) | Scope |
+|---------------------------------|--------|
+| 1–5 | `外搜 [[slug]]` for each stale slug (or one combined pass) |
+| >5 in one domain | `外搜 <domain-slug>` (offer `batch N continue` if huge) |
+| >1 domain | One `外搜 <domain>` per affected domain (max 2 auto per Query turn; rest → **→ 下一步** suggest) |
+
+**Claim patches:** § Claim confirmation gate (never silent Claim edit).
+
+**Next step line:** If opportunistic 外搜 ran, append: `**外搜** — 已刷新 cited 页的 External (YYYY)；Claim 待确认：…` OR suggest `外搜 <domain>` if not auto-run.
+
+**Closing block:** Note opportunistic 外搜 scope + pending Claims.
+
 ---
 
 ## Revise
@@ -513,7 +551,7 @@ Record search URLs in chat revision card; wiki Evidence row summarizes facts (no
       Post **Claim 修正待确认** block in chat; **stop** until user replies **确认 Claim** / **确认全部 Claim** / per-row approve or reject.
       Only after approval → edit Claim in place + propagate (step 4c).
    c. Propagate approved Claim fixes to every page citing old name/version (grep wiki)
-   d. Set updated: today on pages where External row and/or approved Claim changed; wiki_revised: today if field exists
+   d. Set updated: today on pages where External row and/or approved Claim changed; set **external_checked: today** on every page that received a new/confirmed External (YYYY) row; wiki_revised: today if field exists
    e. Do NOT change explain_back / mastery unless user asks
 5. domains/<slug>/overview.md:
    - updated: today
@@ -532,6 +570,7 @@ Record search URLs in chat revision card; wiki Evidence row summarizes facts (no
 | Field | Rule |
 |-------|------|
 | `External (YYYY)` | One row per pass; newer year supersedes — do not delete old External rows |
+| `external_checked` | Set to today when External row written/confirmed this pass |
 | `## Claim` | Edit only when external fact **changes** design truth (not "nice to know") — **always user-confirmed first** (§ Claim confirmation gate) |
 | Book Evidence rows | Keep; External supplements time-sensitive facts |
 | `notes/` | Never write |
@@ -544,12 +583,30 @@ Included in default `lint-review-queue.py` output. Standalone:
 
 ```bash
 python3 ~/zhuomo/scripts/lint-external-fact-check.py <vault>/wiki --domain <slug>
+python3 ~/zhuomo/scripts/lint-external-fact-check.py <vault>/wiki --slugs a,b --max-age-days 180
 ```
+
+Default **max age = 180 days** (`external_checked` frontmatter). `--max-age-days 0` = calendar year only.
 
 | Bucket | Action |
 |--------|--------|
 | `MISSING_EXTERNAL` | Run `外搜 <domain>` or `外搜 [[slug]]` |
-| `STALE_EXTERNAL` | Re-run 外搜 for that scope |
+| `STALE_EXTERNAL` | Re-run 外搜 for that scope (year or age) |
+
+### Opportunistic 外搜 (auto follow-on)
+
+Runs **without** user saying `外搜` when staleness detected mid-workflow. Same Claim confirmation gate.
+
+| Workflow | When to auto-run | Scope |
+|----------|------------------|--------|
+| **Ingest** | study-technical + reference/selective deepen (step 6c) | Ingest domain(s) |
+| **Query think** | After Answer; cited study-technical slugs stale (§ Opportunistic 外搜 after Query) | 1–5 slugs or domain |
+| **Study** | `Explain-back … cold` on study-technical Tier A; target slug stale | `外搜 [[slug]]` **before** cold session |
+| **Lint** | Lists issues only — **does not** auto-run 外搜 | User or next Query/Ingest picks up |
+
+**Per Query turn cap:** auto at most **2** domain-scoped 外搜 passes; defer remainder to **→ 下一步**.
+
+**Opt out:** `no 外搜` in the same message disables opportunistic runs for that turn.
 
 ### 外搜 vs Revise vs Query
 
@@ -592,6 +649,8 @@ User-reported mistake mid-外搜 → finish external row, then **Revise** card f
 | `Explain-back [[concept]] feynman` / `feynman` | § Feynman explain-back protocol |
 | `Review queue: <domain>` | List concepts where `reviewed = null` OR `updated > reviewed` |
 | `Promote [[concept]] to solid` | If `explain_back: passed` → `mastery: solid`; else refuse |
+
+**Opportunistic 外搜 before cold (study-technical):** When target concept is **study-technical** (check `domain:` + § Source types) and `lint-external-fact-check.py --slugs <slug>` flags missing/stale → run `外搜 [[slug]]` **first** (External row only until Claim confirmed), then start cold Explain-back. Skip for literary-appreciation / reference-lookup domains.
 
 ### Explain-back protocol (interactive — default)
 
@@ -863,6 +922,7 @@ Tier definitions: `scripts/domain_study_tiers.py` — edit then re-run sync.
 - [ ] Output has `## Answer`, `## Sources`, `## Gaps`, `## Next step`
 - [ ] Gaps table non-empty if any stub/contradiction exists
 - [ ] Next step follows deterministic table (够用 / Study / File / Revise)
+- [ ] Cited study-technical slugs checked for external staleness; § Opportunistic 外搜 after Query if stale (unless `no 外搜`)
 
 ### Explain-back
 
@@ -909,6 +969,8 @@ Tier definitions: `scripts/domain_study_tiers.py` — edit then re-run sync.
 | 外搜 only in chat, no wiki write | Every fact → Evidence `External (YYYY)` + log.md |
 | 外搜 silently edits Claim | Post **Claim 修正待确认**; apply only after user confirms |
 | study-technical ingest ends without 外搜 | Auto § 外搜 step 6c (unless overview only / archive only) |
+| Query cites stale technical concepts | § Opportunistic 外搜 after Query (180d default) |
+| Cold Explain-back on stale Tier A technical | `外搜 [[slug]]` before cold session |
 | Replace book Evidence with External | External **supplements**; Revise if book Claim wrong |
 | Skill file full of BGP facts | Domain skill + wiki backend; Revise wiki when facts change |
 | "See Figure 5" with no image | Inline `![Figure 5](…)` + source link |

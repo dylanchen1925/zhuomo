@@ -47,11 +47,12 @@ Scan the user message **top to bottom**. First matching row wins. If two verbs a
 3. **No hand-maintained progress tables:** Domain progress = Dataview on concept frontmatter only.
 4. **No default digests:** Do not create `learn/digests/` unless user explicitly asks.
 5. **Explain-back:** One prompt per turn — always interactive default.
-6. **Figure N cited:** Inline image or mermaid at first mention — never bare "see Figure N".
-7. **Closing block:** After Bootstrap / Ingest / Revise / 外搜 / Lint / major Query file-back — use exact 3-line shape in § Output templates.
-8. **Promote to `solid`:** Only when `explain_back: passed` (never on Review alone).
-9. **Skills ≠ wiki:** Wiki holds facts/synthesis. To create a Cursor skill from wiki content, ask the agent in chat (no zhuomo verb). Do not paste corpus facts into SKILL.md.
-10. **Corpus vs personal:** Skill writes **corpus** only (`concepts/`, `sources/`, ingest `synthesis/`). User personal notes live under **`wiki/notes/`** — never Ingest into `notes/`; never paste user judgment into corpus `## Claim` / `## Evidence`.
+6. **Explain-back coverage:** Every `## Explain-back` prompt must be **answerable from the same concept page** — mechanism/trap/procedure in `## Claim` (prefer `###` per prompt) **and** anchored in `## Evidence`. Never ask in Explain-back what Claim+Evidence cannot support; user reports gap → **Revise** (or run enrich script), not lecture-from-source in chat only.
+7. **Figure N cited:** Inline image or mermaid at first mention — never bare "see Figure N".
+8. **Closing block:** After Bootstrap / Ingest / Revise / 外搜 / Lint / major Query file-back — use exact 3-line shape in § Output templates.
+9. **Promote to `solid`:** Only when `explain_back: passed` (never on Review alone).
+10. **Skills ≠ wiki:** Wiki holds facts/synthesis. To create a Cursor skill from wiki content, ask the agent in chat (no zhuomo verb). Do not paste corpus facts into SKILL.md.
+11. **Corpus vs personal:** Skill writes **corpus** only (`concepts/`, `sources/`, ingest `synthesis/`). User personal notes live under **`wiki/notes/`** — never Ingest into `notes/`; never paste user judgment into corpus `## Claim` / `## Evidence`.
 
 ---
 
@@ -194,7 +195,7 @@ updated: YYYY-MM-DD
 # Title
 
 ## Claim
-One paragraph — current trusted statement.
+One paragraph — current trusted statement. **Then** one `###` subsection per Explain-back prompt (mechanism / trap / procedure) so Study never depends on off-page memory.
 
 ## Personal notes
 > Optional one-liner + link only, e.g. [[notes/on-concept/<slug>]] — **do not** paste long personal prose here.
@@ -204,7 +205,7 @@ One paragraph — current trusted statement.
 2. *"Trap or contrast…"*
 3. *"Procedure, scenario, or migration…"*
 
-**Ingest quality (required):** See § Explain-back at ingest — no pure-definition prompts; ≥1 application/contrast/trap per concept.
+**Ingest quality (required):** See § Explain-back at ingest — no pure-definition prompts; ≥1 application/contrast/trap per concept; **each prompt covered in Claim + Evidence** (§ Explain-back coverage).
 
 ## Evidence
 | 要点 | 原文 |
@@ -217,6 +218,17 @@ One paragraph — current trusted statement.
 ```
 
 **Optional frontmatter:** `epistemic: contested` when sources disagree. **Do not** use `epistemic: personal` on corpus pages — personal content belongs in `notes/`.
+
+### Explain-back coverage (required on every deepened concept)
+
+| Rule | Detail |
+|------|--------|
+| **Self-contained** | User answering Explain-back (incl. **cold**) must find enough in **Claim + Evidence on this page** — not raw EPUB, not chat dump |
+| **Claim shape** | ≥1 `###` subsection per numbered Explain-back prompt; title mirrors the question theme |
+| **Evidence shape** | ≥1 Evidence row per prompt theme (book anchor or `External (YYYY)` when time-sensitive) |
+| **Write order** | Draft Claim subsections + Evidence **first**, then write Explain-back bullets from that corpus |
+| **Study gap** | User says「concept 里没有」→ treat as **Revise** / run `enrich-explain-back-coverage.py`; do **not** only teach in chat |
+| **Lint** | `lint_explain_back_coverage.py` flags pages where `###` count < prompt count |
 
 **Personal note page** (`wiki/notes/on-concept/<slug>.md` or `notes/inbox/…`):
 
@@ -466,7 +478,7 @@ python3 ~/zhuomo/scripts/lint-external-fact-check.py <vault>/wiki \
 
 ## Revise
 
-**Trigger:** user error report, lint finding, or new source contradicts wiki.
+**Trigger:** user error report, lint finding, Explain-back「concept 里没有」/ coverage gap, or new source contradicts wiki.
 
 ```
 1. Locate: target page, backlinks (grep wiki), related skills
@@ -665,6 +677,7 @@ START:
 EACH USER REPLY:
   4. Grade THIS prompt only: ✅ / ⚠️ / ❌ (see table below)
   5. 1–3 sentence correction if ⚠️ or ❌ — not full wiki rewrite
+  5b. If user says answer not in concept → acknowledge **wiki gap**; offer `Revise [[slug]]` after session (or pause to Revise if blocking)
   6. Post ONLY next prompt (or go to END if done)
 
 END (after last prompt):
@@ -760,6 +773,7 @@ When deepening concepts, every `## Explain-back` section must follow:
 | **Include ≥1** | Contrast (X vs Y), scenario/decision, remove-premise ("if we drop …"), or failure/troubleshooting |
 | **Prefer** | Synthesis across Claim sections — not a single bullet copy-paste answer |
 | **Count** | 3–4 prompts per deepened concept |
+| **Coverage** | Before finishing ingest: every prompt has matching `###` in Claim + Evidence row; run `lint_explain_back_coverage.py` on touched slugs |
 
 Rubric line on page: `Claim correct · mechanism OK · ≥1 constraint/trap · aligns with Evidence`.
 
@@ -775,9 +789,11 @@ Run (replace `<vault>`):
 python3 ~/zhuomo/scripts/lint-review-queue.py <vault>/wiki
 python3 ~/zhuomo/scripts/lint-review-queue.py <vault>/wiki --domain kubernetes-cilium
 python3 ~/zhuomo/scripts/lint-figure-visuals.py <vault>/wiki
+python3 ~/zhuomo/scripts/lint_explain_back_coverage.py <vault>/wiki
+python3 ~/zhuomo/scripts/enrich-explain-back-coverage.py <vault>/wiki --apply
 ```
 
-`lint-review-queue.py` **includes External (YYYY) fact-check by default** (section `EXTERNAL FACT-CHECK`). Skip with `--skip-external`. Standalone scan: `lint-external-fact-check.py`.
+`lint-review-queue.py` **includes External (YYYY) fact-check by default** (section `EXTERNAL FACT-CHECK`) and **Explain-back coverage** (`EXPLAIN-BACK COVERAGE`). Skip external with `--skip-external`. Standalone: `lint-external-fact-check.py`, `lint_explain_back_coverage.py`.
 
 **Review queue buckets (script output — act in order):**
 
@@ -789,6 +805,7 @@ python3 ~/zhuomo/scripts/lint-figure-visuals.py <vault>/wiki
 | `STALE` | Re-read + Review |
 | `NEVER_REVIEWED` | `Explain-back [[slug]] cold` (Tier A) or Review |
 | `MISSING_EXPLAIN_BACK_SECTION` | Add `## Explain-back` |
+| `EXPLAIN-BACK COVERAGE` (lint_explain_back_coverage.py) | `enrich-explain-back-coverage.py --apply` or `Revise [[slug]]` per prompt |
 | `MISSING_EXTERNAL` / `STALE_EXTERNAL` (lint-external-fact-check.py) | `外搜 <domain>` |
 
 | Check | If failed |
@@ -800,6 +817,7 @@ python3 ~/zhuomo/scripts/lint-figure-visuals.py <vault>/wiki
 | Figure N without inline visual | embed-figure-visuals.py or manual inline |
 | `updated > reviewed` | Report in review queue (user Study) |
 | Missing `## Explain-back` on deepened concept | Add 3 prompts |
+| Explain-back prompt not in Claim/Evidence | Revise or enrich-explain-back-coverage.py |
 | Contradiction between pages | Revise |
 | Duplicate topic pages | Merge to one canonical |
 
@@ -882,6 +900,8 @@ Append `## [date] lint | N issues` to `log.md`. List each issue with suggested R
 | `lint-figure-visuals.py` | Find missing figure embeds |
 | `lint-review-queue.py` | Review queue + **External (YYYY)** scan (default) |
 | `lint-external-fact-check.py` | External scan only (same logic as lint-review-queue) |
+| `lint_explain_back_coverage.py` | Explain-back prompts vs Claim `###` + Evidence |
+| `enrich-explain-back-coverage.py` | Auto-fill Claim subsections from Evidence-linked source MD |
 | `add-evidence-sections.py` | Backfill Evidence blocks |
 | `sync-domain-study-paths.py` | Study paths + inline **A**/**B** tiers + Dataview queues on overviews |
 | `simplify-vault.py` | One-shot vault migration (archive) |
@@ -910,6 +930,7 @@ Tier definitions: `scripts/domain_study_tiers.py` — edit then re-run sync.
 - [ ] Topic map on source page
 - [ ] EPUB/PDF has md corpus under `sources/<slug>/md/` (unless overview only)
 - [ ] Every deepened concept has Claim, Explain-back (3+), Evidence table (skip if archive/overview only per class)
+- [ ] Every Explain-back prompt has matching `###` Claim subsection + Evidence row (§ Explain-back coverage)
 - [ ] `index.md` updated; `log.md` appended
 - [ ] No dangling `[[wikilinks]]` on touched pages
 - [ ] Closing block posted
@@ -929,6 +950,7 @@ Tier definitions: `scripts/domain_study_tiers.py` — edit then re-run sync.
 - [ ] One prompt per turn
 - [ ] Frontmatter updated only at session end
 - [ ] `passed` not set if core mechanism contradicts wiki
+- [ ] Wiki gap reported by user → Revise / enrich, not chat-only answer
 
 ### Revise
 
@@ -964,6 +986,8 @@ Tier definitions: `scripts/domain_study_tiers.py` — edit then re-run sync.
 | Ingest writes into `notes/` | Ingest → corpus only |
 | Reference depth on 诗歌消遣读 | archive only; Query + personal notes when needed |
 | All Explain-back Q&A in one message | One prompt → wait → grade → next |
+| Explain-back asks QoS/eviction; Claim only names QoS | `###` per prompt + Evidence before Study |
+| Teach missing mechanism only in chat | Revise concept + Evidence on wiki |
 | Progress table edited by hand in overview | Dataview reads concept frontmatter |
 | Web search before reading wiki | overview → concepts → then web (外搜: read scope first, then web) |
 | 外搜 only in chat, no wiki write | Every fact → Evidence `External (YYYY)` + log.md |
@@ -989,6 +1013,7 @@ Tier definitions: `scripts/domain_study_tiers.py` — edit then re-run sync.
 | Skip confirm on ambiguous huge ingest | § Confirm menu + § Source types class |
 | IT defaults applied to fiction | Classify literary-appreciation; overview/archive default |
 | Fix only in chat | Revise wiki + log.md; time-sensitive → **外搜** |
+| Explain-back tests facts absent from Claim | Revise / enrich-explain-back-coverage.py |
 | New source contradicts old | Revise affected pages; don't keep both as true |
 | Stale release/CVE in Claims | `外搜 <domain>` not one-off Query |
 | `framework.md` / mega-overview | `overview.md` + optional `guide.md` only |

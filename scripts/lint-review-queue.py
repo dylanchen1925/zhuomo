@@ -184,6 +184,37 @@ def main() -> int:
             for line in ext_lines:
                 print(line)
 
+    # Explain-back Claim/Evidence coverage
+    try:
+        import importlib.util
+
+        _spec = importlib.util.spec_from_file_location(
+            "lint_explain_back_coverage",
+            Path(__file__).with_name("lint_explain_back_coverage.py"),
+        )
+        _cov = importlib.util.module_from_spec(_spec)
+        assert _spec.loader
+        _spec.loader.exec_module(_cov)
+        cov_hits: list = []
+        for p in sorted((wiki / "concepts").glob("*.md")):
+            if args.domain:
+                head = p.read_text(encoding="utf-8")[:600]
+                if f"domain: {args.domain}" not in head:
+                    continue
+            r = _cov.audit_file(p)
+            if r:
+                cov_hits.append(r)
+        if cov_hits:
+            print(f"\n=== EXPLAIN-BACK COVERAGE ({len(cov_hits)}) ===")
+            print("Thin Claim vs Explain-back prompts — run enrich-explain-back-coverage.py --apply")
+            for h in cov_hits[:40]:
+                print(f"  concepts/{h['slug']}.md")
+            if len(cov_hits) > 40:
+                print(f"  … and {len(cov_hits) - 40} more")
+            total += len(cov_hits)
+    except Exception as exc:
+        print(f"\n=== EXPLAIN-BACK COVERAGE (skipped: {exc}) ===")
+
     flagged = total + external_issues
     if flagged:
         print(f"\n{flagged} issue(s) flagged ({total} review + {external_issues} external)")

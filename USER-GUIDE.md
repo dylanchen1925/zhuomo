@@ -2,23 +2,42 @@
 
 How to set up **琢磨 (Zhuomo)**, learn from sources **one concept at a time**, and keep a personal wiki + optional agent skills.
 
-**You read this guide.** The agent reads [SKILL.md](SKILL.md).
+**You read this guide.** The agent reads [SKILL.md](SKILL.md) and loads detail from `~/zhuomo/references/` when needed.
 
-**Quick links:** [REVIEW.md](REVIEW.md) · [LEARNING.md](LEARNING.md) · Obsidian `wiki/help.md`
+**Quick links:** [REVIEW.md](REVIEW.md) · [LEARNING.md](LEARNING.md) · Obsidian `wiki/help.md` · [SIMPLE.md](SIMPLE.md)
+
+---
+
+## 先说你想要什么（意图 → 指令）
+
+| 你想… | 说… | 停在哪 |
+|--------|-----|--------|
+| 新建知识库 | `Bootstrap: raw …, vault …` | 文件夹 + AGENTS + config |
+| **接入已有 Obsidian** | `Adopt vault: …` | 只补 help/AGENTS，**不改**你的 concepts |
+| 导入一本书 | `Ingest: …/book.epub` | concepts + topic map |
+| 书太大、分批 | `Ingest continue: <source-slug>` | partial → 续 deepen |
+| 导入字幕/转写 | `Ingest: …/lecture.srt` | 默认只 md 语料；要概念加 `deepen` |
+| 搞懂一个概念 | `Explain-back [[slug]] cold` | Promote solid |
+| 用知识分析现场 | `Query think: 场景 …` | Answer + 可选 **Apply** |
+| 查版本/CVE | `外搜 <domain>` | Evidence；Claim **需你确认** |
+| 库健康 | `Lint` | 四级报告（阻断→维护） |
+| 连续学一域 | `Study continue: kubernetes-cilium` | 一课 Explain-back |
+| 记个人模型 | `Connect: … — 记入 synthesis` | `wiki/notes/synthesis/` |
 
 ---
 
 ## Table of contents
 
-1. [What Zhuomo is](#1-what-zhuomo-is)
-2. [Prerequisites](#2-prerequisites)
-3. [First-time setup](#3-first-time-setup)
-4. [Learn by concept (Review & Explain-back)](#4-learn-by-concept-review--explain-back)
-5. [Lint vs Revise vs 外搜](#5-lint-vs-revise-vs-外搜)
-6. [Daily and weekly habits](#6-daily-and-weekly-habits)
-7. [Operations reference](#7-operations-reference)
-8. [Prompt cookbook](#8-prompt-cookbook)
-9. [Learning from sources](#9-learning-from-sources)
+0. [功能地图（一张总图）](#0-功能地图一张总图)
+1. [功能图式说明](#1-功能图式说明)
+2. [What Zhuomo is](#2-what-zhuomo-is)
+3. [Prerequisites](#3-prerequisites)
+4. [First-time setup（Bootstrap / Adopt）](#4-first-time-setupbootstrap--adopt)
+5. [Learn by concept (Study)](#5-learn-by-concept-study)
+6. [Lint vs Revise vs 外搜](#6-lint-vs-revise-vs-外搜)
+7. [Daily habits](#7-daily-habits)
+8. [Operations reference](#8-operations-reference)
+9. [Prompt cookbook](#9-prompt-cookbook)
 10. [Domain frameworks and progress](#10-domain-frameworks-and-progress)
 11. [Optional Cursor skills](#11-optional-cursor-skills)
 12. [Multi-device workflow](#12-multi-device-workflow)
@@ -28,61 +47,386 @@ How to set up **琢磨 (Zhuomo)**, learn from sources **one concept at a time**,
 
 ---
 
-## 1. What Zhuomo is
+## 0. 功能地图（一张总图）
+
+琢磨把 **原始资料** 编译成 **Obsidian wiki**，你用 **Claim 知识笔记 + Explain-back** 掌握，必要时 **外搜** 保鲜；**Query** 用来问已有知识、**Apply** 分析现场。
+
+```mermaid
+flowchart TD
+  subgraph input [你丢进来的]
+    R[raw: EPUB PDF 字幕 笔记]
+  end
+
+  subgraph verbs [七个动词 + 扩展]
+    B[Bootstrap / Adopt]
+    I[Ingest / Ingest continue]
+    Q[Query think + Apply]
+    W[外搜]
+    S[Study / Study continue]
+    V[Revise]
+    L[Lint]
+  end
+
+  subgraph wiki [Obsidian wiki]
+    C[concepts Claim 知识笔记]
+    E[Evidence 溯源]
+    D[domains map study]
+    N[notes 个人笔记]
+  end
+
+  R --> I
+  B --> wiki
+  I --> C
+  I --> E
+  C --> S
+  S --> Q
+  W --> E
+  L --> V
+  L --> W
+  Q --> N
+  V --> C
+```
+
+**Corpus（编译层）** = `concepts/` · `sources/` · `domains/` · `wiki/synthesis/`  
+**Personal（个人层）** = `wiki/notes/` — Connect / 「我的想法」写这里，Ingest **不会**自动写进去。
+
+---
+
+## 1. 功能图式说明
+
+下面每张图对应一个功能：节点是「谁做什么」，箭头是「数据/动作往哪走」。细节规则在 [SKILL.md](SKILL.md) 与 `references/`。
+
+---
+
+### 1.1 Bootstrap — 从零建库
+
+```mermaid
+flowchart LR
+  U[你说 Bootstrap] --> A[Agent]
+  A --> F1[建 raw 目录树]
+  A --> F2[建 wiki 骨架]
+  A --> F3[复制 AGENTS.md help]
+  A --> F4[写 ~/.zhuomo/config.json]
+  F2 --> O[overview domain-map]
+  F4 --> CFG[只存路径 不存正文]
+  A --> I{带了第一本书?}
+  I -->|是| IN[接着 Ingest]
+  I -->|否| DONE[完成 3 行 closing]
+```
+
+```
+  你                          Agent                    磁盘
+  ───                         ─────                    ────
+  Bootstrap: raw… vault…  →   建 inbox/ books/    →   ~/zhuomo-data/raw/
+                              建 wiki/            →   vault/wiki/
+                              zhuomo_config set   →   ~/.zhuomo/config.json
+```
+
+---
+
+### 1.2 Adopt — 接入已有 Obsidian（不覆盖）
+
+已有大量笔记时 **不要 Bootstrap 覆盖**，用 Adopt：
+
+```mermaid
+flowchart TD
+  U[Adopt vault: 路径] --> CHK[vault-adopt-check.py]
+  CHK -->|空库或无 marker| OK[合并 templates]
+  CHK -->|非空 corpus 且无 marker| NO[拒绝覆盖 提示风险]
+  OK --> H[补 help.md AGENTS.md]
+  OK --> M[写 .zhuomo-adopted 标记]
+  OK --> CFG[更新 config.json]
+  NO --> U2[你确认后仅 merge 模板]
+```
+
+**原则：** 只加「琢磨约定文件」，**不批量改** 已有 `concepts/` Claim。
+
+---
+
+### 1.3 Ingest — 书 → 知识笔记
+
+```mermaid
+flowchart TD
+  U[Ingest: book.epub] --> CL[分类 study-technical 等]
+  CL --> TM[Topic map 在 sources 页]
+  TM --> MD[整书 md 语料 sources/slug/md]
+  MD --> DP[Agent 读原文 写 Claim]
+  DP --> P[concepts 页]
+  P --> EB[Explain-back 3-4 题]
+  P --> EV[Evidence 锚点]
+  DP --> MAP[更新 domain map]
+  CL --> WS{study-technical deepen?}
+  WS -->|是| WAI[自动 外搜 domain]
+  WAI --> CONF[Claim 修正 等你确认]
+```
+
+**Claim 两层（技术书默认）：**
+
+```mermaid
+flowchart TD
+  subgraph understandable [可理解层 你先读这个]
+    A1[解决什么问题]
+    A2[机制链 + 完整例子]
+    A3[When to use / vs / 陷阱]
+  end
+  subgraph formal [正式层 查阅用]
+    B1[精确定义 CLI 公式]
+    B2[每项指回例子第几步]
+  end
+  understandable --> formal
+```
+
+**大书分批：**
+
+```mermaid
+flowchart LR
+  I1[Ingest 第 1 批] --> ST[ingest_status: partial]
+  ST --> NS[next_sections 写在 source 页]
+  NS --> I2[Ingest continue: slug]
+  I2 --> ST2{还有章节?}
+  ST2 -->|是| ST
+  ST2 -->|否| DONE[ingest_status: complete]
+```
+
+---
+
+### 1.4 Transcript — 字幕 / 转写（默认只存档）
+
+```mermaid
+flowchart TD
+  U[Ingest: lecture.srt] --> CL[清洗 去广告 分段]
+  CL --> MD[写入 sources/.../md/]
+  MD --> SRC[source 页 class: transcript]
+  SRC --> DEF[默认 不生成 concepts]
+  U2[你补充: deepen / 沉淀知识] --> TM[Topic map + Claim 同 Ingest]
+```
+
+可选脚本：`python3 ~/zhuomo/scripts/transcript-to-wiki-md.py input.srt out/md/`
+
+---
+
+### 1.5 Study — 学会一个概念
+
+```mermaid
+flowchart TD
+  M[domains/slug/map 纲领 ~30min] --> ST[study.md 看下一步列]
+  ST --> COLD[Explain-back cold 先测]
+  COLD --> READ[读 Claim 知识笔记]
+  READ --> EB[Explain-back / feynman]
+  EB --> P{passed?}
+  P -->|是| PR[Promote solid]
+  P -->|否| DX[Study 卡住? 见诊断图]
+  DX --> RV[Revise 加厚 Claim]
+  DX --> FY[feynman]
+  DX --> WS[外搜 版本过时]
+  READ -.->|按需| EV[Evidence 查原文]
+```
+
+**Study continue（连续学一域）：**
+
+```mermaid
+flowchart LR
+  U[Study continue: domain] --> ST[读 study 下一步列]
+  ST --> ONE[只选一课 一个 concept]
+  ONE --> EB[跑一轮 Explain-back]
+  EB --> NEXT[closing 建议下一行或 Revise]
+```
+
+**卡住诊断（不必死磕 feynman）：**
+
+| 现象 | 图式上该走哪条边 |
+|------|------------------|
+| Claim 像目录、太短 | → **Revise**（Agent 重读 source） |
+| 术语/公式不懂 | → 读 Claim **正式层** + Evidence |
+| 会背不会选型 | → Revise 加 scenario + procedure |
+| 和书/外搜矛盾 | → **外搜** 或 Revise |
+| 15 分钟做不完 | → 缩到 study 表 **一行** |
+
+---
+
+### 1.6 Query think — 问 wiki + Apply 现场
+
+```mermaid
+flowchart TD
+  U[Query think: 问题] --> BF[brain-first 读 map concepts]
+  BF --> AN[Answer + Sources]
+  AN --> GP[Gaps 标 fact/judgment/unknown]
+  GP --> NS[Next step 够用 Study File Revise]
+  U2[消息里带真实场景] --> AP[Apply 块]
+  AP --> AP1[断点: 预期 vs 实际]
+  AP --> AP2[用的 concept]
+  AP --> AP3[判断 + 下一次验证]
+  AP --> AP4[默认不写回 wiki]
+```
+
+**Apply 示例说法：**
+
+```
+Query think: 生产里 BGP 经常 flap，wiki 里的 [[bgp-hold-timer]] 怎么用来排查？我的场景：双 ISP，只有一条路径在抖。
+```
+
+---
+
+### 1.7 外搜 — 时效事实（Claim 需确认）
+
+```mermaid
+flowchart TD
+  U[外搜 cisco-sdwan] --> RD[先读 wiki 范围]
+  RD --> WEB[查 vendor CVE 考纲等]
+  WEB --> SUM[摘要三分法]
+  SUM --> F[事实 有来源]
+  SUM --> J[判断 含条件]
+  SUM --> U2[未知 待查]
+  WEB --> EXT[Evidence 加 External YYYY]
+  EXT --> GATE{Claim 要改?}
+  GATE -->|是| WAIT[Claim 修正待确认 停]
+  WAIT --> OK[你: 确认 Claim]
+  OK --> EDIT[才改 wiki Claim]
+  GATE -->|否| DONE[只写 External]
+```
+
+**自动外搜：** study-technical 深度 Ingest 后；Query/Study 引用 **>180 天** 未检查的 technical 概念（可说 `no 外搜` 跳过）。
+
+---
+
+### 1.8 Revise — 改错 / 加厚 Claim
+
+```mermaid
+flowchart LR
+  U[Revise 或 Explain-back 报 gap] --> LOC[定位页 + 反向链接]
+  LOC --> CARD[修订卡 旧 claim 新 claim]
+  CARD --> FIX[改 Claim / supersede / merge]
+  FIX --> PROP[传播到引用页]
+  PROP --> LOG[log.md + updated 今天]
+```
+
+**个人想法不进 corpus：**
+
+```
+Revise [[bgp]] — 我的想法：…   →   wiki/notes/on-concept/bgp.md
+```
+
+---
+
+### 1.9 Lint — 库体检（脚本报候选，人/agent 判决）
+
+```mermaid
+flowchart TD
+  U[Lint] --> SCR[跑 lint-review-queue 等]
+  SCR --> T1[1 阻断 坏链 orphan]
+  SCR --> T2[2 失真 薄 Claim 过时 External]
+  SCR --> T3[3 待消化 未 Review partial ingest]
+  SCR --> T4[4 维护 图缺失等]
+  T2 --> V[Revise 或 外搜]
+  T3 --> S[Study 或 Ingest continue]
+  T1 --> FIX[直接修链/ stub]
+```
+
+**记住：** 脚本列表 ≠ 自动删页；重复 concept 要 **打开两页** 再 merge。
+
+---
+
+### 1.10 Connect — 个人跨概念模型
+
+```mermaid
+flowchart LR
+  CHAT[聊透几个 concept] --> U[Connect: … 记入 synthesis]
+  U --> N[notes/synthesis/xxx.md]
+  N --> P[origin: personal]
+  CORP[Ingest Query 编译主题] --> S[wiki/synthesis/ origin zhuomo]
+```
+
+| 写哪 | 谁写 | 内容 |
+|------|------|------|
+| `wiki/synthesis/` | Ingest / Query | 跨书 **编译** 主题 |
+| `wiki/notes/synthesis/` | **Connect** | **你的** 对照/模型 |
+
+---
+
+### 1.11 Domain 四页 — 两种读法
+
+```mermaid
+flowchart TD
+  subgraph topdown [自顶向下 第一次来]
+    MAP[map.md 纲领 ~30min]
+    MAP --> OV[overview 为什么学 gaps]
+  end
+  subgraph bottomup [自底向上 日常]
+    STUDY[study.md 进度表 下一步]
+    STUDY --> CON[concepts Claim]
+  end
+  GUIDE[guide.md 索引] -.->|按需查| CON
+  MAP --> STUDY
+```
+
+| 页 | 回答 |
+|----|------|
+| **map** | 整体怎么叠？Tier A 在哪层？ |
+| **overview** | 为什么学？外搜？gaps？ |
+| **guide** | 某概念在哪？ |
+| **study** | 学到哪？下一步 Promote/cold？ |
+
+---
+
+## 2. What Zhuomo is
 
 **琢磨** — polish raw material until it is clear, linked, and usable.
 
 | You provide | Zhuomo helps produce |
 |-------------|----------------------|
-| EPUB, PDF, articles, video notes, highlights | **Wiki** (Obsidian) — concepts, Evidence, frameworks |
-| Repeatable agent behavior (optional) | **Cursor skills** — separate chat step; see §11 |
-| Your study time | **Explain-back** prompts (cold / feynman) |
+| EPUB, PDF, articles, **SRT/VTT**, notes | **Wiki** — concepts (Claim), Evidence, domains |
+| Repeatable agent behavior (optional) | **Cursor skills** — separate chat; §11 |
+| Your study time | **Explain-back** (cold / feynman) + **Study continue** |
 
-**You do not need to name topics upfront.** Drop a source; the agent proposes a topic map and ingests into `wiki/concepts/`.
+**North star:** Ingest once → study from **Claim** → open book only when Claim thin or you want primary text.
 
-**Learning model (2026):** study **per concept** — read the page, **Review** (mark read), **Explain-back** (teach it aloud in chat). No flashcard decks, no Roguelike runs.
+**Agent 细节** 在 `~/zhuomo/references/`（Claim rubric、Apply、外搜、Lint 等）；**SKILL.md** 是路由入口。
 
 ---
 
-## 2. Prerequisites
+## 3. Prerequisites
 
 | Tool | Purpose |
 |------|---------|
 | **Cursor** | Run Zhuomo (`/zhuomo` or natural language) |
-| **Obsidian** | Read wiki, graph, optional Dataview for review queue |
-| **Git** (optional) | Version wiki or skill repos |
-
-Install the skill:
+| **Obsidian** | Read wiki, graph, Dataview for study 进度 |
+| **Git** (optional) | Version wiki or zhuomo repo |
 
 ```bash
 ln -sf /path/to/zhuomo ~/.cursor/skills/zhuomo
 ```
 
-You do **not** need the Obsidian Spaced Repetition plugin.
+Config（仅路径）：`python3 ~/zhuomo/scripts/zhuomo_config.py show`
 
 ---
 
-## 3. First-time setup
+## 4. First-time setup（Bootstrap / Adopt）
 
-### Step 1: Bootstrap
-
-In Cursor:
+### 新建库 — Bootstrap
 
 ```
-/zhuomo Bootstrap: raw ~/zhuomo-data/raw/, Obsidian vault ~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen
+/zhuomo Bootstrap: raw ~/zhuomo-data/raw/, Obsidian vault ~/…/Dylan Chen
 ```
 
-Or bootstrap and ingest the first book in one line:
+或一行带第一本书：
 
 ```
 /zhuomo Bootstrap + ingest: ~/zhuomo-data/raw/books/my-first-book.epub
 ```
 
-**Default:** reference depth — topic map, EPUB md corpus, **all concepts deepened** with `## Explain-back` + `## Evidence`.
+**Default:** reference depth — topic map, md corpus, concepts deepened + Explain-back + Evidence.
 
-**Lite:** add `overview only` or `Bootstrap lite` for stubs first.
+**Lite:** `overview only` / `Bootstrap lite`.
 
-### Step 2: Folder layout
+### 已有 Obsidian — Adopt
+
+```
+/zhuomo Adopt vault: ~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Dylan Chen
+```
+
+Agent 跑 `vault-adopt-check.py`；**不会**覆盖已有 concepts。只补 `help.md`、`AGENTS.md`、`.zhuomo-adopted`。
+
+### Folder layout
 
 ```
 ~/zhuomo-data/raw/
@@ -92,94 +436,61 @@ Or bootstrap and ingest the first book in one line:
 
 vault/
 ├── AGENTS.md
+├── .zhuomo-adopted   # Adopt 后可选标记
 └── wiki/
     ├── overview.md · index.md · log.md · domain-map.md · help.md
-    ├── domains/<slug>/overview.md (+ optional guide.md)
+    ├── domains/<slug>/map · overview · guide · study
     ├── concepts/*.md
-    ├── sources/
-    ├── synthesis/
-    └── notes/
+    ├── sources/<slug>.md + md/    # 含 ingest_status / next_sections
+    ├── synthesis/                 # 编译层
+    └── notes/                     # 个人层
 ```
 
-### Step 3: Open Obsidian
-
-Open the vault; start from `wiki/overview.md` or `wiki/help.md`.
-
-### Step 4: First ingest
+### First ingest
 
 ```
 /zhuomo Ingest: ~/zhuomo-data/raw/books/my-first-book.epub
 ```
 
-Map only:
+大书续作：
+
+```
+/zhuomo Ingest continue: my-book-slug
+```
+
+Map only：
 
 ```
 /zhuomo Ingest overview only: raw/web/article.md
 ```
 
-Browse `wiki/concepts/` — each deepened page should have **Explain-back** then **Evidence**.
-
 ---
 
-## 4. Learn by concept (Review & Explain-back)
+## 5. Learn by concept (Study)
 
-### The loop
+**主教材 = `## Claim` 知识笔记**，不是整本书。见 §1.5 图。
 
-```mermaid
-flowchart LR
-  C[cold Explain-back] --> E[Evidence gaps]
-  E --> F[feynman]
-  F --> P{passed?}
-  P -->|yes| S[solid]
-  P -->|no| R[Revise]
-```
+| Step | You say |
+|------|---------|
+| **Cold** | `Explain-back [[concept]] cold` |
+| **Read** | Open concept — Claim（可理解层 + 正式层） |
+| **Explain-back** | `Explain-back [[concept]]` — 一轮一题 |
+| **Feynman** | `Explain-back [[concept]] feynman` |
+| **Promote** | `Promote [[concept]] to solid` — 仅 after **passed** |
+| **Continue** | `Study continue: <domain>` |
+| **Evidence** | 按需 — 核对原文 |
 
-| Step | You say | What happens |
-|------|---------|----------------|
-| **Cold** | `Explain-back [[concept]] cold` | Test before Claim — [REVIEW.md](REVIEW.md#cold-explain-back-first-learn) |
-| **Explain-back** | `Explain-back [[concept]]` | Revision path; one prompt per turn |
-| **Feynman** | `Explain-back [[concept]] feynman` | Teach-back with child-style probes |
-| **Promote** | `Promote [[concept]] to solid` | After **passed** |
+Full spec: [REVIEW.md](REVIEW.md) · 卡住: [references/study-diagnosis.md](references/study-diagnosis.md)
 
-`reviewed` is set automatically by Explain-back sessions.
-
-Full spec: [REVIEW.md](REVIEW.md).
-
-### Concept page shape
-
-```markdown
-## Claim
-…
-
-## Mechanics / …
-…
-
-## Explain-back
-1. *"Walk me through …"*
-2. *"What's the trap …"*
-
-## Evidence
-- [[sources/…]]
-```
-
-### Frontmatter (progress)
+### Frontmatter
 
 | Field | Meaning |
 |-------|---------|
-| `reviewed` | You read and accept this version |
+| `reviewed` | Explain-back 结束时自动写 |
 | `explain_back` | `not_started` · `attempted` · `passed` |
 | `mastery` | `learning` · `solid` |
-| `updated` | Agent last edited — if **after** `reviewed`, read again |
-
-**After Revise:** run `Explain-back [[concept]] cold` if the page changed materially (`updated > reviewed`).
-
-### Explain-back rubric (summary)
-
-**Default mode:** interactive — one explain-back prompt per turn; agent grades each answer before the next. Full spec: [REVIEW.md § Interactive explain-back](REVIEW.md#interactive-explain-back-default).
-
-**Passed:** correct Claim, mechanism OK, at least one constraint/trap, aligns with Evidence, handles one follow-up.
-
-**Partial / fail:** re-read Evidence, try **feynman**, or **Revise**.
+| `updated` | 页被改 — 若 **>** `reviewed` → 建议 cold 重测 |
+| `external_checked` | 外搜确认 External 的日期 |
 
 ### Review queue
 
@@ -187,212 +498,128 @@ Full spec: [REVIEW.md](REVIEW.md).
 Review queue: cisco-aci
 ```
 
-Or run `python3 scripts/lint-review-queue.py <vault>/wiki` from the zhuomo repo.
-
-Shows concepts where:
-
-- `updated > reviewed` (agent changed page)
-- never `reviewed`
-- reviewed but `explain_back` not `passed`
+或：`python3 ~/zhuomo/scripts/lint-review-queue.py <vault>/wiki`
 
 ---
 
-## 5. Lint vs Revise vs 外搜
+## 6. Lint vs Revise vs 外搜
+
+见 §1.7–1.9 图。
 
 | | **Lint** | **外搜** | **Revise** |
 |---|----------|----------|------------|
-| **Purpose** | Health scan | Refresh time-sensitive facts vs web | Fix a specific error |
-| **Trigger** | `Lint`, after big ingest | Stale domain; missing `External (YYYY)` | You spot error; Explain-back fail |
-| **Changes wiki?** | Usually lists issues | **Yes** — External rows + overview；Claim **先确认再改** | **Yes** — targeted edits |
-| **Web?** | No | **Yes** (after reading wiki scope) | Only if you cite new source |
-| **Log** | `lint \| …` | `external-fact-check \| …` | `revise \| [[concept]]` |
-| **Side effect** | — | Sets `updated` → cold Explain-back on Tier A | Sets `updated` → cold Explain-back |
-
-**Typical flow:**
+| **Purpose** | 分级体检 | 保鲜时效事实 | 改具体错/加厚 Claim |
+| **Trigger** | `Lint` | 过时 domain/概念 | 你发现错；Study gap |
+| **Claim** | 只建议 | **待确认** 才改 | 直接改 corpus |
+| **Web** | No | Yes | 仅当你给新来源 |
 
 ```
-Lint  →  MISSING_EXTERNAL on cisco-sdwan
-外搜  →  外搜 cisco-sdwan
-Explain-back cold →  Tier A after wiki refresh
-```
-
-**Single-page mistake (not domain refresh):**
-
-```
-Revise →  Revise [[aci-border-leaf-l3out]] — add Figure 91 inline
+Lint → MISSING_EXTERNAL → 外搜 cisco-sdwan → 确认 Claim → Explain-back cold
 ```
 
 ---
 
-## 6. Daily habits
+## 7. Daily habits
 
-- Drop captures in `raw/inbox/`
-- One **Explain-back cold** on next Tier A from `domains/<slug>/study`
-- **`Lint`** when something feels stale
-
-```
-/zhuomo Lint
-/zhuomo Review queue: kubernetes-cilium
-```
+- `raw/inbox/` 丢 capture
+- `domains/<slug>/study` 看 **下一步** — 一行 concept
+- `Explain-back cold` 或 `Study continue: <domain>`
+- 每周或 ingest 后：`Lint`
 
 ---
 
-## 7. Operations reference
+## 8. Operations reference
 
-**Seven verbs:** Bootstrap · Ingest · Query · **外搜** · Revise · Study · Lint. **Connect** for personal cross-concept notes.
+**Verbs:** Bootstrap · **Adopt** · Ingest · **Ingest continue** · Query · 外搜 · Revise · Study · **Study continue** · Lint · Connect
 
 | Verb | Examples | Output |
 |------|----------|--------|
-| **Ingest** | `Ingest: book.epub` | Concepts + Explain-back + Evidence |
-| **Query** | `Query: …` | Synthesis + Gaps |
-| **外搜** | `外搜 cisco-aci` / `外搜 [[concept]]` | `External (YYYY)` + overview；Claim 修正 **待你确认** |
-| **Study** | `Explain-back cold` / `feynman` / `Promote` | Frontmatter mastery |
-| **Revise** | `Revise [[page]] — …` | Fixed pages + `updated` |
-| **Lint** | `Lint` | Issues + review queue + external gaps |
-| **Connect** | `Connect: … — 记入 synthesis` | `wiki/notes/synthesis/` |
-
-**Archive only** (no learn artifacts):
-
-```
-/zhuomo Ingest raw/paper.pdf — archive only
-```
-
-**Overview only:**
-
-```
-/zhuomo Ingest overview only: book.epub
-```
+| **Bootstrap** | `Bootstrap: raw …, vault …` | Skeleton + config |
+| **Adopt** | `Adopt vault: …` | Non-destructive merge |
+| **Ingest** | `Ingest: book.epub` | Concepts + source status |
+| **Ingest continue** | `Ingest continue: slug` | Resume `next_sections` |
+| **Query** | `Query think: …` | Answer + Gaps + optional Apply |
+| **外搜** | `外搜 cisco-aci` | External + 确认 Claim |
+| **Study** | cold / feynman / Promote / continue | Mastery |
+| **Revise** | `Revise [[page]] — …` | Fixed corpus |
+| **Lint** | `Lint` | Tiered report |
+| **Connect** | `Connect: … — 记入 synthesis` | `notes/synthesis/` |
 
 ---
 
-## 8. Prompt cookbook
+## 9. Prompt cookbook
 
-### Bootstrap and maintenance
+### Bootstrap / Adopt / maintenance
 
 ```
 /zhuomo Bootstrap: raw ~/zhuomo-data/raw/, Obsidian vault ~/path/to/vault
-
+/zhuomo Adopt vault: ~/path/to/existing/vault
 /zhuomo Process everything in ~/zhuomo-data/raw/inbox/
-
 /zhuomo Lint
 ```
 
-### Per-concept study
+### Study
 
 ```
 Explain-back [[aci-border-leaf-l3out]] cold
 Explain-back [[aci-border-leaf-l3out]] feynman
-Review queue: cisco-aci
+Study continue: kubernetes-cilium
 Promote [[aci-spine-leaf-topology]] to solid
+Review queue: cisco-aci
 ```
 
 ### Ingest
 
 ```
-/zhuomo Ingest raw/ddia.epub — discover topics, deepen all.
-
-/zhuomo Ingest this blog — focus caching; list other topics at end.
-
+/zhuomo Ingest raw/ddia.epub
+/zhuomo Ingest continue: ddia
 /zhuomo Ingest overview only: huge-book.epub
+/zhuomo Ingest: ~/raw/video/lecture.srt
+/zhuomo Ingest: lecture.srt — deepen 前 3 章主题
 ```
 
-**study-technical** + reference / selective deepen：ingest 完成后 agent **自动外搜** 该 domain（写 `External (YYYY)`；Claim 待确认）。
-
-**Query / Explain-back cold：**若引用的 technical 概念 **>180 天**未外搜（或缺 `External (YYYY)`），同会话 **自动跟进外搜**（可说 `no 外搜` 跳过）。
-
-### Connect
+### Query + Apply
 
 ```
-/zhuomo Connect: how does [[aci-multi-pod]] relate to [[aci-multi-site]]? — 记入 synthesis
+/zhuomo Query think: Multi-Pod vs Multi-Site?
+/zhuomo Query think: 现场 vManage 和 OMP 对不上，wiki 里 [[sdwan-omp-routing]] 怎么用？双 ISP 只有一侧 flap。
 ```
 
-### 外搜
+### 外搜 / Connect / Revise
 
 ```
 /zhuomo 外搜 cisco-sdwan
 /zhuomo 外搜 [[sdwan-architecture-planes]]
-/zhuomo external fact-check kubernetes-cilium
+/zhuomo Connect: Cilium overlay vs ACI — 记入 synthesis
+/zhuomo Revise [[bgp]] — 我的想法：…
 ```
-
-Refreshes vendor releases, exam versions, CVEs, renames. Writes `External (YYYY)` in Evidence — does not replace book anchors.
-
-### Revise
-
-```
-/zhuomo Revise [[bgp]] — claim was wrong; evidence: [link]
-
-/zhuomo Merge [[foo]] and [[foo-bar]]
-```
-
-### Applied (optional)
-
-```
-/zhuomo Applied: production incident — [[aci-border-leaf-l3out]] — static route asymmetry
-```
-
----
-
-## 9. Learning from sources
-
-Default ingest: **concepts only** — no `learn/digests/`.
-
-| On demand | Output |
-|-----------|--------|
-| **Connect** | `Connect: … — 记入 synthesis` → `wiki/notes/synthesis/` |
-
-Explain-back prompts live on each concept page. Detail: [LEARNING.md](LEARNING.md).
 
 ---
 
 ## 10. Domain frameworks and progress
 
-Each domain: **`wiki/domains/<slug>/overview.md`** — pillars, glossary, **Dataview progress**. **`guide.md`** = concept index only (concept-first).
+四页模型见 §1.11。
 
-### Progress (Dataview)
-
-Install Obsidian **Dataview**. Open domain overview → **学习进度** table reads concept frontmatter automatically.
-
-| Field | Meaning |
-|-------|---------|
-| `mastery: learning` | Has Evidence |
-| `mastery: solid` | Explain-back passed |
-| `reviewed` | You read this version |
-| `explain_back` | Teach-back status |
-| `updated` | Last page change |
-
-How to use queries: [REVIEW.md](REVIEW.md#progress-in-obsidian-dataview).
+**Grasped** = Tier A 全 `explain_back: passed`。进度在 `study.md` Dataview **下一步** 列 — 不要手改大表。
 
 ```
 /zhuomo Promote [[aci-spine-leaf-topology]] to solid
 ```
 
-Template: [LEARNING.md](LEARNING.md).
+Detail: [LEARNING.md](LEARNING.md) · [REVIEW.md](REVIEW.md#progress-in-obsidian-dataview)
 
 ---
 
 ## 11. Optional Cursor skills
 
-**Not a zhuomo verb.** Zhuomo compiles wiki; skills are optional files under `~/.cursor/skills/`.
-
-1. **Ingest** concepts to wiki first (`Claim` + `Evidence` + `Explain-back`).
-2. In a **new Cursor chat**, cite wiki pages and ask for a skill:
+**Not a zhuomo verb.** Wiki first; skill in separate chat:
 
 ```
-根据 wiki 里的 [[cilium-datapath-modes]] 和 [[cilium-ebpf-dataplane]] 写一个 skill，
-触发词用「选 Cilium 路由模式」；事实留在 wiki，skill 只写触发条件和阅读顺序。
+根据 wiki/domains/cisco-aci/overview.md 建 network-expert skill，
+WIKI-SCOPE 写读哪些页；事实留在 wiki。
 ```
 
-**Domain expert** (persona + `WIKI-SCOPE.md` manifest, facts in wiki):
-
-```
-根据 wiki/domains/cisco-aci/overview.md 和其中链到的概念，
-在 ~/.cursor/skills/ 建 network-expert：SKILL.md 写 persona/workflow，
-WIKI-SCOPE.md 写要先读哪些页面；不要把 wiki 全文贴进 skill。
-```
-
-Layout reference: [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md).
-
-When facts change: **Revise wiki** first. Edit skill files only if triggers or workflow changed.
+[WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md)
 
 ---
 
@@ -400,26 +627,8 @@ When facts change: **Revise wiki** first. Edit skill files only if triggers or w
 
 | Device | Do | Don't |
 |--------|-----|--------|
-| **Phone** | `raw/inbox/`; read wiki; Review/Explain-back in Cursor mobile if available | Heavy EPUB ingest |
-| **Laptop** | Ingest, Revise, Learn, skills | — |
-
-| Layer | Sync |
-|-------|------|
-| Wiki | iCloud / Obsidian Sync / Git |
-| `raw/inbox/` | iCloud / Dropbox |
-
-Phone capture template:
-
-```markdown
----
-url:
-captured: 2026-06-14
-status: inbox
----
-Why I saved this.
-```
-
-Laptop:
+| **Phone** | `raw/inbox/`; read wiki | Heavy ingest |
+| **Laptop** | Ingest, Revise, Adopt, Lint | — |
 
 ```
 /zhuomo Process raw/inbox/
@@ -429,59 +638,49 @@ Laptop:
 
 ## 13. Source types
 
-| Source | Raw location | Notes |
-|--------|--------------|-------|
-| Web | `raw/web/` | Save content, not URL alone |
-| EPUB / PDF | `raw/books/` | Default: full md corpus + deepen all |
-| Video | `raw/video/` | Transcript or notes |
-| Readwise | `raw/inbox/readwise-*.md` | Ingest to wiki |
-| Phone note | `raw/inbox/` | Process on laptop |
+| Source | Raw | Ingest 默认 |
+|--------|-----|-------------|
+| EPUB / PDF | `raw/books/` | md corpus + deepen concepts |
+| Web / article | `raw/web/` | 按大小 reference 或 overview |
+| **SRT / VTT** | `raw/video/` | **语料 only**；deepen 需明说 |
+| Readwise | `raw/inbox/` | → concepts |
+| 年鉴/手册 | `raw/books/` | `archive only` 常见 |
 
-EPUB detail: [REFERENCE.md](REFERENCE.md#epub-epub).
+Classes: study-technical · study-analytic · craft-narrative · literary-appreciation · reference-lookup · **transcript** — 见 [references/ingest-depth-and-resume.md](references/ingest-depth-and-resume.md)
 
 ---
 
 ## 14. Troubleshooting
 
-| Problem | Likely cause | Fix |
-|---------|--------------|-----|
-| Chat-only answers | Query not filed | File to `wiki/synthesis/` or deepen concept |
-| Duplicate concepts | Skipped search | `Lint` + merge |
-| Wiki vs skill disagree | Stale skill | `Revise` wiki; update skill if workflow changed |
-| Page changed but I didn't notice | `updated` after chat Revise | `Review queue: <domain>` |
-| No Explain-back section | Old stub or skipped deepen | `Revise` or re-run `migrate-concept-review.py` |
-| `solid` too early | Ingest marked solid | Only **Promote** after Explain-back passed |
-| Ingest shallow / no Evidence | `overview only` | Full `Ingest` or `Deepen all` |
-| Broken wikilinks | Moved/deleted page | `Lint` |
-| Phone can't read `raw/books/` | Laptop-only folder | Expected — use inbox on phone |
+| Problem | Fix |
+|---------|-----|
+| Claim 像导读 | `Revise [[slug]]` — 可理解层+正式层 |
+| Explain-back 反复不过 | [study-diagnosis](references/study-diagnosis.md) — 别只会 feynman |
+| 外搜改了 Claim 但你没同意 | 应出现「待确认」— 回复 `确认 Claim` |
+| Adopt 覆盖了笔记 | 应用 Adopt 而非 Bootstrap；检查 adopt-check |
+| 大书一次做不完 | `Ingest continue: <slug>` + source 页 `next_sections` |
+| 字幕变成 50 个 concept | 默认 transcript 只语料；deepen 需你指定 |
+| Lint 叫删页 | **不要**自动删 — 读两页再 merge |
+| `solid` too early | 仅 **Promote** after passed |
 
 ---
 
 ## 15. FAQ
 
-**Do I have to name the topic?**  
-No. Optional lens only.
+**Bootstrap 和 Adopt 区别？**  
+Bootstrap = 空库新建。Adopt = 已有 vault 只加琢磨模板与 config，不改 corpus。
 
-**Wiki only or also a Cursor skill?**  
-Default zhuomo path is **wiki only**. Say in chat if you also want a skill file; that is not an Ingest side effect.
+**Ingest continue 怎么知道续哪？**  
+看 `wiki/sources/<slug>.md` 的 `ingest_status` / `next_sections`；或 `Lint` / `lint-ingest-resume.py`。
 
-**One vault for many subjects?**  
-Yes. Use `domain-map.md` and `domains/*/overview.md`.
+**Query 和 Apply？**  
+Query 答 wiki；消息里带 **真实场景** 时多一块 **Apply**（判断+验证），默认不写回 wiki。
 
-**Is Obsidian required?**  
-No, but best for reading and links.
+**手绘图在哪？**  
+本 guide §0–§1；Obsidian `help.md` 有精简学习链图。
 
-**Where does the agent write?**  
-Only `wiki/`. Raw is read-only for the agent.
-
-**Flashcards / Run?**  
-Removed. Use **Explain-back** per concept.
-
-**Readwise vs Zhuomo ingest?**  
-Readwise export is raw until ingest compiles concepts.
-
-**How long per concept?**  
-Read 5–15 min; Explain-back 5–10 min when ready.
+**Agent 读哪份 spec？**  
+[SKILL.md](SKILL.md) 路由 + `references/` 细节。
 
 ---
 
@@ -489,12 +688,10 @@ Read 5–15 min; Explain-back 5–10 min when ready.
 
 | File | Use when |
 |------|----------|
-| [USER-GUIDE.md](USER-GUIDE.md) | This guide |
+| [USER-GUIDE.md](USER-GUIDE.md) | **This guide** — 图式 + 全流程 |
 | [REVIEW.md](REVIEW.md) | Study, Explain-back, Dataview |
-| [LEARNING.md](LEARNING.md) | Connect, domain overviews |
-| [SKILL.md](SKILL.md) | Agent entry point |
-| [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) | Wiki layout (agents) |
-| [REFERENCE.md](REFERENCE.md) | EPUB, Readwise, revision cards (wiki) |
-| [WIKI-BACKED-SKILLS.md](WIKI-BACKED-SKILLS.md) | Optional skill file layout (chat-created) |
-| [SIMPLE.md](SIMPLE.md) | Minimal path |
-| Obsidian `wiki/help.md` | Daily cheatsheet |
+| [LEARNING.md](LEARNING.md) | Connect, domain 四页 |
+| [SKILL.md](SKILL.md) | Agent 路由 |
+| [references/](references/) | Agent 专项方法 |
+| [SIMPLE.md](SIMPLE.md) | 最小路径 |
+| Obsidian `wiki/help.md` | 日常 cheatsheet |

@@ -2,13 +2,14 @@
 
 Help the user **learn from concepts** and **maintain domain overviews** — not duplicate content in digests.
 
-**Study loop:** [REVIEW.md](REVIEW.md) — `Explain-back` (cold / default / feynman) + Promote.
+**Study loop:** [REVIEW.md](REVIEW.md) — `Explain-back` (cold / default / feynman) + Promote.  
+**Agent detail:** [references/](references/) — Claim rubric, ingest resume, 外搜, Lint tiers, Query Apply.
 
 ---
 
 ## Architecture (optional)
 
-**North star:** Turn raw sources into durable wiki you can study from; agents query corpus, not re-read EPUBs.
+**North star:** Turn raw sources into **concept 知识笔记** you study from directly — **not** a table of contents back to the book. Agents read source at Ingest/Revise; you read `concepts/` Claim (+ Explain-back). Open `sources/md` only when you want primary text or Claim is thin.
 
 | Layer | Location | Role |
 |-------|----------|------|
@@ -19,6 +20,19 @@ Help the user **learn from concepts** and **maintain domain overviews** — not 
 **RAG rediscovers every question. A wiki accumulates.** Ingest compiles once; Query and Revise keep it current.
 
 **Cursor skills:** Not part of zhuomo verbs. To build a skill from wiki content, chat with the agent and point at `[[concepts]]` — no `Extract skill` workflow in this repo.
+
+---
+
+## Concept-as-知识笔记 (required at deepen)
+
+| Rule | Detail |
+|------|--------|
+| **Claim** | Finished study note — mechanism, traps, when-to-use; user learns **without** reading the book |
+| **Evidence** | Provenance anchors — optional drill-down |
+| **Agent** | Reads source at Ingest/Revise and **writes** Claim; never leaves 导读 + links |
+| **Ban** | Chapter paste, enrich snippets, "详见原文" as substitute for Claim prose |
+
+See SKILL.md § Learning model — concept as 知识笔记.
 
 ---
 
@@ -49,7 +63,8 @@ Every deepened concept gets `## Explain-back` with **3–4 prompts**:
 
 | Layer | Location | Content |
 |-------|----------|---------|
-| **L0** | `domains/<slug>/overview.md` | Domain map — pillars, gaps, Dataview progress |
+| **L0 map** | `domains/<slug>/map.md` | **Whole picture** — 分层、块关系、自顶向下路径、Tier 对照（~30 min） |
+| **L0 overview** | `domains/<slug>/overview.md` | Domain hub — pillars teaser, gaps, 外搜, study 链（不长篇纲领） |
 | **L1 compiled** | `wiki/synthesis/` | Cross-book themes (`origin: zhuomo`) |
 | **L1 personal** | `wiki/notes/synthesis/` | Your cross-concept models (`origin: personal`) |
 | **L2 personal** | `wiki/notes/on-concept/` | Your judgment on one concept |
@@ -77,9 +92,22 @@ Every deepened concept gets `## Explain-back` with **3–4 prompts**:
 
 ---
 
+## Domain four-page model
+
+| 页 | 路径 | 自顶向下 / 自底向上 |
+|----|------|---------------------|
+| **map** | `domains/<slug>/map.md` | **纲领** — 第一次来、迷路时回 map |
+| **overview** | `domains/<slug>/overview.md` | 入口、gaps、外搜 |
+| **guide** | `domains/<slug>/guide.md` | concept 索引（按需） |
+| **study** | `domains/<slug>/study.md` | **Tier A/B 日常** — Dataview + 下一步 |
+
+**Grasped** = Tier A 全 `explain_back: passed`. **Mastered（场景）** = + 所选 Tier B.
+
 ## Domain overview maintenance
 
-**`domains/<slug>/overview.md`** — pillars, **Dataview progress**, glossary, gaps, **建议学习顺序** (Tier **A** / **B**).
+**`domains/<slug>/map.md`** — North star、分层地图、mermaid、块关系、自顶向下 5–8 站、Tier 对照。Template: `templates/wiki/domain-map-page.md`. Sync: `sync-domain-map-pages.py`.
+
+**`domains/<slug>/overview.md`** — pillars（短）、glossary、gaps、**建议学习顺序** (Tier **A** / **B**).
 
 **`guide.md`** — concept index only (concept-first).
 
@@ -89,12 +117,14 @@ Progress: Obsidian Dataview on concept frontmatter — [REVIEW.md](REVIEW.md#pro
 
 - [ ] Concepts: `## Evidence` + `## Explain-back` (quality rules above)
 - [ ] Frontmatter: `domain`, `mastery`, `explain_back`, `updated`
-- [ ] Domain `overview.md` pillars + gaps
-- [ ] Run `sync-domain-study-paths.py` (or `--tiers-only`)
+- [ ] Domain `overview.md` pillars + gaps; **`map.md`** 分层与 Tier 对照
+- [ ] Run `sync-domain-study-paths.py` (or `--tiers-only`); **`sync-domain-map-pages.py`** for new/changed domain
 
 ```bash
 python3 ~/zhuomo/scripts/sync-domain-study-paths.py <vault>/wiki
 python3 ~/zhuomo/scripts/sync-domain-study-paths.py <vault>/wiki --tiers-only
+python3 ~/zhuomo/scripts/sync-domain-map-pages.py <vault>/wiki
+python3 ~/zhuomo/scripts/sync-domain-map-pages.py <vault>/wiki --force
 ```
 
 ### Example prompts

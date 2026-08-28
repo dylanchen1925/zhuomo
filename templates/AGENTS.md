@@ -2,7 +2,7 @@
 
 Bootstrapped: {{BOOTSTRAP_DATE}}
 
-**Procedures:** `~/zhuomo/SKILL.md` (self-contained — ingest, query, revise, study, lint).  
+**Procedures:** `~/zhuomo/SKILL.md` (router) + `~/zhuomo/references/` (ingest, Claim, Study, 外搜, Lint).  
 **Human cheatsheet:** `wiki/help.md` (from repo `templates/wiki/help.md`).
 
 ---
@@ -62,15 +62,17 @@ Repo: `~/zhuomo/REVIEW.md` (Study), `~/zhuomo/REFERENCE.md` (figures, EPUB, revi
 | Page | Path |
 |------|------|
 | Vault hub | `wiki/overview.md` — domain table only; **no domain prose** |
+| Domain **map** | `wiki/domains/<slug>/map.md` — whole picture (~30 min) |
 | Domain entry | `wiki/domains/<slug>/overview.md` |
 | Domain guide | `wiki/domains/<slug>/guide.md` — concept index only |
+| Domain study | `wiki/domains/<slug>/study.md` — Tier Dataview + 下一步 |
 | Concepts | `wiki/concepts/*.md` |
 | Synthesis | `wiki/synthesis/*.md` |
 | Sources | `wiki/sources/<slug>.md` + `md/` text corpus; images in `~/zhuomo-data/corpus/<slug>/assets/` |
 | Log | `wiki/log.md` — append-only |
 | **Personal notes** | `wiki/notes/` — user-authored; see `templates/wiki/notes-README.md` |
 
-**New domain:** Add row to `wiki/overview.md` + `wiki/domain-map.md`; create `domains/<slug>/overview.md`.
+**New domain:** Add row to `wiki/overview.md` + `wiki/domain-map.md`; create `domains/<slug>/overview.md` + **`map.md`** (`sync-domain-map-pages.py`).
 
 **Do not create:** `framework.md`, `mega-overview.md`.
 
@@ -94,7 +96,8 @@ Repo: `~/zhuomo/REVIEW.md` (Study), `~/zhuomo/REFERENCE.md` (figures, EPUB, revi
 
 | Verb | When | Notes |
 |------|------|-------|
-| **Bootstrap** | Once | Copy this file from `~/zhuomo/templates/AGENTS.md`; replace `{{…}}` placeholders |
+| **Bootstrap** | Once | Copy AGENTS.md; `zhuomo_config.py set`; see `references/bootstrap-adopt.md` |
+| **Adopt** | Existing vault | `Adopt vault: …` — non-destructive; `vault-adopt-check.py` first |
 | **Ingest** | New source | Brain-first search wiki; topic map; reference depth default |
 | **Query** | Questions | Brain-first read order; think mode → Answer + Sources + **Gaps** |
 | **Revise** | Errors, contradictions | Propagate fix; set `updated:`; log |
@@ -108,7 +111,7 @@ Repo: `~/zhuomo/REVIEW.md` (Study), `~/zhuomo/REFERENCE.md` (figures, EPUB, revi
 ## Query — brain-first order
 
 ```
-wiki/overview.md → domain-map.md → domains/<slug>/overview.md (+ guide.md)
+wiki/overview.md → domain-map.md → domains/<slug>/map.md → domains/<slug>/overview.md (+ guide.md)
 → index.md → concepts/ + sources/ + synthesis/ (corpus) → notes/ if needed → only then raw or web
 ```
 
@@ -117,7 +120,7 @@ wiki/overview.md → domain-map.md → domains/<slug>/overview.md (+ guide.md)
 | `Query search:` | Ranked `[[pages]]` + one-line relevance |
 | `Query think:` (default) | `## Answer` + `## Sources` + `## Gaps` + `## Next step` (够用 / Study / File — see SKILL.md table) |
 
-**Model layer:** L0 overview 心智模型 · L1 compiled `wiki/synthesis/` (`origin: zhuomo`) · L1 personal `wiki/notes/synthesis/` · L2 `wiki/notes/on-concept/`. Template: `templates/wiki/synthesis.md`.
+**Model layer:** L0 **map** whole picture · L0 overview hub · L1 compiled `wiki/synthesis/` · L1 personal `wiki/notes/synthesis/` · L2 `wiki/notes/on-concept/`. Template: `templates/wiki/synthesis.md`.
 
 File durable synthesis to `wiki/synthesis/` or extend concepts; append `log.md` if substantial.
 

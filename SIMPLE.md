@@ -1,6 +1,8 @@
 # Zhuomo — simplified mode
 
-**Seven verbs:** Bootstrap · Ingest · Query · **外搜** · Revise · Study · Lint. **Connect** for personal cross-concept notes.
+**Seven verbs:** Bootstrap · Ingest · Query · **外搜** · Revise · Study · Lint. **Connect** for personal notes. **Adopt vault** · **Ingest continue** · **Study continue** when resuming.
+
+**Agent refs:** `~/zhuomo/references/` (Claim rubric, Apply, diagnosis, Lint tiers).
 
 ## Minimum viable Zhuomo
 
@@ -18,6 +20,8 @@ Raw  →  Bootstrap + Ingest  →  concepts + Evidence  →  Query
 | Chat with agent | — |
 
 ## Study (lite)
+
+**Learn from `concepts/` Claim（知识笔记）— not the book.** Evidence → source = 按需深挖。
 
 | Step | Say |
 |------|-----|

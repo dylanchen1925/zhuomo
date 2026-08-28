@@ -2,15 +2,33 @@
 
 **Study** = read a concept, teach it back, promote mastery. One human doc for learning + retention.
 
-**Related:** [LEARNING.md](LEARNING.md) · [SKILL.md](SKILL.md) (agent ops) · vault `[[help]]`
+**Related:** [LEARNING.md](LEARNING.md) · [SKILL.md](SKILL.md) · [references/study-diagnosis.md](references/study-diagnosis.md) · vault `[[help]]`
+
+---
+
+## Study stuck? (diagnosis)
+
+Explain-back **partial/fail** or「背了不会用」→ agent uses [references/study-diagnosis.md](references/study-diagnosis.md):
+
+| 卡点 | 你说 / 做 |
+|------|-----------|
+| Claim 太薄 / 导读 | `Revise [[slug]]` |
+| 术语不懂 | 读 Claim **正式层** + Evidence |
+| 不会串机制 | Revise 补 `### vs` 或 `Connect` |
+| 版本/CV E 过时 | `外搜 [[slug]]` 或 domain |
+| 只会背不会选 | Revise 加 scenario + procedure |
+
+**连续学习：** `Study continue: <domain>` — one lesson from `study.md` **下一步** column.
 
 ---
 
 ## Where to start (study order + progress)
 
-**Open:** `domains/<domain>/study.md` — **学习进度** per Tier A / B / rest.
+**First visit to a domain:** `domains/<domain>/map.md` (~30 min whole picture) → then `study.md`.
 
-`domains/<domain>/overview.md` — **建议学习顺序** only (inline **A** / **B** markers).
+**Daily Study:** `domains/<domain>/study.md` — **学习进度** per Tier A / B / rest.
+
+`domains/<domain>/overview.md` — gaps、外搜、**建议学习顺序** (inline **A** / **B** markers).
 
 | Column | Purpose |
 |--------|---------|
@@ -40,6 +58,7 @@ A concept page is a **compiled map**, not the textbook. Explain-back often tests
 
 ### First learn (Tier A / new material)
 
+0. **`domains/<slug>/map.md`** — skim whole picture if first time in domain (optional if revisiting)
 1. **`Explain-back [[slug]] cold`** (recommended) — answer from memory before seeing Claim  
 2. After cold session: read gaps → **Evidence** rows for misses only  
 3. If mechanism still weak → **`Explain-back [[slug]] feynman`**  

@@ -5,31 +5,59 @@ updated: 2026-07-05
 
 # Zhuomo 怎么用
 
-**日常只看这一页。** 仓库：`SIMPLE.md`、`REVIEW.md`（Study 详规 + Dataview）。
+**日常只看这一页。** 完整功能图（Bootstrap / Ingest / Study / 外搜 等）：仓库 `~/zhuomo/USER-GUIDE.md` §0–§1。
+
+**Agent refs:** `~/zhuomo/references/` · 详规：`REVIEW.md`
 
 ---
 
-## 学习链（Path → Test → Repeat）
+## 先说你想要什么
+
+| 你想… | 说… |
+|--------|-----|
+| 导入书/EPUB | `Ingest: …` |
+| 分批续 ingest | `Ingest continue: <source-slug>` |
+| 接入已有库 | `Adopt vault: …` |
+| 字幕/转写 | `Ingest: ….srt`（默认语料；要概念说 deepen） |
+| 学概念 | `Explain-back [[概念]] cold` |
+| 分析现场 | `Query think: 我的场景 …` |
+| 查时效 | `外搜 <学科>` |
+| 卡住不会背 | 见 REVIEW「Study stuck」→ Revise / 外搜 |
+| 连续学 | `Study continue: <学科>` |
+
+---
+
+## 学习链（concept 知识笔记 → Test）
+
+**主路径：** 读 `concepts/` 的 **Claim**（Agent 已从书里编译好）→ Explain-back。`sources/md` 仅在你或 Agent 需要核对原文时打开。
 
 ```mermaid
 flowchart TD
-  A[新主题 / Tier A 概念] --> B["Explain-back cold 先测"]
-  B --> C{passed?}
-  C -->|否| D["读 Evidence 缺口 → feynman"]
-  D --> B
-  C -->|是| E[Promote solid]
-  E --> F["Lint RETEST 30d → cold 复测"]
+  M["domains/学科/map 纲领 ~30min"] --> A[新主题 / Tier A 概念]
+  A --> B["Explain-back cold 可选先测"]
+  B --> C["读 Claim 知识笔记"]
+  C --> D["Explain-back / feynman"]
+  D --> E{passed?}
+  E -->|否| F["Revise Claim 或 feynman"]
+  F --> C
+  E -->|是| G[Promote solid]
+  G --> H["Lint RETEST 30d → cold"]
+  C -.->|按需| I[Evidence 查原文]
+  C -.->|迷路| M
 ```
 
 | 学习要素 | 琢磨动词 | 产出 |
 |----------|----------|------|
-| **Path** | `domains/<学科>/overview` · `study` | Tier A/B 顺序 + 进度表 |
-| **Test（首次）** | `Explain-back [[概念]] cold` | 先答后看 Claim |
-| **Test（复习）** | `Explain-back [[概念]]` | 已读过 concept 时用 |
+| **Map（纲领）** | `domains/<学科>/map` | Whole picture — 自顶向下 ~30 min |
+| **Path** | `domains/<学科>/study` | Tier A/B 自底向上 + 进度表 |
+| **Read（主教材）** | 打开 `concepts/*.md` **Claim** | 知识笔记 — 不必先读书 |
+| **Test（首次）** | `Explain-back [[概念]] cold` | 先测后读 Claim |
+| **Test（复习）** | `Explain-back [[概念]]` | 对照 Claim 复述 |
 | **深测** | `Explain-back [[概念]] feynman` | 小孩式追问 |
 | **Repeat** | `Lint` · RETEST 桶 | solid 超 30 天 cold 复测 |
+| **深挖（可选）** | Evidence 链接 | 原文 archive |
 
-**15 分钟块：** cold → Evidence 补缺 → feynman → Promote。
+**15 分钟块：** cold（可选）→ 读 Claim → feynman → Promote。
 
 ---
 
@@ -117,7 +145,7 @@ Connect: overlay vs native 选型 — 记入 synthesis
 | 问题 | 打开 |
 |------|------|
 | 学科列表 | [[domain-map]] · [[overview]] |
-| 学习顺序 / 进度 | `domains/<学科>/overview` · `study` |
+| 学习顺序 / 进度 | `domains/<学科>/map` · `study` |
 | 编译概念 | `concepts/` |
 | 个人笔记 | `notes/` |
 | 日志 | [[log]] |

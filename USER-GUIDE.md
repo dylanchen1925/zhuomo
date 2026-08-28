@@ -51,68 +51,31 @@ How to set up **琢磨 (Zhuomo)**, learn from sources **one concept at a time**,
 
 琢磨把 **原始资料** 编译成 **Obsidian wiki**，你用 **Claim 知识笔记 + Explain-back** 掌握，必要时 **外搜** 保鲜；**Query** 用来问已有知识、**Apply** 分析现场。
 
-```mermaid
-flowchart TD
-  subgraph input [你丢进来的]
-    R[raw: EPUB PDF 字幕 笔记]
-  end
+> **手绘风图**在 `assets/diagrams/`（Excalidraw Pastel + 抖线滤镜）。改图：`python3 scripts/generate-sketch-diagrams.py`
 
-  subgraph verbs [七个动词 + 扩展]
-    B[Bootstrap / Adopt]
-    I[Ingest / Ingest continue]
-    Q[Query think + Apply]
-    W[外搜]
-    S[Study / Study continue]
-    V[Revise]
-    L[Lint]
-  end
-
-  subgraph wiki [Obsidian wiki]
-    C[concepts Claim 知识笔记]
-    E[Evidence 溯源]
-    D[domains map study]
-    N[notes 个人笔记]
-  end
-
-  R --> I
-  B --> wiki
-  I --> C
-  I --> E
-  C --> S
-  S --> Q
-  W --> E
-  L --> V
-  L --> W
-  Q --> N
-  V --> C
-```
+![琢磨功能总览 — 手绘风](assets/diagrams/00-overview.svg)
 
 **Corpus（编译层）** = `concepts/` · `sources/` · `domains/` · `wiki/synthesis/`  
 **Personal（个人层）** = `wiki/notes/` — Connect / 「我的想法」写这里，Ingest **不会**自动写进去。
 
 ---
 
-## 1. 功能图式说明
+## 1. 功能图式说明（手绘风）
 
-下面每张图对应一个功能：节点是「谁做什么」，箭头是「数据/动作往哪走」。细节规则在 [SKILL.md](SKILL.md) 与 `references/`。
+下面每张 **SVG 手绘图** 对应一组功能；文字表补充细节。规则见 [SKILL.md](SKILL.md) 与 `references/`。
+
+| 图文件 | 内容 |
+|--------|------|
+| [00-overview.svg](assets/diagrams/00-overview.svg) | 总览：raw → 动词 → wiki |
+| [01-ingest.svg](assets/diagrams/01-ingest.svg) | Ingest + partial continue + 外搜确认 |
+| [02-study.svg](assets/diagrams/02-study.svg) | Study 链 + 卡住三分支 |
+| [03-query-waishou.svg](assets/diagrams/03-query-waishou.svg) | Query / Apply / 外搜 |
+| [04-domain-four-pages.svg](assets/diagrams/04-domain-four-pages.svg) | map · overview · guide · study |
+| [05-lint-connect.svg](assets/diagrams/05-lint-connect.svg) | Lint 四级 + Connect |
 
 ---
 
 ### 1.1 Bootstrap — 从零建库
-
-```mermaid
-flowchart LR
-  U[你说 Bootstrap] --> A[Agent]
-  A --> F1[建 raw 目录树]
-  A --> F2[建 wiki 骨架]
-  A --> F3[复制 AGENTS.md help]
-  A --> F4[写 ~/.zhuomo/config.json]
-  F2 --> O[overview domain-map]
-  F4 --> CFG[只存路径 不存正文]
-  A --> I{带了第一本书?}
-  I -->|是| IN[接着 Ingest]
-  I -->|否| DONE[完成 3 行 closing]
-```
 
 ```
   你                          Agent                    磁盘
@@ -128,236 +91,82 @@ flowchart LR
 
 已有大量笔记时 **不要 Bootstrap 覆盖**，用 Adopt：
 
-```mermaid
-flowchart TD
-  U[Adopt vault: 路径] --> CHK[vault-adopt-check.py]
-  CHK -->|空库或无 marker| OK[合并 templates]
-  CHK -->|非空 corpus 且无 marker| NO[拒绝覆盖 提示风险]
-  OK --> H[补 help.md AGENTS.md]
-  OK --> M[写 .zhuomo-adopted 标记]
-  OK --> CFG[更新 config.json]
-  NO --> U2[你确认后仅 merge 模板]
-```
-
-**原则：** 只加「琢磨约定文件」，**不批量改** 已有 `concepts/` Claim。
+**原则：** `vault-adopt-check.py` → 只加 help / AGENTS / `.zhuomo-adopted`，**不批量改** 已有 `concepts/` Claim。
 
 ---
 
 ### 1.3 Ingest — 书 → 知识笔记
 
-```mermaid
-flowchart TD
-  U[Ingest: book.epub] --> CL[分类 study-technical 等]
-  CL --> TM[Topic map 在 sources 页]
-  TM --> MD[整书 md 语料 sources/slug/md]
-  MD --> DP[Agent 读原文 写 Claim]
-  DP --> P[concepts 页]
-  P --> EB[Explain-back 3-4 题]
-  P --> EV[Evidence 锚点]
-  DP --> MAP[更新 domain map]
-  CL --> WS{study-technical deepen?}
-  WS -->|是| WAI[自动 外搜 domain]
-  WAI --> CONF[Claim 修正 等你确认]
-```
+![Ingest 流程 — 手绘风](assets/diagrams/01-ingest.svg)
 
-**Claim 两层（技术书默认）：**
+**Claim 两层（技术书）：** 可理解层（问题 + 例子 + 机制）→ 正式层（定义/CLI/公式，指回例子）。
 
-```mermaid
-flowchart TD
-  subgraph understandable [可理解层 你先读这个]
-    A1[解决什么问题]
-    A2[机制链 + 完整例子]
-    A3[When to use / vs / 陷阱]
-  end
-  subgraph formal [正式层 查阅用]
-    B1[精确定义 CLI 公式]
-    B2[每项指回例子第几步]
-  end
-  understandable --> formal
-```
-
-**大书分批：**
-
-```mermaid
-flowchart LR
-  I1[Ingest 第 1 批] --> ST[ingest_status: partial]
-  ST --> NS[next_sections 写在 source 页]
-  NS --> I2[Ingest continue: slug]
-  I2 --> ST2{还有章节?}
-  ST2 -->|是| ST
-  ST2 -->|否| DONE[ingest_status: complete]
-```
+**大书分批：** `ingest_status: partial` + `Ingest continue: <slug>`，见 source 页 `next_sections`。
 
 ---
 
 ### 1.4 Transcript — 字幕 / 转写（默认只存档）
 
-```mermaid
-flowchart TD
-  U[Ingest: lecture.srt] --> CL[清洗 去广告 分段]
-  CL --> MD[写入 sources/.../md/]
-  MD --> SRC[source 页 class: transcript]
-  SRC --> DEF[默认 不生成 concepts]
-  U2[你补充: deepen / 沉淀知识] --> TM[Topic map + Claim 同 Ingest]
-```
+默认：**清洗 → md 语料 → 不生成 concepts**；要说 `deepen` / `沉淀知识` 才走 Ingest  deepen。
 
-可选脚本：`python3 ~/zhuomo/scripts/transcript-to-wiki-md.py input.srt out/md/`
+可选：`python3 ~/zhuomo/scripts/transcript-to-wiki-md.py input.srt out/md/`
 
 ---
 
 ### 1.5 Study — 学会一个概念
 
-```mermaid
-flowchart TD
-  M[domains/slug/map 纲领 ~30min] --> ST[study.md 看下一步列]
-  ST --> COLD[Explain-back cold 先测]
-  COLD --> READ[读 Claim 知识笔记]
-  READ --> EB[Explain-back / feynman]
-  EB --> P{passed?}
-  P -->|是| PR[Promote solid]
-  P -->|否| DX[Study 卡住? 见诊断图]
-  DX --> RV[Revise 加厚 Claim]
-  DX --> FY[feynman]
-  DX --> WS[外搜 版本过时]
-  READ -.->|按需| EV[Evidence 查原文]
-```
+![Study 流程 — 手绘风](assets/diagrams/02-study.svg)
 
-**Study continue（连续学一域）：**
-
-```mermaid
-flowchart LR
-  U[Study continue: domain] --> ST[读 study 下一步列]
-  ST --> ONE[只选一课 一个 concept]
-  ONE --> EB[跑一轮 Explain-back]
-  EB --> NEXT[closing 建议下一行或 Revise]
-```
+**Study continue：** `Study continue: <domain>` — 只从 `study.md` **下一步** 挑一课。
 
 **卡住诊断（不必死磕 feynman）：**
 
-| 现象 | 图式上该走哪条边 |
-|------|------------------|
-| Claim 像目录、太短 | → **Revise**（Agent 重读 source） |
-| 术语/公式不懂 | → 读 Claim **正式层** + Evidence |
-| 会背不会选型 | → Revise 加 scenario + procedure |
-| 和书/外搜矛盾 | → **外搜** 或 Revise |
-| 15 分钟做不完 | → 缩到 study 表 **一行** |
+| 现象 | 下一步 |
+|------|--------|
+| Claim 像目录、太短 | **Revise** |
+| 术语/公式不懂 | Claim **正式层** + Evidence |
+| 会背不会选型 | Revise 加 scenario |
+| 和书/外搜矛盾 | **外搜** 或 Revise |
+| 15 分钟做不完 | study 表 **一行** |
 
 ---
 
-### 1.6 Query think — 问 wiki + Apply 现场
+### 1.6 Query think + 1.7 外搜
 
-```mermaid
-flowchart TD
-  U[Query think: 问题] --> BF[brain-first 读 map concepts]
-  BF --> AN[Answer + Sources]
-  AN --> GP[Gaps 标 fact/judgment/unknown]
-  GP --> NS[Next step 够用 Study File Revise]
-  U2[消息里带真实场景] --> AP[Apply 块]
-  AP --> AP1[断点: 预期 vs 实际]
-  AP --> AP2[用的 concept]
-  AP --> AP3[判断 + 下一次验证]
-  AP --> AP4[默认不写回 wiki]
-```
+![Query 与外搜 — 手绘风](assets/diagrams/03-query-waishou.svg)
 
-**Apply 示例说法：**
+**Apply 示例：**
 
 ```
-Query think: 生产里 BGP 经常 flap，wiki 里的 [[bgp-hold-timer]] 怎么用来排查？我的场景：双 ISP，只有一条路径在抖。
+Query think: 生产里 BGP 经常 flap，wiki 里的 [[bgp-hold-timer]] 怎么排查？场景：双 ISP，一侧在抖。
 ```
 
----
-
-### 1.7 外搜 — 时效事实（Claim 需确认）
-
-```mermaid
-flowchart TD
-  U[外搜 cisco-sdwan] --> RD[先读 wiki 范围]
-  RD --> WEB[查 vendor CVE 考纲等]
-  WEB --> SUM[摘要三分法]
-  SUM --> F[事实 有来源]
-  SUM --> J[判断 含条件]
-  SUM --> U2[未知 待查]
-  WEB --> EXT[Evidence 加 External YYYY]
-  EXT --> GATE{Claim 要改?}
-  GATE -->|是| WAIT[Claim 修正待确认 停]
-  WAIT --> OK[你: 确认 Claim]
-  OK --> EDIT[才改 wiki Claim]
-  GATE -->|否| DONE[只写 External]
-```
-
-**自动外搜：** study-technical 深度 Ingest 后；Query/Study 引用 **>180 天** 未检查的 technical 概念（可说 `no 外搜` 跳过）。
+**外搜：** 事实 / 判断 / 未知 三分法；改 Claim 前必须 **确认 Claim**。自动外搜见 §6。
 
 ---
 
 ### 1.8 Revise — 改错 / 加厚 Claim
 
-```mermaid
-flowchart LR
-  U[Revise 或 Explain-back 报 gap] --> LOC[定位页 + 反向链接]
-  LOC --> CARD[修订卡 旧 claim 新 claim]
-  CARD --> FIX[改 Claim / supersede / merge]
-  FIX --> PROP[传播到引用页]
-  PROP --> LOG[log.md + updated 今天]
-```
-
-**个人想法不进 corpus：**
-
-```
-Revise [[bgp]] — 我的想法：…   →   wiki/notes/on-concept/bgp.md
-```
+定位 → 修订卡 → 改 Claim / merge → 传播 → `log.md`。个人想法：`Revise [[x]] — 我的想法：…` → `notes/on-concept/`。
 
 ---
 
-### 1.9 Lint — 库体检（脚本报候选，人/agent 判决）
+### 1.9 Lint + 1.10 Connect
 
-```mermaid
-flowchart TD
-  U[Lint] --> SCR[跑 lint-review-queue 等]
-  SCR --> T1[1 阻断 坏链 orphan]
-  SCR --> T2[2 失真 薄 Claim 过时 External]
-  SCR --> T3[3 待消化 未 Review partial ingest]
-  SCR --> T4[4 维护 图缺失等]
-  T2 --> V[Revise 或 外搜]
-  T3 --> S[Study 或 Ingest continue]
-  T1 --> FIX[直接修链/ stub]
-```
+![Lint 与 Connect — 手绘风](assets/diagrams/05-lint-connect.svg)
 
-**记住：** 脚本列表 ≠ 自动删页；重复 concept 要 **打开两页** 再 merge。
+**Lint：** 1阻断 → 2失真 → 3待消化 → 4维护；脚本只报**候选**，合并前须读正文。
 
----
-
-### 1.10 Connect — 个人跨概念模型
-
-```mermaid
-flowchart LR
-  CHAT[聊透几个 concept] --> U[Connect: … 记入 synthesis]
-  U --> N[notes/synthesis/xxx.md]
-  N --> P[origin: personal]
-  CORP[Ingest Query 编译主题] --> S[wiki/synthesis/ origin zhuomo]
-```
-
-| 写哪 | 谁写 | 内容 |
-|------|------|------|
-| `wiki/synthesis/` | Ingest / Query | 跨书 **编译** 主题 |
-| `wiki/notes/synthesis/` | **Connect** | **你的** 对照/模型 |
+| 写哪 | 谁写 |
+|------|------|
+| `wiki/synthesis/` | Ingest / Query 编译 |
+| `wiki/notes/synthesis/` | **Connect** 个人 |
 
 ---
 
 ### 1.11 Domain 四页 — 两种读法
 
-```mermaid
-flowchart TD
-  subgraph topdown [自顶向下 第一次来]
-    MAP[map.md 纲领 ~30min]
-    MAP --> OV[overview 为什么学 gaps]
-  end
-  subgraph bottomup [自底向上 日常]
-    STUDY[study.md 进度表 下一步]
-    STUDY --> CON[concepts Claim]
-  end
-  GUIDE[guide.md 索引] -.->|按需查| CON
-  MAP --> STUDY
-```
+![Domain 四页 — 手绘风](assets/diagrams/04-domain-four-pages.svg)
 
 | 页 | 回答 |
 |----|------|
@@ -677,7 +486,7 @@ Bootstrap = 空库新建。Adopt = 已有 vault 只加琢磨模板与 config，�
 Query 答 wiki；消息里带 **真实场景** 时多一块 **Apply**（判断+验证），默认不写回 wiki。
 
 **手绘图在哪？**  
-本 guide §0–§1；Obsidian `help.md` 有精简学习链图。
+`assets/diagrams/*.svg`（Pastel 色 + 抖线滤镜，类似 Excalidraw）。GitHub / Obsidian 预览 `USER-GUIDE.md` 即可见。改布局：编辑 `scripts/generate-sketch-diagrams.py` 后运行 `python3 scripts/generate-sketch-diagrams.py`。
 
 **Agent 读哪份 spec？**  
 [SKILL.md](SKILL.md) 路由 + `references/` 细节。

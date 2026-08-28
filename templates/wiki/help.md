@@ -29,6 +29,8 @@ updated: 2026-07-05
 
 ## 学习链（concept 知识笔记 → Test）
 
+**手绘功能图（完整）：** 仓库 `USER-GUIDE.md` §0–§1 · `assets/diagrams/*.svg`
+
 **主路径：** 读 `concepts/` 的 **Claim**（Agent 已从书里编译好）→ Explain-back。`sources/md` 仅在你或 Agent 需要核对原文时打开。
 
 ```mermaid

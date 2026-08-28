@@ -6,7 +6,7 @@
 |-----------|------------|
 | `Explain-back [[x]]` | Default interactive |
 | `Explain-back [[x]] cold` / `先测后读` | Hide Claim until session end |
-| `Explain-back [[x]] feynman` | Child persona probes |
+| `Explain-back [[x]] feynman` | **Advanced opt-in:** free teach-back + probes (not default) |
 | `Promote [[x]] to solid` | Only if `explain_back: passed` |
 | `Study continue: domain` | [continuous-study.md](continuous-study.md) |
 
@@ -40,9 +40,11 @@ END: verdict passed|partial|fail → update frontmatter → offer Promote
 
 ---
 
-## Feynman
+## Feynman (advanced opt-in)
 
-- Persona: curious 12-year-old; 1–2 probes per round
+Rarely used. Trigger only when user says `feynman` explicitly.
+
+- Probes: why / example / what-if — **no required child persona**
 - No full Claim dump; passed via feynman counts prompts covered for Promote
 - Optional: `保存 feynman 笔记` → `notes/on-concept/<slug>.md`
 

@@ -28,7 +28,7 @@ After action → retry Explain-back from appropriate mode (cold / default / feyn
 |-----------|------|
 | First learn Tier A | `Explain-back [[slug]] cold` |
 | Revision | `Explain-back [[slug]]` |
-| Mechanism weak but terms OK | `Explain-back [[slug]] feynman` |
+| Mechanism weak but terms OK | **Revise** Claim first; optional `Explain-back [[slug]] feynman` if user asks |
 | Passed | `Promote [[slug]] to solid` |
 | solid + reviewed >30d | `Explain-back [[slug]] cold` (RETEST) |
 

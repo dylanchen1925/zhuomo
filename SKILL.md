@@ -195,7 +195,7 @@ Locate → revision card → edit/supersede/merge/retract → propagate → upda
 |-----|-----|
 | `Explain-back [[x]]` | Interactive, one prompt/turn |
 | `… cold` | Hide Claim until end |
-| `… feynman` | Child probes |
+| `… feynman` | Advanced opt-in: free teach-back + probes |
 | `Promote [[x]] to solid` | If `explain_back: passed` |
 | `Review queue: domain` | `reviewed` null or `updated > reviewed` |
 

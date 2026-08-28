@@ -10,7 +10,7 @@
 Raw  →  Bootstrap + Ingest  →  concepts + Evidence  →  Query
 ```
 
-**Daily reference:** Obsidian `wiki/help.md`.
+**Daily reference:** Obsidian `wiki/help.md`. **Full guide + flowcharts:** [USER-GUIDE.md](USER-GUIDE.md).
 
 | Keep | Skip until needed |
 |------|-------------------|
@@ -26,7 +26,7 @@ Raw  →  Bootstrap + Ingest  →  concepts + Evidence  →  Query
 | Step | Say |
 |------|-----|
 | First learn | `Explain-back [[concept]] cold` |
-| Stuck explaining | `Explain-back [[concept]] feynman` |
+| Stuck explaining | Revise Claim or [study-diagnosis](references/study-diagnosis.md) |
 | Promote | `Promote [[concept]] to solid` |
 | Health | `Lint` |
 | Stale releases/CVE | `外搜 <domain>` |

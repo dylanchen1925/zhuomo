@@ -2,7 +2,7 @@
 
 Help the user **learn from concepts** and **maintain domain overviews** — not duplicate content in digests.
 
-**Study loop:** [REVIEW.md](REVIEW.md) — `Explain-back` (cold / default / feynman) + Promote.  
+**Study loop:** [REVIEW.md](REVIEW.md) — `Explain-back` (cold / default) + Promote.  
 **Agent detail:** [references/](references/) — Claim rubric, ingest resume, 外搜, Lint tiers, Query Apply.
 
 ---
@@ -133,5 +133,5 @@ python3 ~/zhuomo/scripts/sync-domain-map-pages.py <vault>/wiki --force
 Connect: native routing vs overlay in Cilium and ACI L3Out — 记入 synthesis
 
 Explain-back [[aci-border-leaf-l3out]] cold
-Explain-back [[aci-border-leaf-l3out]] feynman
+Explain-back [[aci-border-leaf-l3out]] cold
 ```

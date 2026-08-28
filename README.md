@@ -4,7 +4,7 @@
 
 > **琢磨** — polish raw material until it is clear, linked, and teachable.
 
-Zhuomo is a [Cursor agent skill](https://cursor.com/docs/context/skills) plus conventions for an Obsidian vault: ingest sources into **concept pages** (Claim + Evidence + Explain-back), query brain-first, and learn with **retrieval practice** (`cold` → `feynman` → `solid`).
+Zhuomo is a [Cursor agent skill](https://cursor.com/docs/context/skills) plus conventions for an Obsidian vault: ingest sources into **concept pages** (Claim + Evidence + Explain-back), query brain-first, and learn with **retrieval practice** (`cold` → Explain-back → `solid`).
 
 ---
 
@@ -73,7 +73,7 @@ Designed for **retrieval practice**, not read-then-quiz fluency.
 flowchart TD
   A[Tier A concept] --> B["Explain-back cold"]
   B --> C{passed?}
-  C -->|no| D[Evidence gaps → feynman]
+  C -->|no| D[Evidence gaps → Revise or default Explain-back]
   D --> B
   C -->|yes| E[Promote solid]
   E --> F["Lint RETEST → cold again"]
@@ -83,8 +83,9 @@ flowchart TD
 |------|---------|------|
 | **Cold** | `Explain-back [[x]] cold` | First learn — no Claim until you answer |
 | **Default** | `Explain-back [[x]]` | Revision — one prompt per turn |
-| **Feynman** | `Explain-back [[x]] feynman` | Can't explain simply — child-style probes |
 | **Promote** | `Promote [[x]] to solid` | Only if `explain_back: passed` |
+
+**Advanced opt-in:** `Explain-back [[x]] feynman` — free teach-back + probes (see REVIEW.md; not default).
 
 Progress: `domains/<domain>/study.md` (Dataview **下一步**: `① Promote` → `② Explain-back` → `③ Cold`).
 
@@ -97,7 +98,6 @@ Progress: `domains/<domain>/study.md` (Dataview **下一步**: `① Promote` →
 ```
 /zhuomo Query think: native routing vs VXLAN overlay for this fabric?
 /zhuomo Explain-back [[cilium-datapath-modes]] cold
-/zhuomo Explain-back [[cilium-datapath-modes]] feynman
 /zhuomo Promote [[cilium-datapath-modes]] to solid
 /zhuomo Connect: overlay vs native mental model — 记入 synthesis
 /zhuomo Lint
@@ -171,7 +171,7 @@ Requires: `markitdown[pptx,docx]`; `youtube-transcript-api` optional but recomme
 | Doc | Use when |
 |-----|----------|
 | [SIMPLE.md](SIMPLE.md) | Minimum viable path |
-| [REVIEW.md](REVIEW.md) | Explain-back rubric, cold/feynman, Dataview |
+| [REVIEW.md](REVIEW.md) | Explain-back rubric, cold/default, Dataview |
 | [LEARNING.md](LEARNING.md) | Connect, ingest Explain-back quality, domain overviews |
 | [USER-GUIDE.md](USER-GUIDE.md) | First-time setup, prompt cookbook |
 | [KNOWLEDGE-BASE.md](KNOWLEDGE-BASE.md) | Wiki layout details (agents) |

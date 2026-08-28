@@ -101,7 +101,7 @@ Repo: `~/zhuomo/REVIEW.md` (Study), `~/zhuomo/REFERENCE.md` (figures, EPUB, revi
 | **Ingest** | New source | Brain-first search wiki; topic map; reference depth default |
 | **Query** | Questions | Brain-first read order; think mode → Answer + Sources + **Gaps** |
 | **Revise** | Errors, contradictions | Propagate fix; set `updated:`; log |
-| **Study** | Learning | cold, Explain-back, feynman, Promote, Review queue |
+| **Study** | Learning | cold, Explain-back, Promote, Review queue |
 | **Lint** | Health | `lint-review-queue.py`, `lint-figure-visuals.py` |
 
 **Connect:** `Connect: … — 记入 synthesis` → `wiki/notes/synthesis/` (personal). See `~/zhuomo/LEARNING.md`.
@@ -151,7 +151,7 @@ When wrong, stale, contradicted, or duplicated: revision card → edit / superse
 
 - `Explain-back [[concept]] cold` → Tier A first pass: **hide Claim** until session ends
 - `Explain-back [[concept]]` → one prompt per turn (revision path)
-- `Explain-back [[concept]] feynman` → child-persona teach-back loop
+- `Explain-back [[concept]] feynman` → **advanced opt-in** free teach-back loop (only when user says `feynman`)
 - `Promote [[concept]] to solid` → only if `explain_back: passed`
 - `reviewed:` set by Explain-back sessions — no separate Review verb
 

@@ -5,3 +5,6 @@ __pycache__/
 
 # macOS
 .DS_Store
+
+# Local course transcript extracts (scratch)
+.course-extract/

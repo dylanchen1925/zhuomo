@@ -61,7 +61,7 @@ A concept page is a **compiled map**, not the textbook. Explain-back often tests
 0. **`domains/<slug>/map.md`** — skim whole picture if first time in domain (optional if revisiting)
 1. **`Explain-back [[slug]] cold`** (recommended) — answer from memory before seeing Claim  
 2. After cold session: read gaps → **Evidence** rows for misses only  
-3. If mechanism still weak → **`Explain-back [[slug]] feynman`**  
+3. If still weak → default **`Explain-back [[slug]]`** or **Revise** Claim (see [study-diagnosis](references/study-diagnosis.md))  
 4. Pass → `Promote [[slug]] to solid`  
 
 **Review-first path** (revision only): read Claim + body → default `Explain-back [[slug]]`.
@@ -90,7 +90,7 @@ A concept page is a **compiled map**, not the textbook. Explain-back often tests
 
 1. Pick one row with **下一步** `①`/`②`/`③` on `study.md`  
 2. **New material:** `Explain-back [[slug]] cold` (5–8 min)  
-3. Fill gaps from Evidence; feynman if needed  
+3. Fill gaps from Evidence; default Explain-back or Revise if needed  
 4. Promote if passed  
 
 ---
@@ -103,7 +103,7 @@ A concept page is a **compiled map**, not the textbook. Explain-back often tests
 | Ingest | deepen + Evidence + Explain-back | New source |
 | Query | search / think | Questions |
 | Revise | fix pages | Errors |
-| **Study** | Explain-back (cold / default / feynman), Promote, Review queue | Learning |
+| **Study** | Explain-back (cold / default), Promote, Review queue | Learning |
 | Lint | health + review queue | After big ingest |
 
 ---
@@ -114,7 +114,7 @@ A concept page is a **compiled map**, not the textbook. Explain-back often tests
 |---------|------------|
 | `Explain-back [[concept]]` | **Interactive (default):** one prompt at a time — [§ Interactive explain-back](#interactive-explain-back-default) |
 | `Explain-back [[concept]] cold` / `先测后读` | [§ Cold explain-back](#cold-explain-back-first-learn) — no Claim/body until after you answer |
-| `Explain-back [[concept]] feynman` | [§ Feynman explain-back](#feynman-explain-back-opt-in) — teach like to a curious 12-year-old; why/example probes |
+| `Explain-back [[concept]] feynman` | [§ Feynman explain-back](#feynman-explain-back-advanced-opt-in) — **advanced opt-in**; free teach-back + probes (not default) |
 | `Review queue: cisco-aci` | List `updated > reviewed` and never reviewed |
 | `Promote [[concept]] to solid` | Only if `explain_back: passed` |
 
@@ -187,7 +187,7 @@ Place **before** `## Evidence`. Ingest/deepen adds 3–4 prompts per concept.
 |-------|-------|------|
 | During session | Ask `## Explain-back` prompts one at a time; grade each | Answer from memory only |
 | **Hidden** | Do **not** show Claim, body, or Evidence until session ends | — |
-| After last prompt | Reveal Claim one-liner + gap list vs Evidence | Read missed Evidence; feynman if needed |
+| After last prompt | Reveal Claim one-liner + gap list vs Evidence | Read missed Evidence; default Explain-back or Revise |
 
 Same frontmatter rubric as default. **Retest:** Lint `RETEST` bucket → `Explain-back [[slug]] cold` for stale `solid`.
 
@@ -258,13 +258,15 @@ flowchart TD
 
 ---
 
-## Feynman explain-back (opt-in)
+## Feynman explain-back (advanced opt-in)
+
+**Rarely used.** Keep for explicit `Explain-back [[concept]] feynman` only — not in the default 15-minute block.
 
 **Trigger:** `Explain-back [[concept]] feynman` or `feynman` on the same line.
 
-Use when default or cold Explain-back feels too quiz-like, or you can recite facts but cannot **explain simply**. Same Promote gate: `explain_back: passed`.
+Use when default/cold feels too quiz-like **and** Claim is already thick enough. Prefer **Revise** first if the page is thin. Same Promote gate: `explain_back: passed`.
 
-**Persona:** Agent plays a curious **12-year-old** — probes with「为什么？」「举个具体例子？」「如果去掉 X 会怎样？」(1–2 per round, not a lecture).
+**Persona:** Agent probes with「为什么？」「举个具体例子？」「如果去掉 X 会怎样？」— **not** required to use a child persona (网工向内容用场景追问更合适).
 
 | Step | You | Agent |
 |------|-----|-------|
@@ -353,7 +355,6 @@ Or say `Lint` — script prints buckets:
 
 ```
 Explain-back [[aci-border-leaf-l3out]] cold
-Explain-back [[aci-border-leaf-l3out]] feynman
 Explain-back [[aci-border-leaf-l3out]]
 /zhuomo explain-back eigrp
 

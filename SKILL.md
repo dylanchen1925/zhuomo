@@ -51,6 +51,8 @@ Order when multiple verbs: **Lint → 外搜 → Revise → Ingest → Study →
 10. **Skills ≠ wiki:** no corpus facts in SKILL.md.
 11. **Corpus vs personal:** ingest → `concepts/`/`sources/` only; user judgment → `wiki/notes/`.
 12. **Concept = 知识笔记:** user learns from Claim; agent reads source at Ingest/Revise — not 导读.
+13. **Scripts-first:** run applicable `~/zhuomo/scripts/` tool before hand-editing corpus — [model-agnostic-playbook.md](references/model-agnostic-playbook.md).
+14. **Fixed outputs:** use reference section headings and § Output templates verbatim; no improvised report shapes.
 
 ---
 
@@ -82,6 +84,7 @@ Order when multiple verbs: **Lint → 外搜 → Revise → Ingest → Study →
 | [external-fact-check.md](references/external-fact-check.md) | 外搜 + 三分法摘要 |
 | [lint-interpretation.md](references/lint-interpretation.md) | Lint report tiers |
 | [bootstrap-adopt.md](references/bootstrap-adopt.md) | Bootstrap / Adopt |
+| [model-agnostic-playbook.md](references/model-agnostic-playbook.md) | Cross-model stability; Lint/Revise ladders |
 
 ---
 
@@ -134,7 +137,7 @@ Order when multiple verbs: **Lint → 外搜 → Revise → Ingest → Study →
 
 **Summary:** classify → topic map (`templates/wiki/source-page.md`) → md corpus → deepen → map/overview → optional auto **外搜** (study-technical reference/selective) → set `ingest_status` / `next_sections`.
 
-**Resume:** `Ingest continue: <slug>` — deepen `next_sections` only.
+**Resume:** `Ingest continue: <slug>` — deepen `next_sections` only. Run `ingest-batch-chapters.py <wiki> --source <slug>` for next chapter batch.
 
 **Transcript default:** clean + md corpus; **no** auto concepts unless user asks deepen.
 
@@ -166,6 +169,12 @@ Required: `## Answer`, `## Sources`, `## Gaps` (with **Type:** fact/judgment/unk
 ## Revise
 
 User error, lint tier-2, Explain-back gap, contradiction, approved 外搜 Claim.
+
+**Ladder (single slug, in order):** → [model-agnostic-playbook.md](references/model-agnostic-playbook.md) § Revise ladder
+
+```
+batch-revise-knowledge-notes.py --apply --slug → patch-claim-two-layers.py --apply --slug → agent read source anchors
+```
 
 ```
 Locate → revision card → edit/supersede/merge/retract → propagate → updated: → log
@@ -203,16 +212,25 @@ Locate → revision card → edit/supersede/merge/retract → propagate → upda
 
 ## Lint
 
-→ [lint-interpretation.md](references/lint-interpretation.md)
+→ [lint-interpretation.md](references/lint-interpretation.md) · execution → [model-agnostic-playbook.md](references/model-agnostic-playbook.md)
+
+**Default (one command):**
+
+```bash
+python3 ~/zhuomo/scripts/zhuomo-doctor.py <vault>/wiki
+```
+
+Manual/debug only:
 
 ```bash
 python3 ~/zhuomo/scripts/lint-review-queue.py <vault>/wiki
 python3 ~/zhuomo/scripts/lint-figure-visuals.py <vault>/wiki
 python3 ~/zhuomo/scripts/lint_explain_back_coverage.py <vault>/wiki
+python3 ~/zhuomo/scripts/lint-claim-layers.py <vault>/wiki
 python3 ~/zhuomo/scripts/lint-ingest-resume.py <vault>/wiki
 ```
 
-Report tiers **1阻断 → 2失真 → 3待消化 → 4维护**. Script output = **candidates**; read pages before merge/delete/Claim edit.
+Report tiers **1阻断 → 2失真 → 3待消化 → 4维护**. Bucket → action table in playbook (deterministic). Tier-2 spot-check **≤3 pages** before hand edit.
 
 ---
 
@@ -240,9 +258,14 @@ Personal cross-concept → `wiki/notes/synthesis/` (`origin: personal`). Compile
 
 | Script | When |
 |--------|------|
+| `ingest-batch-chapters.py` | **Ingest continue** — chapter batch plan + `--mark-done` |
+| `zhuomo-doctor.py` | **Lint default** — all checks, tiered report |
+| `batch-revise-knowledge-notes.py` | Revise step 1 — heuristic Claim from Evidence |
+| `patch-claim-two-layers.py` | Add `### Formal:` scaffold |
 | `epub-to-wiki-md.py` / `pdf-*` / `markitdown-to-wiki-md.py` | Book/article/video URL corpus |
 | `transcript-to-wiki-md.py` | SRT/VTT → `sources/.../md/` |
-| `lint-review-queue.py` | Review buckets + External |
+| `lint-review-queue.py` | Review buckets + External (doctor calls this) |
+| `lint-claim-layers.py` | Missing `### Formal:` |
 | `lint-external-fact-check.py` | External only |
 | `lint_explain_back_coverage.py` | Prompt vs Claim ### |
 | `lint-ingest-resume.py` | Partial `ingest_status` |

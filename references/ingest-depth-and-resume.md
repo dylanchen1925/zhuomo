@@ -55,6 +55,8 @@ concepts_deepened: 0
 
 ## Procedure (numbered)
 
+**Weak / unknown model:** steps 0–3 + Confirm menu → **stop** before step 4 unless user confirmed 继续. See [model-agnostic-playbook.md](model-agnostic-playbook.md).
+
 ```
 0. Classify; write/update source page frontmatter
 1. Read TOC/structure; brain-first duplicate search
@@ -72,6 +74,12 @@ concepts_deepened: 0
 ```
 
 ### Ingest continue
+
+```bash
+python3 ~/zhuomo/scripts/ingest-batch-chapters.py <vault>/wiki --source <slug>        # next batch
+python3 ~/zhuomo/scripts/ingest-batch-chapters.py <vault>/wiki --source <slug> --init
+python3 ~/zhuomo/scripts/ingest-batch-chapters.py <vault>/wiki --source <slug> --mark-done "Ch3"
+```
 
 ```
 1. Read sources/<slug>.md — ingest_status, next_sections, topic map

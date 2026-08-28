@@ -206,7 +206,7 @@ def main() -> int:
                 cov_hits.append(r)
         if cov_hits:
             print(f"\n=== EXPLAIN-BACK COVERAGE ({len(cov_hits)}) ===")
-            print("Thin Claim vs Explain-back prompts — run enrich-explain-back-coverage.py --apply")
+            print("Thin Claim vs Explain-back — Revise ladder: batch-revise-knowledge-notes.py --apply --slug")
             for h in cov_hits[:40]:
                 print(f"  concepts/{h['slug']}.md")
             if len(cov_hits) > 40:

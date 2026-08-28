@@ -10,7 +10,7 @@ Do **not** default to feynman alone — pick action by bottleneck.
 
 | 卡点 | 常见表现 | 下一步 |
 |------|----------|--------|
-| **材料不足** | Claim <120 词、纯导读、无 `###` | **Revise** — agent re-reads source, expands Claim |
+| **材料不足** | Claim <120 词、纯导读、无 `###` | Run **Revise ladder** ([model-agnostic-playbook.md](model-agnostic-playbook.md)) |
 | **字面不懂** | 术语/符号/CLI 卡 | Read Claim **正式层** + Evidence anchor; not raw book yet |
 | **关系没建立** | 会背定义，不会串机制 | **Revise** — add `### vs [[peer]]`, mechanism chain; optional **Connect** |
 | **判断失真** | 与 Evidence / 外搜冲突 | **外搜** or **Revise**; do not Promote |
@@ -40,7 +40,7 @@ User: answer not on page / 「concept 里没有」
 
 1. Acknowledge gap in session
 2. End session with `explain_back: attempted` if needed
-3. **Revise [[slug]]** — expand Claim (not chat-only teaching)
+3. **Revise ladder** on `[[slug]]` — not chat-only teaching
 4. Do **not** rely on `enrich-explain-back-coverage.py --apply`
 
 ---

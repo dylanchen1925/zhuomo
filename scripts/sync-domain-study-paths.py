@@ -562,6 +562,35 @@ def write_study_page(dom_dir: Path, slug: str, overview_text: str, updated: str)
     return format_study_page(slug, title, spec, updated)
 
 
+def is_custom_study_page(path: Path) -> bool:
+    if not path.is_file():
+        return False
+    text = path.read_text(encoding="utf-8")
+    if text.startswith("---"):
+        parts = text.split("---", 2)
+        if len(parts) >= 2 and "type: career-track-study" in parts[1]:
+            return True
+    return "/milestones" in text and "Milestones" in text
+
+
+def ensure_guide_page(dom_dir: Path, slug: str, overview_text: str, updated: str, dry_run: bool) -> bool:
+    gd = dom_dir / "guide.md"
+    if gd.is_file():
+        return False
+    import importlib.util
+
+    guide_path = Path(__file__).resolve().parent / "sync-domain-guide-pages.py"
+    spec = importlib.util.spec_from_file_location("sync_domain_guide_pages", guide_path)
+    mod = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(mod)
+    content = mod.build_guide(slug, overview_text, updated)
+    if not dry_run:
+        gd.write_text(content, encoding="utf-8")
+    print(f"guide (new): {gd}")
+    return True
+
+
 def normalize_domain_markdown_files(domains_dir: Path, *, dry_run: bool = False) -> int:
     n = 0
     for md in sorted(domains_dir.rglob("*.md")):
@@ -614,19 +643,23 @@ def main() -> int:
             continue
         text = ov.read_text(encoding="utf-8")
         new_text = text
+        ensure_guide_page(dom, slug, text, args.date, args.dry_run)
         if (do_paths or do_tiers) and slug in PATHS and "overview" in PATHS[slug]:
             new_text = apply_study_path(new_text, slug, PATHS[slug]["overview"])
         if do_tiers:
             new_text = sync_overview_extras(new_text, slug)
             study_md = dom / "study.md"
-            study_content = write_study_page(dom, slug, new_text, args.date)
-            study_content = normalize_markdown_blank_lines(study_content)
-            old_study = study_md.read_text(encoding="utf-8") if study_md.is_file() else ""
-            if study_content != old_study and not args.dry_run:
-                study_md.write_text(study_content, encoding="utf-8")
-            if study_content != old_study:
-                n += 1
-                print(f"study: {study_md}")
+            if not is_custom_study_page(study_md):
+                study_content = write_study_page(dom, slug, new_text, args.date)
+                study_content = normalize_markdown_blank_lines(study_content)
+                old_study = study_md.read_text(encoding="utf-8") if study_md.is_file() else ""
+                if study_content != old_study and not args.dry_run:
+                    study_md.write_text(study_content, encoding="utf-8")
+                if study_content != old_study:
+                    n += 1
+                    print(f"study: {study_md}")
+            else:
+                print(f"study (skip custom): {study_md}")
         new_text = bump_updated(new_text, args.date)
         new_text = normalize_markdown_blank_lines(new_text)
         if new_text != text:
@@ -636,6 +669,8 @@ def main() -> int:
                 ov.write_text(new_text, encoding="utf-8")
         if do_paths and slug in PATHS and "guide" in PATHS[slug]:
             gd = dom / "guide.md"
+            if not gd.is_file():
+                ensure_guide_page(dom, slug, new_text, args.date, args.dry_run)
             if gd.is_file():
                 gtext = gd.read_text(encoding="utf-8")
                 gnew = replace_or_insert(gtext, GUIDE_HEADINGS, PATHS[slug]["guide"])

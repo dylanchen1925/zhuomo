@@ -1,8 +1,11 @@
-# Lint — script candidates vs agent judgment
+# Lint — script candidates vs deterministic actions
 
 **Trigger:** `Lint`, after large ingest.
 
-Scripts report **candidates**; agent **opens pages** before delete/merge/Claim edit.
+**Default:** `zhuomo-doctor.py` — one command, tiered report.  
+Details: [model-agnostic-playbook.md](model-agnostic-playbook.md) § Lint.
+
+Manual sub-scripts only when debugging.
 
 ---
 
@@ -12,6 +15,7 @@ Scripts report **candidates**; agent **opens pages** before delete/merge/Claim e
 python3 ~/zhuomo/scripts/lint-review-queue.py <vault>/wiki
 python3 ~/zhuomo/scripts/lint-figure-visuals.py <vault>/wiki
 python3 ~/zhuomo/scripts/lint_explain_back_coverage.py <vault>/wiki
+python3 ~/zhuomo/scripts/lint-claim-layers.py <vault>/wiki   # missing ### Formal:
 python3 ~/zhuomo/scripts/lint-ingest-resume.py <vault>/wiki   # partial sources
 ```
 
@@ -31,7 +35,7 @@ Skip external: `--skip-external`. Standalone: `lint-external-fact-check.py`.
 | **3 — 待消化** | Structure OK, study backlog | NEVER_REVIEWED, partial ingest, MISSING_EXPLAIN_BACK |
 | **4 — 维护便利** | Cosmetic / optional | Figure embed, duplicate title wording |
 
-**Rule:** Zero script alerts ≠ “content all correct”. Agent spot-checks tier-2 candidates.
+**Rule:** Zero script alerts ≠ “content all correct”. Tier-2: run **Revise ladder** on flagged slug; spot-check **≤3** pages only if ladder insufficient.
 
 ---
 
@@ -45,7 +49,8 @@ Skip external: `--skip-external`. Standalone: `lint-external-fact-check.py`.
 | `STALE` | Re-read Claim (not full book) |
 | `NEVER_REVIEWED` | Claim → `Explain-back [[slug]] cold` (Tier A) |
 | `MISSING_EXPLAIN_BACK_SECTION` | Add `## Explain-back` |
-| `EXPLAIN-BACK COVERAGE` | **Revise** — expand Claim; enrich dry-run only |
+| `EXPLAIN-BACK COVERAGE` | `batch-revise-knowledge-notes.py --apply --slug` → `patch-claim-two-layers.py` if needed |
+| `MISSING_FORMAL` | `patch-claim-two-layers.py --apply --slug` |
 | `MISSING_EXTERNAL` / `STALE_EXTERNAL` | Suggest **外搜** — do **not** auto-edit Claim |
 | Duplicate topic (manual) | Read both; merge/supersede — **no script auto-delete** |
 | `ingest_status: partial` | Offer `Ingest continue: <slug>` |

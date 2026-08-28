@@ -3,6 +3,7 @@
 Bootstrapped: {{BOOTSTRAP_DATE}}
 
 **Procedures:** `~/zhuomo/SKILL.md` (router) + `~/zhuomo/references/` (ingest, Claim, Study, 外搜, Lint).  
+**Cross-model stability:** `~/zhuomo/references/model-agnostic-playbook.md` — scripts-first, Revise/Lint ladders.  
 **Human cheatsheet:** `wiki/help.md` (from repo `templates/wiki/help.md`).
 
 ---
